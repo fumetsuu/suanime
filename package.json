@@ -28,6 +28,11 @@
   "dependencies": {
     "babel-preset-react": "^6.24.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-player": "^1.1.1",
+    "react-player-controls": "^0.5.18",
+    "react-videoplayer": "^0.6.4",
+    "redux": "^3.7.2",
+    "video-react": "^0.9.4"
   }
 }
