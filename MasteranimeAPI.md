@@ -2,7 +2,7 @@
 
 ### Endpoints
 - **releases**: `https://www.masterani.me/api/releases`
-- **anime**: `https://www.masterani.me/api/anime/ [base url]`
+- **anime**: `https://www.masterani.me/api/anime/ (base url)`
    - **info**: `https://www.masterani.me/api/anime/:id`
    - **detailed**: `https://www.masterani.me/api/anime/:id/detailed`
    - **search**: `https://www.masterani.me/api/anime/search`
@@ -39,22 +39,23 @@
 		},
 		"episode": "4",
 		"created_at": "2018-01-30 15:07:43"
-	}, ...
-    {
-      	"anime": {
-            "id": 2514,
-            "title": "Boruto: Naruto Next Generations",
-            "slug": "2514-boruto-naruto-next-generations",
-            "duration": 23,
-            "age": "PG-13 - Teens 13 or older",
-            "poster": "2514pwtPLckB.jpg",
-            "wallpaper": "2514ATfcUPfy.jpg"
-        },
-        "episode": "42",
-        "created_at": "2018-01-24 09:35:10"
-    }
+	}, 
+	{
+	"anime": {
+	    "id": 2514,
+	    "title": "Boruto: Naruto Next Generations",
+	    "slug": "2514-boruto-naruto-next-generations",
+	    "duration": 23,
+	    "age": "PG-13 - Teens 13 or older",
+	    "poster": "2514pwtPLckB.jpg",
+	    "wallpaper": "2514ATfcUPfy.jpg"
+	},
+	"episode": "42",
+	"created_at": "2018-01-24 09:35:10"
+	}
 ]
 ```
+`note: some results were omitted for brevity`
 
 <br><hr><br>
 
@@ -467,7 +468,7 @@
                 "title": "Black Clover",
                 "slug": "2661-black-clover-tv",
                 "poster": "2661Zu6tcSmH.jpg"
-            }, //omitted for brevity
+            },
             {
                 "total": 34,
                 "title": "Boruto: Naruto Next Generations",
@@ -487,7 +488,7 @@
                 "title": "Black Clover",
                 "slug": "2661-black-clover-tv",
                 "poster": "2661Zu6tcSmH.jpg"
-            }, //omitted for brevity
+            },
             {
                 "total": 2147,
                 "title": "Ryuuou no Oshigoto!",
@@ -497,6 +498,7 @@
         ]
     }
   ```
+`note: some results were omitted for brevity`
   
 </section>
 
