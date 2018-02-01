@@ -2,7 +2,9 @@
 @import 'scrollbar'
 @import 'sidenav'
 @import 'card'
+@import 'pagination'
 @import 'home-content'
+
 
 body, html, #app, .wrapper
     margin: 0
@@ -15,3 +17,17 @@ body, html, #app, .wrapper
 
 a
     text-decoration: none
+
+.central-loader
+    background-image: url("../assets/loader.svg")
+    width: 50px
+    height: 50px
+    background-size: contain
+    background-position: center
+    margin-left: 50%
+    margin-top: 20%
+    transition: 0.4s
+
+.disabled
+    pointer-events: none
+    color: grey

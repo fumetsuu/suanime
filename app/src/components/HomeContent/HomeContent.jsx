@@ -3,7 +3,6 @@ import React from 'react';
 import HomeHeader from './HomeHeader.jsx'
 import HeaderActionButton from './HeaderActionButton.jsx'
 import CardsDisplay from './CardsDisplay.jsx'
-import Pagination from './Pagination.jsx'
 
 const HomeContent = () => (
   <div className="home-content-wrapper">
@@ -14,7 +13,6 @@ const HomeContent = () => (
         <HeaderActionButton/>
       </div>
       <CardsDisplay/>
-      <Pagination/>
     </div>
   </div>
 );

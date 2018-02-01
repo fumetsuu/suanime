@@ -1,5 +1,7 @@
+const fs = require('fs')
 import React, { Component } from 'react'
 import { convertMS } from '../../util.js'
+const rp = require('request-promise')
 
 var content
 
@@ -15,7 +17,7 @@ export default class AnimeCard extends Component {
     var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
     var timeago = convertMS(Date.now()-Date.parse(createTime)-tzOffset)
     content = 
-        <a className="card-container" href={link}>
+        <div className="card-container" onClick={this.downloadEp.bind(this)}>
           <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
           <div className="card-header">
             <div className="card-date">{timeago}</div>
@@ -23,10 +25,20 @@ export default class AnimeCard extends Component {
           </div>
           <div className="spacer-vertical"/>
           <div className="card-title">{title}</div>
-        </a>
+        </div>
   }
 
   render() {
     return content
+  }
+
+  downloadEp() {
+    var epLink = `https://wwww.masterani.me/anime/watch/${this.props.animeDataRecent.slug}/${this.props.animeDataRecent.episode}`
+    var testlink = `https://www.masterani.me/api/anime/${this.props.animeDataRecent.id}`
+    rp(testlink).then(data => {
+      fs.writeFile('hey.txt', data, () => {
+        console.log(`done writing ${this.props.animeDataRecent.title}`)
+      })
+    }).catch(err => console.log(err))
   }
 }

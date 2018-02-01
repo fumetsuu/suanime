@@ -13,7 +13,7 @@ module.exports = {
 	output: {
 		//location and filename for bundled js
 		path: __dirname + '/app/build',
-		publicPath: 'build/',
+		publicPath: './',
 		filename: 'bundle.js'
 	},
 	node: {
@@ -40,8 +40,8 @@ module.exports = {
 			},
 			{
 				test: /\.(png|jpg|gif|svg)$/,
-				loader: 'file-loader',
-				query: {
+				loader: "file-loader",
+				options: {
 					name: 'img/[name].[ext]'
 				}
 			},
@@ -51,7 +51,7 @@ module.exports = {
 
 	plugins: [
 		new ExtractTextPlugin({
-			filename: 'css/bundle.css'
+			filename: 'bundle.css'
 		}),
 		new HtmlWebpackPlugin({
 			template: 'app/index.html'
