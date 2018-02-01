@@ -1,8 +1,8 @@
 import React from 'react';
 
 const HeaderActionButton = () => (
-    <div>
-        
+    <div className="header-action-button">
+        <i className="material-icons">file_download</i>
     </div>
 );
 

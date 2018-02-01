@@ -31,8 +31,12 @@
     "react-dom": "^16.2.0",
     "react-player": "^1.1.1",
     "react-player-controls": "^0.5.18",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
     "react-videoplayer": "^0.6.4",
     "redux": "^3.7.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
     "video-react": "^0.9.4"
   }
 }
