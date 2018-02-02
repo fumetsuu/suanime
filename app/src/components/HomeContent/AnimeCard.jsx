@@ -1,13 +1,14 @@
 const fs = require('fs')
 const path = require('path')
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { convertMS } from '../../util/util.js'
 import { streamMoe } from '../../util/animeDownloaders.js'
 const rp = require('request-promise')
 
 var animeDataRecent, title, link, poster, lastEp, timeago
 
-export default class AnimeCard extends Component {
+class AnimeCard extends Component {
   constructor(props) {
     super(props)
     animeDataRecent = this.props.animeDataRecent
@@ -27,19 +28,17 @@ export default class AnimeCard extends Component {
     var animefilename = path.join(__dirname, `../downloads/${fn}.mp4`)
     var animeExists = fs.existsSync(animefilename) 
     if(!animeExists) {
-      console.log(animefilename + ' no exist.')
       downloadClass = "dp-btn"
       playClass = "none"
     } else {
-      console.log('heyyyyyy', animefilename)
       downloadClass = "none"
       playClass = "dp-btn"
     }
     return(
-      <div className="card-container" onClick={this.downloadEp.bind(this)}>
+      <div className="card-container" onClick={this.downloadEpComp.bind(this)}>
         <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
-        <div className={downloadClass} onClick={this.downloadEp.bind(this)}><i className="material-icons">file_download</i></div>
-        <div className={playClass} onClick={this.playEp.bind(this)}><i className="material-icons">play_arrow</i></div>
+        <div className={downloadClass} onClick={this.downloadEpComp.bind(this)}><i className="material-icons">file_download</i></div>
+        <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
         <div className="card-header">
           <div className="card-date">{timeago}</div>
           <div className="card-episode">EP. {lastEp}</div>
@@ -50,16 +49,30 @@ export default class AnimeCard extends Component {
     )
   }
 
-  downloadEp(e) {
+  downloadEpComp(e) {
     e.stopPropagation()    
     var epLink = `https://www.masterani.me/anime/watch/${this.props.animeDataRecent.anime.slug}/${this.props.animeDataRecent.episode}`
     var animeFilename = `${this.props.animeDataRecent.anime.title} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
     console.log(animeFilename)
-    streamMoe(epLink, animeFilename)
+    this.props.downloadEp(epLink, animeFilename)
   }
 
-  playEp(e) {
+  playEpComp(e) {
     e.stopPropagation()
     console.log('time to play anime hehe')
   }
 }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    downloadEp: (epLink, animeFilename) => dispatch({
+      type: 'INITIATE_DOWNLOAD',
+      payload: {
+        epLink: epLink,
+        animeFilename: animeFilename
+      }
+    })
+  }
+}
+
+export default connect(null, mapDispatchToProps)(AnimeCard)

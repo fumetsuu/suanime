@@ -3,7 +3,6 @@ const path = require('path')
 const rp = require('request-promise')
 const request = require('request')
 const progress = require('request-progress')
-const progStr = require('progress-stream')
 const cheerio = require('cheerio')
 
 export function streamMoe(masteraniWatchURL, animeFilename) {

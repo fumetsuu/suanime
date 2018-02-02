@@ -43,7 +43,6 @@ export default class CardsDisplay extends Component {
         } else {
             var pageBackClass = `pag-btn ${this.state.currentPage==0?'disabled':''}`
             var pageNextClass = `pag-btn ${this.state.currentPage==maxPage?'disabled':''}`
-            console.log(this.state.currentPage, maxPage)
         return (
             <div className="cards-display-wrapper">
                 <div className="cards-display">
