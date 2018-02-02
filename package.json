@@ -27,6 +27,9 @@
   },
   "dependencies": {
     "babel-preset-react": "^6.24.1",
+    "cheerio": "^1.0.0-rc.2",
+    "download": "^6.2.5",
+    "progress-stream": "^2.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-player": "^1.1.1",
@@ -36,7 +39,9 @@
     "react-videoplayer": "^0.6.4",
     "redux": "^3.7.2",
     "request": "^2.83.0",
+    "request-progress": "^3.0.0",
     "request-promise": "^4.2.2",
-    "video-react": "^0.9.4"
+    "video-react": "^0.9.4",
+    "watch-ignore-webpack-plugin": "^1.0.0"
   }
 }

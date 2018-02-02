@@ -1,8 +1,10 @@
+const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const WatchIgnorePlugin = require('watch-ignore-webpack-plugin')
 
 module.exports = {
-	devtool: 'inline-source-map', //for chrome devtools
+	devtool: 'source-map', //for chrome devtools
 
 	watch: true, //watch project folder
 
@@ -56,5 +58,9 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: 'app/index.html'
 		})
+		// new WatchIgnorePlugin([
+		// 	path.resolve(__dirname, './node_modules/'),
+		// 	path.resolve(__dirname, './downloads/')
+		// ])
 	]
 }
