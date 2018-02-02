@@ -15,7 +15,7 @@ export default class SideNav extends Component {
       <div className="side-nav">
         <Title/>
         <SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>
-        <SideNavLink icon="merge_type" label="Integration" linkTarget="/downloads"/>
+        <SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
         <div className="spacer-vertical"/>
         <SideNavToggle/>
         <SideNavLink icon="settings" label="Settings" linkTarget="/settings"/>

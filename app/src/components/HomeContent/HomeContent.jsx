@@ -3,7 +3,6 @@ import React from 'react';
 import HomeHeader from './HomeHeader.jsx'
 import HeaderActionButton from './HeaderActionButton.jsx'
 import CardsDisplay from './CardsDisplay.jsx'
-import DownloadCard from '../DownloadsPage/DownloadCard.jsx'
 
 const HomeContent = () => (
   <div className="home-content-wrapper">
@@ -14,7 +13,6 @@ const HomeContent = () => (
         <HeaderActionButton/>
       </div>
       <CardsDisplay/>
-      <DownloadCard/>
     </div>
   </div>
 );

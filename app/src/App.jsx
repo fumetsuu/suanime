@@ -6,7 +6,8 @@ require('./styles/main.sass')
 
 //components imports
 import SideNav from './components/SideNav/SideNav.jsx'
-import HomeContent from './components/HomeContent/HomeContent.jsx';
+import HomeContent from './components/HomeContent/HomeContent.jsx'
+import DownloadsPage from './components/DownloadsPage/DownloadsContainer.jsx'
 export default class App extends Component {
 	render() {
 		return (
@@ -15,6 +16,7 @@ export default class App extends Component {
 					<SideNav/>
 					<Switch>
 						<Route exact path="/" component={HomeContent}/>
+						<Route path="/downloads" component={DownloadsPage}/>
 					</Switch>
 				</div>
 			</Router>

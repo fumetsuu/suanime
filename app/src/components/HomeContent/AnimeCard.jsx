@@ -3,7 +3,6 @@ const path = require('path')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { convertMS } from '../../util/util.js'
-import { streamMoe } from '../../util/animeDownloaders.js'
 const rp = require('request-promise')
 
 var animeDataRecent, title, link, poster, lastEp, timeago
@@ -53,7 +52,6 @@ class AnimeCard extends Component {
     e.stopPropagation()    
     var epLink = `https://www.masterani.me/anime/watch/${this.props.animeDataRecent.anime.slug}/${this.props.animeDataRecent.episode}`
     var animeFilename = `${this.props.animeDataRecent.anime.title} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
-    console.log(animeFilename)
     this.props.downloadEp(epLink, animeFilename)
   }
 

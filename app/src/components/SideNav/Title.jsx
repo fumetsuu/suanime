@@ -1,9 +1,10 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom'
 
 const Title = () => (
-  <div className="title">
+  <NavLink exact to="/" className="title">
     <span className="su-blue">SU</span> ANIME
-  </div>
+  </NavLink>
 );
 
 export default Title;
