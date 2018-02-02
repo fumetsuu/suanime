@@ -5,36 +5,38 @@ import { connect } from 'react-redux'
 import { convertMS } from '../../util/util.js'
 const rp = require('request-promise')
 
-var animeDataRecent, title, link, poster, lastEp, timeago
+let content
 
 class AnimeCard extends Component {
   constructor(props) {
     super(props)
-    animeDataRecent = this.props.animeDataRecent
-    title = animeDataRecent.anime.title
-    link = `https://www.masterani.me/anime/info/${animeDataRecent.anime.slug}`
-    poster = `https://cdn.masterani.me/poster/${animeDataRecent.anime.poster}`
-    lastEp = animeDataRecent.episode
-    var createTime = animeDataRecent['created_at'] //GMT 0
-    var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
-    timeago = convertMS(Date.now()-Date.parse(createTime)-tzOffset)
+
   }
 
   render() {
+    var animeDataRecent = this.props.animeDataRecent
+    var title = animeDataRecent.anime.title
+    var link = `https://www.masterani.me/anime/info/${animeDataRecent.anime.slug}`
+    var poster = `https://cdn.masterani.me/poster/${animeDataRecent.anime.poster}`
+    var lastEp = animeDataRecent.episode
+    var createTime = animeDataRecent['created_at'] //GMT 0
+    var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
+    var timeago = convertMS(Date.now()-Date.parse(createTime)-tzOffset)
     var downloadClass = "dp-btn"
     var playClass = "none"
-    var fn = `${title} - ${lastEp}`.replace(/[\\/:"*?<>|]+/, '')
-    var animefilename = path.join(__dirname, `../downloads/${fn}.mp4`)
-    var animeExists = fs.existsSync(animefilename) 
-    if(!animeExists) {
-      downloadClass = "dp-btn"
-      playClass = "none"
-    } else {
+    var fn = `${title} - ${lastEp}`.replace(/[\\/:"*?<>|]+/, '')+'.mp4'
+    if(this.props.downloading.includes(fn)) {
+      downloadClass = "none"
+      playClass = "dp-btn disabled"
+    } else if(this.props.completed.includes(fn)) {
       downloadClass = "none"
       playClass = "dp-btn"
+    } else {
+      downloadClass = "dp-btn"
+      playClass = "none"
     }
-    return(
-      <div className="card-container" onClick={this.downloadEpComp.bind(this)}>
+    content = 
+      <div className="card-container">
         <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
         <div className={downloadClass} onClick={this.downloadEpComp.bind(this)}><i className="material-icons">file_download</i></div>
         <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
@@ -44,15 +46,16 @@ class AnimeCard extends Component {
         </div>
         <div className="spacer-vertical"/>
         <div className="card-title">{title}</div>
-      </div>
-    )
+    </div>
+    return content
   }
 
   downloadEpComp(e) {
     e.stopPropagation()    
     var epLink = `https://www.masterani.me/anime/watch/${this.props.animeDataRecent.anime.slug}/${this.props.animeDataRecent.episode}`
     var animeFilename = `${this.props.animeDataRecent.anime.title} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
-    this.props.downloadEp(epLink, animeFilename)
+    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
+    this.props.downloadEp(epLink, animeFilename, posterImg)
   }
 
   playEpComp(e) {
@@ -61,16 +64,25 @@ class AnimeCard extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    downloading: state.downloadsReducer.downloading,
+    completed: state.downloadsReducer.completed
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
-    downloadEp: (epLink, animeFilename) => dispatch({
-      type: 'INITIATE_DOWNLOAD',
+    downloadEp: (epLink, animeFilename, posterImg) => dispatch({
+      type: 'QUEUE_DOWNLOAD',
       payload: {
         epLink: epLink,
-        animeFilename: animeFilename
+        animeFilename: animeFilename,
+        posterImg: posterImg,
+        status: 'DOWNLOADING'
       }
     })
   }
 }
 
-export default connect(null, mapDispatchToProps)(AnimeCard)
+export default connect(mapStateToProps, mapDispatchToProps)(AnimeCard)

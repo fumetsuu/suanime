@@ -17,7 +17,6 @@ class DownloadsHolder extends Component {
 
 //can handle speed and network data within this component using props, only use redux for link and name.
 const mapStateToProps = state => {
-    console.log('mapstate', state)
   return {
     downloadsArray: state.downloadsReducer.downloadsArray,
     epLink: state.downloadsReducer.epLink,

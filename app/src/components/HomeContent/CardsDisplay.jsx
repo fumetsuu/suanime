@@ -25,7 +25,7 @@ export default class CardsDisplay extends Component {
             releasesData = releases
             for(var i = 0 ; i < NUM_OF_CARDS; i++) {
                 this.setState({
-                    cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releases[i]}/>]
+                    cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releases[i]} key={i}/>]
                 })
             }
             maxPage = Math.ceil(releases.length / NUM_OF_CARDS)-1
@@ -67,7 +67,7 @@ export default class CardsDisplay extends Component {
             setTimeout(() => {
                 for(var i = this.state.currentPage*NUM_OF_CARDS ; i < (this.state.currentPage+1)*NUM_OF_CARDS; i++) {
                     this.setState({
-                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]}/>]
+                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]} key={i}/>]
                     })
                 }
                 addSpacerCards(this)
@@ -83,7 +83,7 @@ export default class CardsDisplay extends Component {
             setTimeout(() => {
                 for(var i = this.state.currentPage*NUM_OF_CARDS ; i < ((this.state.currentPage+1)*NUM_OF_CARDS>releasesData.length?releasesData.length:(this.state.currentPage+1)*NUM_OF_CARDS); i++) {
                     this.setState({
-                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]}/>]
+                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]} key={i}/>]
                     })
                 }
                 addSpacerCards(this)
