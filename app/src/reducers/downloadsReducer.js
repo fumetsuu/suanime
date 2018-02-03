@@ -11,7 +11,7 @@ export default function reducer(state={
         case "QUEUE_DOWNLOAD": {
             console.log(action)
             return Object.assign({}, state, {
-                downloadsArray: [...state.downloadsArray, <DownloadCard epLink={action.payload.epLink} animeFilename={action.payload.animeFilename} posterImg={action.payload.posterImg}/>],
+                downloadsArray: [...state.downloadsArray, <DownloadCard epLink={action.payload.epLink} animeFilename={action.payload.animeFilename} posterImg={action.payload.posterImg} animeName={action.payload.animeName} epTitle={action.payload.epTitle}/>],
                 downloading: [...state.downloading, action.payload.animeFilename],
                 epLink: action.payload.epLink,
                 animeFilename: action.payload.animeFilename,

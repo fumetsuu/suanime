@@ -7,6 +7,7 @@ class DownloadCard extends Component {
   constructor(props) {
     super(props)
     var thisdlObj
+    console.log(global.estore)
     var dlObjsFROMTREE = this.props.dlObjsFROMTREE
     dlObjsFROMTREE.some(dlObj => {
       if(dlObj.id == this.props.animeFilename) {
@@ -20,16 +21,14 @@ class DownloadCard extends Component {
       thisdlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
       this.props.createdlObj(this.props.animeFilename, thisdlObj)
     }
-    
+    this.state = {}
     console.log(thisdlObj)
-    this.state = {
-      dlObj: thisdlObj
-    }
+    this.dlObj = thisdlObj
     console.log('state from constructor ' , this.state)
   }
 
   componentDidMount() {
-    this.state.dlObj.updateState()
+    this.dlObj.updateState()
   }
 
   render() {
@@ -70,8 +69,8 @@ class DownloadCard extends Component {
       <div className="download-card-container">
         <div className="download-card-img" style={{backgroundImage: `url('${this.props.posterImg}')`}}/>
         <div className="download-card-header">
-          <div className="download-title">{this.props.animeFilename} <br></br> 
-            <div className="download-ep-title">Ep 4 - Title</div>          
+          <div className="download-title">{this.props.animeName} <br></br> 
+            <div className="download-ep-title">{this.props.epTitle}</div>          
           </div>
           <div className="download-control-btn" onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
           <div className="download-control-btn"><i className="material-icons">clear</i></div>
@@ -92,7 +91,7 @@ class DownloadCard extends Component {
     this.setState({
       status: 'STARTING_DOWNLOAD'
     })
-    this.state.dlObj.start()
+    this.dlObj.start()
   }
   pauseDownload() {
     console.log('pausing download for '+this.props.animeFilename)
