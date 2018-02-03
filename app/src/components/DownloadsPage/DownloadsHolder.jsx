@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { streamMoe } from '../../util/animeDownloaders.js'
 import DownloadCard from './DownloadCard.jsx'
 
 

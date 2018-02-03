@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "babel-preset-react": "^6.24.1",
+    "bytes": "^3.0.0",
     "cheerio": "^1.0.0-rc.2",
     "download": "^6.2.5",
     "progress-stream": "^2.0.0",
