@@ -38,7 +38,7 @@ class AnimeCard extends Component {
     content = 
       <div className="card-container">
         <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
-        <div className={downloadClass} onClick={this.downloadEpComp.bind(this)}><i className="material-icons">file_download</i></div>
+        <div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
         <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
         <div className="card-header">
           <div className="card-date">{timeago}</div>
@@ -50,14 +50,14 @@ class AnimeCard extends Component {
     return content
   }
 
-  downloadEpComp(e) {
+  queueDLComp(e) {
     e.stopPropagation()    
     var epLink = `https://www.masterani.me/anime/watch/${this.props.animeDataRecent.anime.slug}/${this.props.animeDataRecent.episode}`
     var animeName = this.props.animeDataRecent.anime.title
     var epTitle = 'Episode '+this.props.animeDataRecent.episode
     var animeFilename = `${animeName} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
     var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
-    this.props.downloadEp(epLink, animeFilename, posterImg, animeName, epTitle)
+    this.props.queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
   }
 
   playEpComp(e) {
@@ -75,7 +75,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    downloadEp: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch({
+    queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch({
       type: 'QUEUE_DOWNLOAD',
       payload: {
         epLink: epLink,
