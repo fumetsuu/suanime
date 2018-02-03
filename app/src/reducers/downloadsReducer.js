@@ -4,7 +4,8 @@ import DownloadCard from '../components/DownloadsPage/DownloadCard.jsx'
 export default function reducer(state={
     downloadsArray: [],
     downloading: [],
-    completed: []
+    completed: [],
+    dlObjs: []
 }, action) {
     switch(action.type) {
         case "QUEUE_DOWNLOAD": {
@@ -21,6 +22,14 @@ export default function reducer(state={
             return Object.assign({}, state, {
                 downloading: state.downloading.filter(el => el != action.payload.animeFilename),
                 completed: [...state.completed, action.payload.animeFilename]
+            })
+        }
+        case "CREATE_DLOBJ": {
+            return Object.assign({}, state, {
+                dlObjs: [...state.dlObjs, {
+                    id: action.payload.id,
+                    dlObj: action.payload.dlObj
+                }]
             })
         }
         default: return state

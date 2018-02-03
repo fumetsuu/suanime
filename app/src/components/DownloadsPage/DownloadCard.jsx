@@ -2,20 +2,34 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
 
-//status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED'
+//status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'STARTING_DOWNLOAD'
 class DownloadCard extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      dlObj: null,
-      status: "NOT_STARTED",
-      speed: "0 B/s",
-      progressSize: "0MB",
-      totalSize: "0MB",
-      percentage: 0,
-      elapsed: 0,
-      remaining: 0
+    var thisdlObj
+    var dlObjsFROMTREE = this.props.dlObjsFROMTREE
+    dlObjsFROMTREE.some(dlObj => {
+      if(dlObj.id == this.props.animeFilename) {
+        thisdlObj = dlObj.dlObj
+        thisdlObj.fixComp(this)      
+        return true
+      }
+    })
+    if(!thisdlObj) {
+      thisdlObj = new streamMoe()
+      thisdlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
+      this.props.createdlObj(this.props.animeFilename, thisdlObj)
     }
+    
+    console.log(thisdlObj)
+    this.state = {
+      dlObj: thisdlObj
+    }
+    console.log('state from constructor ' , this.state)
+  }
+
+  componentDidMount() {
+    this.state.dlObj.updateState()
   }
 
   render() {
@@ -46,6 +60,11 @@ class DownloadCard extends Component {
         statusText = "Completed"
         controlAction = this.playDownload.bind(this)
       }
+      case 'STARTING_DOWNLOAD': {
+        controlIcon = "pause"
+        statusText = "Starting Download"
+        controlAction = null
+      }
     }
     return (
       <div className="download-card-container">
@@ -61,7 +80,7 @@ class DownloadCard extends Component {
           <div className="download-status">{statusText}</div>
           <div className="download-network-data">{this.state.speed}  |  {this.state.progressSize}/{this.state.totalSize}  |  {this.state.percentage}%  |  Elapsed: {this.state.elapsed}  |  Remaining: {this.state.remaining}</div>
           <div className="download-progress-bar-container">
-            <div className="download-progress-bar"></div>
+            <div className="download-progress-bar" style={{width: this.state.percentage+'%'}}></div>
           </div>
         </div>
       </div>
@@ -71,13 +90,9 @@ class DownloadCard extends Component {
   startDownload() {
     console.log('starting download for '+this.props.animeFilename)
     this.setState({
-      status: 'DOWNLOADING'
+      status: 'STARTING_DOWNLOAD'
     })
-    this.setState({
-      dlObj: new streamMoe(this.props.epLink, this.props.animeFilename, this)
-    }, ()=>{
-      this.state.dlObj.start()
-    })
+    this.state.dlObj.start()
   }
   pauseDownload() {
     console.log('pausing download for '+this.props.animeFilename)
@@ -105,8 +120,21 @@ const mapDispatchToProps = dispatch => {
         animeFilename: animeFilename,
         status: 'COMPLETE'
       }
+    }),
+    createdlObj: (animeFilename ,newdlObj) => dispatch({
+      type: 'CREATE_DLOBJ',
+      payload: {
+        id: animeFilename,
+        dlObj: newdlObj
+      }
     })
   }
 }
 
-export default connect(null, mapDispatchToProps)(DownloadCard)
+const mapStateToProps = state => {
+  return {
+    dlObjsFROMTREE: state.downloadsReducer.dlObjs
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DownloadCard)
