@@ -30,6 +30,7 @@ export function streamMoe() {
         console.log('updating state from streammoe.js')
         this.comp.setState(Object.assign({}, this.comp.state, this.heldState))
     }
+    this.closed = false
     this.dlReq = null
     this.start = () => {
         this.heldState.status = "STARTING_DOWNLOAD"
@@ -81,26 +82,29 @@ export function streamMoe() {
                     })).on('error', err => {
                         console.log(err)
                     }).on('end', () => {
-                        new Notification('Download Complete', {
-                            body: this.animeFilename+' has finished downloading'
-                        })
-                        this.heldState = {
-                            status: 'COMPLETED',
-                            speed: '',
-                            progressSize: this.comp.state.totalSize,
-                            percentage: '100',
-                            remaining: '0 sec'
-                        }
-                        this.comp.setState(this.heldState)
-                        store.dispatch({
-                            type: "COMPLETED_DOWNLOAD",
-                            payload: {
-                                animeFilename: this.animeFilename,
-                                totalSize: this.comp.state.totalSize,
-                                elapsed: this.comp.state.elapsed
+                        if(!this.closed) {
+                            new Notification('Download Complete', {
+                                body: this.animeFilename+' has finished downloading'
+                            })
+                            this.heldState = {
+                                status: 'COMPLETED',
+                                speed: '',
+                                progressSize: this.comp.state.totalSize,
+                                percentage: '100',
+                                remaining: '0 sec'
                             }
-                        })
-
+                            this.comp.setState(this.heldState)
+                            store.dispatch({
+                                type: "COMPLETED_DOWNLOAD",
+                                payload: {
+                                    animeFilename: this.animeFilename,
+                                    totalSize: this.comp.state.totalSize,
+                                    elapsed: this.comp.state.elapsed
+                                }
+                            })
+                        } else {
+                            console.log("closed")
+                        }
                     }).pipe(dlp)
                 }, err => {
                     if(err) {
@@ -112,6 +116,10 @@ export function streamMoe() {
                 })
             })
             .catch(err => console.log(err))
+    }
+    this.delete = () => {
+        this.closed = true
+        this.dlReq.abort()
     }
 }
 

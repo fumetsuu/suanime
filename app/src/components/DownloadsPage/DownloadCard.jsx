@@ -52,6 +52,7 @@ class DownloadCard extends Component {
     var controlIcon
     var controlAction
     var statusText
+    var clearClass = "download-control-btn"
     switch(this.state.status) {
       case 'NOT_STARTED': {
         controlIcon = "play_arrow"
@@ -81,6 +82,7 @@ class DownloadCard extends Component {
         controlIcon = "pause"
         statusText = "Starting Download"
         controlAction = null
+        clearClass = "download-control-btn disabled"
         break
       }
       case 'COMPLETED': {
@@ -98,7 +100,7 @@ class DownloadCard extends Component {
             <div className="download-ep-title">{this.props.epTitle}</div>          
           </div>
           <div className="download-control-btn" onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
-          <div className="download-control-btn" onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
+          <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
         </div>
         <div className="download-progress-container">
           <div className="download-status">{statusText}</div>
@@ -132,10 +134,11 @@ class DownloadCard extends Component {
   }
   clearDownload() {
     console.log('clearing download for '+this.props.animeFilename)
+    this.dlObj.delete()
+    // this.props.clearDL(this.props.animeFilename)    
     fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
       console.log('unlink: ', err)
     })
-    this.props.clearDL(this.props.animeFilename)
   }
 }
 
