@@ -1,18 +1,21 @@
 .side-nav
     position: fixed
+    z-index: 100000
     background-color: $dark-grey
     color: $light-grey
     height: 100%
     width: 250px
+    transition: 0.3s
     font-family: 'Source Sans Pro'
     font-weight: 900
     letter-spacing: 2px
     text-align: center
     display: grid
+    overflow: hidden
     grid-template-columns: 100%
     grid-template-rows: repeat(3, 100px) auto repeat(2, 100px)
     .title
-        width: 100%
+        width: 250px
         line-height: 100px
         font-size: 2rem
         background-color: $black
@@ -28,8 +31,14 @@
         line-height: 60px
         top: 50%
         left: 222px
+        transition: 0.3s
+        user-select: none
+        &:hover
+            filter: brightness(1.2)
+            cursor: pointer
     .side-nav-link
         text-align: center
+        width: 250px
         text-transform: uppercase
         height: 100px
         line-height: 100px

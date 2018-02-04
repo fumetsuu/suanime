@@ -62,7 +62,16 @@ class AnimeCard extends Component {
 
   playEpComp(e) {
     e.stopPropagation()
+    var animeName = this.props.animeDataRecent.anime.title
+    var animeFilename = `${animeName} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
+    var videoFile = path.join(__dirname, ('../downloads/'+animeFilename))
+    console.log(videoFile)
+    var epNumber = 'Episode '+this.props.animeDataRecent.episode
+    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
+    var slug = this.props.animeDataRecent.slug
     console.log('time to play anime hehe')
+    this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
+    window.location.hash="#/watch"
   }
 }
 
@@ -83,6 +92,16 @@ const mapDispatchToProps = dispatch => {
         posterImg: posterImg,
         animeName: animeName,
         epTitle: epTitle
+      }
+    }),
+    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch({
+      type: 'PLAY_ANIME',
+      payload: {
+        videoFile: videoFile,
+        animeName: animeName,
+        epNumber: epNumber,
+        posterImg: posterImg,
+        slug: slug
       }
     })
   }

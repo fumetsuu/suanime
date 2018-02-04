@@ -1,11 +1,20 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-export default class SideNavToggle extends Component {
-  render() {
+const SideNavToggle = (props) => {
     return (
-      <div className="side-nav-toggle">
-        <i className="material-icons">chevron_left</i>
+      <div className="side-nav-toggle" onClick={props.toggle} style={{left: props.toggleLeft}}>
+        <i className="material-icons">{props.toggleIcon}</i>
       </div>
     )
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    toggle: () => dispatch({
+      type: 'TOGGLE_SIDENAV'
+    })
   }
 }
+
+export default connect(null, mapDispatchToProps)(SideNavToggle)

@@ -81,18 +81,16 @@ export function streamMoe() {
 
         this.getStreamMoeURL = (streamdata, cb) => {
             var workingMirror
-            streamdata.mirrors.every(mirror => {
-                if (mirror.host_id == 19) {
+            streamdata.mirrors.forEach(mirror => {
+                if (mirror.host_id == 19 && mirror.quality == 480) {
                     workingMirror = mirror
-                    workingMirror.host['link_url'] = 'https://stream.moe/'
-                    return true
                 }
-                return false
             })
             if(!workingMirror) {
                 cb('NOT_FOUND', null)
                 return false                 
             }
+            workingMirror.host['link_url'] = 'https://stream.moe/'
             var embedURL = workingMirror.host.link_url + workingMirror.embed_id
             var downloadURL
             rp(embedURL).then(body => {
