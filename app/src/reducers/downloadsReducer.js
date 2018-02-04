@@ -56,7 +56,7 @@ export default function reducer(state={
                 completedArray: newCompletedArray
             })
         }
-        case "CLEAR_DOWNLOAD": { //PROBLEM IS HERE
+        case "CLEAR_DOWNLOAD": { //PROBLEM IS FIXED
             var newDownloading = state.downloading.filter(el => el!=action.payload.animeFilename)
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = state.completed.filter(el => el!=action.payload.animeFilename)
@@ -66,7 +66,6 @@ export default function reducer(state={
             var newCompletedArray = state.completedArray.filter(el => el.props.animeFilename != action.payload.animeFilename)
             global.estore.set("storedCompletedArray", newCompletedArray)
             var newDlObjs = state.dlObjs.filter(el => el.id != action.payload.animeFilename)
-            console.log('---------------'+action.payload.animeFilename+'-----------------\n',newDownloading, newCompleted, newDownloadsArray, newCompletedArray, newDlObjs)
             return Object.assign({}, state, {
                 downloading: newDownloading,
                 completed: newCompleted,

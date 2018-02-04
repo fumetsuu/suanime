@@ -57,7 +57,11 @@ export function streamMoe() {
                     }
                     return false
                 })
-                console.log(workingMirror)
+                if(!workingMirror) {
+                    this.heldState.status = "ERROR"
+                    this.comp.setState(this.heldState)
+                    console.log("no mirror ", this.animeFilename)                    
+                }
                 var embedURL = workingMirror.host.link_url + workingMirror.embed_id
                 var downloadURL
                 rp(embedURL).then(body => {

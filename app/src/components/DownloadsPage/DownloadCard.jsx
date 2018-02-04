@@ -18,10 +18,8 @@ class DownloadCard extends Component {
         elapsed: this.props.elapsed,
         remaining: '0 sec'
       }
-      console.log("state", this.state)
     } else {
       var thisdlObj
-      console.log(global.estore)
       var dlObjsFROMTREE = this.props.dlObjsFROMTREE
       dlObjsFROMTREE.some(dlObj => {
         if(dlObj.id == this.props.animeFilename) {
@@ -36,10 +34,8 @@ class DownloadCard extends Component {
         this.props.createdlObj(this.props.animeFilename, thisdlObj)
       }
       this.state = {}
-      console.log(thisdlObj)
       this.dlObj = thisdlObj
     }
-    console.log('state from constructor ' , this.state)
   }
 
   componentDidMount() {
@@ -133,12 +129,14 @@ class DownloadCard extends Component {
     console.log('playing download for '+this.props.animeFilename)
   }
   clearDownload() {
-    console.log('clearing download for '+this.props.animeFilename)
-    this.dlObj.delete()
-    this.props.clearDL(this.props.animeFilename)    
-    fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
-      console.log('unlink: ', err)
-    })
+    if(confirm("yo u SURE")) {
+      console.log('clearing download for '+this.props.animeFilename)
+      this.dlObj.delete()
+      this.props.clearDL(this.props.animeFilename)    
+      fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
+        console.log('unlink: ', err)
+      })
+    }
   }
 }
 
