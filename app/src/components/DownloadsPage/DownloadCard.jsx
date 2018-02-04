@@ -47,6 +47,7 @@ class DownloadCard extends Component {
   render() {
     var controlIcon
     var controlAction
+    var controlClass = "download-control-btn"
     var statusText
     var clearClass = "download-control-btn"
     switch(this.state.status) {
@@ -76,6 +77,7 @@ class DownloadCard extends Component {
       }
       case 'STARTING_DOWNLOAD': {
         controlIcon = "pause"
+        controlClass = "download-control-btn disabled"
         statusText = "Starting Download"
         controlAction = null
         clearClass = "download-control-btn disabled"
@@ -87,6 +89,12 @@ class DownloadCard extends Component {
         controlAction = this.playDownload.bind(this)
         break
       }
+      case 'NETWORK_ERROR': {
+        controlIcon = "play_arrow"
+        statusText = "Network Error - please restart download"
+        controlAction = this.startDownload.bind(this)
+        break
+      }
     }
     return (
       <div className="download-card-container">
@@ -95,7 +103,7 @@ class DownloadCard extends Component {
           <div className="download-title">{this.props.animeName} <br></br> 
             <div className="download-ep-title">{this.props.epTitle}</div>          
           </div>
-          <div className="download-control-btn" onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
+          <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
           <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
         </div>
         <div className="download-progress-container">
@@ -118,12 +126,14 @@ class DownloadCard extends Component {
     this.setState({
       status: 'PAUSED'
     })
+    this.dlObj.pause()
   }
   continueDownload() {
     console.log('continuing download for '+this.props.animeFilename)
     this.setState({
       status: 'DOWNLOADING'
     })
+    this.dlObj.continue()
   }
   playDownload() {
     console.log('playing download for '+this.props.animeFilename)
@@ -131,7 +141,9 @@ class DownloadCard extends Component {
   clearDownload() {
     if(confirm("yo u SURE")) {
       console.log('clearing download for '+this.props.animeFilename)
-      this.dlObj.delete()
+      if(this.dlObj) {
+        this.dlObj.delete()
+      }
       this.props.clearDL(this.props.animeFilename)    
       fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
         console.log('unlink: ', err)

@@ -69,8 +69,7 @@ export function streamMoe() {
                     downloadURL = moeHTML('.first ~ td > a').attr('href')
                     var dlp = fs.createWriteStream(path.join(__dirname, '../downloads/'+this.animeFilename))
                     this.dlReq = request(downloadURL)
-                    progress(this.dlReq, { throttle: 500 }).on('progress', (dlState => {
-                        console.log(dlState)                        
+                    progress(this.dlReq, { throttle: 500 }).on('progress', (dlState => {                    
                         if(!dlState.time.remaining) {} else {
                             this.heldState = {
                                 status: 'DOWNLOADING',
@@ -81,9 +80,24 @@ export function streamMoe() {
                                 elapsed: convertSec(Math.ceil((dlState.time.elapsed))),
                                 remaining: convertSec(Math.ceil((dlState.time.remaining)))
                             }
+                            if(this.comp.state.status == 'PAUSED') {
+                                this.heldState.status = 'PAUSED'
+                            }
                             this.comp.setState(this.heldState)
                         }
                     })).on('error', err => {
+                        this.heldState = {
+                            status: "NETWORK_ERROR",
+                            speed: "0 B/s",
+                            progressSize: "0MB",
+                            totalSize: "0MB",
+                            percentage: 0,
+                            elapsed: 0,
+                            remaining: 0
+                          }
+                        this.comp.setState(this.heldState)
+                        this.closed = true
+                        this.dlReq.abort()
                         console.log(err)
                     }).on('end', () => {
                         if(!this.closed) {
@@ -126,6 +140,12 @@ export function streamMoe() {
             this.closed = true
             this.dlReq.abort()
         }
+    }
+    this.pause = () => {
+        this.dlReq.pause()
+    }
+    this.continue = () => {
+        this.dlReq.resume()
     }
 }
 

@@ -2,7 +2,7 @@ const electron = require('electron');
 const { app, BrowserWindow } = electron;
 
 require('electron-reload')(__dirname, {
-    ignored: /downloads\//
+    ignored: /downloads\/|node_modules\/|app\/build\//
 });
 
 let mainWindow;
