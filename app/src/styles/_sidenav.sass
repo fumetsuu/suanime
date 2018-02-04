@@ -4,6 +4,7 @@
     background-color: $dark-grey
     color: $light-grey
     height: 100%
+    overflow-y: auto
     width: 250px
     transition: 0.3s
     font-family: 'Source Sans Pro'
@@ -11,9 +12,9 @@
     letter-spacing: 2px
     text-align: center
     display: grid
-    overflow: hidden
+    overflow-x: hidden
     grid-template-columns: 100%
-    grid-template-rows: repeat(3, 100px) auto repeat(2, 100px)
+    grid-template-rows: repeat(4, 100px) auto repeat(2, 100px)
     .title
         width: 250px
         line-height: 100px
@@ -28,6 +29,7 @@
         width: 50px
         height: 50px
         position: fixed
+        z-index: 1000000
         line-height: 60px
         top: 50%
         left: 222px

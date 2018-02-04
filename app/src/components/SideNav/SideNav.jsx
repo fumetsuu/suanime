@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 import Title from './Title.jsx'
 import SideNavLink from './SideNavLink.jsx'
@@ -15,6 +16,7 @@ const SideNav = (props) => {
         <Title/>
         <SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>
         <SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
+        <SideNavLink icon="live_tv" label="Watch" linkTarget="/watch"/>
         <div className="spacer-vertical"/>
         <SideNavToggle toggleLeft={toggleLeft} toggleIcon={toggleIcon}/>
         <SideNavLink icon="settings" label="Settings" linkTarget="/settings"/>
@@ -29,4 +31,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(SideNav)
+export default withRouter(connect(mapStateToProps)(SideNav))

@@ -84,7 +84,7 @@ class DownloadCard extends Component {
         break
       }
       case 'COMPLETED': {
-        controlIcon = "star"
+        controlIcon = "live_tv"
         statusText = "Completed"
         controlAction = this.playDownload.bind(this)
         break
@@ -137,6 +137,14 @@ class DownloadCard extends Component {
   }
   playDownload() {
     console.log('playing download for '+this.props.animeFilename)
+    var animeName = this.props.animeName
+    var videoFile = path.join(__dirname, ('../downloads/'+this.props.animeFilename))
+    var epNumber = this.props.epTitle
+    var posterImg = this.props.posterImg
+    var slug = this.props.epLink.split("watch/")[1].split("/")[0]
+    console.log('time to play anime hehe')
+    this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
+    window.location.hash="#/watch"
   }
   clearDownload() {
     if(confirm("yo u SURE")) {
@@ -165,6 +173,16 @@ const mapDispatchToProps = dispatch => {
       type: 'CLEAR_DOWNLOAD',
       payload: {
         animeFilename: animeFilename
+      }
+    }),
+    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch({
+      type: 'PLAY_ANIME',
+      payload: {
+        videoFile: videoFile,
+        animeName: animeName,
+        epNumber: epNumber,
+        posterImg: posterImg,
+        slug: slug
       }
     })
   }
