@@ -90,7 +90,7 @@ class DownloadCard extends Component {
         break
       }
       case 'NETWORK_ERROR': {
-        controlIcon = "play_arrow"
+        controlIcon = "settings_backup_restore"
         statusText = "Network Error - please restart download"
         controlAction = this.startDownload.bind(this)
         break
