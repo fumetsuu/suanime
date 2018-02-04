@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+const toggableHashes = ["#/watch"]
 
 const SideNavToggle = (props) => {
     return (
@@ -11,9 +12,15 @@ const SideNavToggle = (props) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    toggle: () => dispatch({
-      type: 'TOGGLE_SIDENAV'
-    })
+    toggle: () => {
+      if(toggableHashes.includes(window.location.hash)) {
+        dispatch({
+          type: 'TOGGLE_SIDENAV'
+          })
+      } else {
+        console.log("cant close sidenav on this windowd")
+      }
+    }
   }
 }
 
