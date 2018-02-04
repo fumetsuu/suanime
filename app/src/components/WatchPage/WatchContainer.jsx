@@ -1,5 +1,6 @@
 import React from 'react';
 import AnimeVideo from './AnimeVideo.jsx'
+import WatchInformation from './WatchInformation.jsx'
 import { connect } from 'react-redux'
 
 const WatchContainer = (props) => {
@@ -7,12 +8,7 @@ const WatchContainer = (props) => {
     return (
     <div className="watch-container">
         <AnimeVideo videoSrc={props.videoFile}/>
-        <div className="watch-information">
-            <div className="watch-title">{props.animeName} 
-                <br></br> 
-                <div className="watch-episode">{props.epNumber}</div>
-            </div>
-        </div>
+        <WatchInformation animeName={props.animeName} epNumber={props.epNumber} posterImg={props.posterImg} slug={props.slug}/>
     </div>
     )
 }

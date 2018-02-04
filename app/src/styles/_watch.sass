@@ -1,11 +1,29 @@
 .watch-container
-    height: 100%
+    height: 90%
+    width: 75%
+    position: absolute
+    left: 50%
+    top: 50%
+    transform: translate(-50%, -50%)
     .player-wrapper
         position: relative
         width: 100%
         height: 90%
+        background-color: black
     .anime-player
+        background-color: $black
         position: absolute
         top: 0
         left: 50%
         transform: translateX(-50%)
+    .watch-information
+        background-color: $dark-grey
+        font-family: 'Source Sans Pro'
+        letter-spacing: 2px
+        height: auto
+        color: white
+        .watch-title
+            font-size: 1.4rem
+            .watch-episode
+                font-size: 0.8rem
+                color: $light-blue
