@@ -11,6 +11,11 @@ class DownloadsHolder extends Component {
                 dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle}/>)
             })
         }
+        if(this.props.completedArray.length) {
+            this.props.completedArray.forEach(el => {
+                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} elapsed={el.props.elapsed}/>)
+            })
+        }
         return (
         <div className="downloads-holder">
             {dlArray}
@@ -24,7 +29,8 @@ class DownloadsHolder extends Component {
 //react components aren't stored in estore, only props
 const mapStateToProps = state => {
   return {
-    downloadsArray: state.downloadsReducer.downloadsArray
+    downloadsArray: state.downloadsReducer.downloadsArray,
+    completedArray: state.downloadsReducer.completedArray
   }
 }
 

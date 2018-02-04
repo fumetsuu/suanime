@@ -6,6 +6,7 @@ const progress = require('request-progress')
 const cheerio = require('cheerio')
 const bytes = require('bytes')
 import { convertSec } from '../util.js'
+import store from '../../store.js'
 
 export function streamMoe() {
     this.setArgs = (passedmasteraniWatchURL, passedanimeFilename, passedcomp) => {
@@ -31,6 +32,8 @@ export function streamMoe() {
     }
     this.dlReq = null
     this.start = () => {
+        this.heldState.status = "STARTING_DOWNLOAD"
+        this.comp.setState(this.heldState)
         rp(this.masteraniWatchURL)
             .then(body => {
                 var streamdataformat = /var args = (.*)/g
@@ -78,6 +81,9 @@ export function streamMoe() {
                     })).on('error', err => {
                         console.log(err)
                     }).on('end', () => {
+                        new Notification('Download Complete', {
+                            body: this.animeFilename+' has finished downloading'
+                        })
                         this.heldState = {
                             status: 'COMPLETED',
                             speed: '',
@@ -86,10 +92,23 @@ export function streamMoe() {
                             remaining: '0 sec'
                         }
                         this.comp.setState(this.heldState)
-                        new Notification('Download Complete', {
-                            body: this.animeFilename+' has finished downloading'
+                        store.dispatch({
+                            type: "COMPLETED_DOWNLOAD",
+                            payload: {
+                                animeFilename: this.animeFilename,
+                                totalSize: this.comp.state.totalSize,
+                                elapsed: this.comp.state.elapsed
+                            }
                         })
+
                     }).pipe(dlp)
+                }, err => {
+                    if(err) {
+                        this.heldState.status = "ERROR"
+                        this.comp.setState(this.heldState)
+                    console.log("probably an error on the video server's side", err)
+                        
+                    }
                 })
             })
             .catch(err => console.log(err))

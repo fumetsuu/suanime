@@ -1,34 +1,51 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
+const fs = require('fs')
+const path = require('path')
 
 //status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'STARTING_DOWNLOAD'
 class DownloadCard extends Component {
   constructor(props) {
     super(props)
-    var thisdlObj
-    console.log(global.estore)
-    var dlObjsFROMTREE = this.props.dlObjsFROMTREE
-    dlObjsFROMTREE.some(dlObj => {
-      if(dlObj.id == this.props.animeFilename) {
-        thisdlObj = dlObj.dlObj
-        thisdlObj.fixComp(this)      
-        return true
+    if(this.props.completed) {
+      this.state = {
+        status: 'COMPLETED',
+        speed: '',
+        progressSize: this.props.totalSize,
+        totalSize: this.props.totalSize,
+        percentage: '100',
+        elapsed: this.props.elapsed,
+        remaining: '0 sec'
       }
-    })
-    if(!thisdlObj) {
-      thisdlObj = new streamMoe()
-      thisdlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
-      this.props.createdlObj(this.props.animeFilename, thisdlObj)
+      console.log("state", this.state)
+    } else {
+      var thisdlObj
+      console.log(global.estore)
+      var dlObjsFROMTREE = this.props.dlObjsFROMTREE
+      dlObjsFROMTREE.some(dlObj => {
+        if(dlObj.id == this.props.animeFilename) {
+          thisdlObj = dlObj.dlObj
+          thisdlObj.fixComp(this)      
+          return true
+        }
+      })
+      if(!thisdlObj) {
+        thisdlObj = new streamMoe()
+        thisdlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
+        this.props.createdlObj(this.props.animeFilename, thisdlObj)
+      }
+      this.state = {}
+      console.log(thisdlObj)
+      this.dlObj = thisdlObj
     }
-    this.state = {}
-    console.log(thisdlObj)
-    this.dlObj = thisdlObj
     console.log('state from constructor ' , this.state)
   }
 
   componentDidMount() {
-    this.dlObj.updateState()
+    if(this.dlObj) {
+      this.dlObj.updateState()
+    }
   }
 
   render() {
@@ -54,15 +71,23 @@ class DownloadCard extends Component {
         controlAction = this.continueDownload.bind(this)
         break
       }
-      case 'COMPLETED': {
-        controlIcon = "star"
-        statusText = "Completed"
-        controlAction = this.playDownload.bind(this)
+      case 'ERROR': {
+        controlIcon = "play_arrow"
+        statusText = "Error - please try again later"
+        controlAction = this.startDownload.bind(this)
+        break
       }
       case 'STARTING_DOWNLOAD': {
         controlIcon = "pause"
         statusText = "Starting Download"
         controlAction = null
+        break
+      }
+      case 'COMPLETED': {
+        controlIcon = "star"
+        statusText = "Completed"
+        controlAction = this.playDownload.bind(this)
+        break
       }
     }
     return (
@@ -73,7 +98,7 @@ class DownloadCard extends Component {
             <div className="download-ep-title">{this.props.epTitle}</div>          
           </div>
           <div className="download-control-btn" onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
-          <div className="download-control-btn"><i className="material-icons">clear</i></div>
+          <div className="download-control-btn" onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
         </div>
         <div className="download-progress-container">
           <div className="download-status">{statusText}</div>
@@ -88,9 +113,6 @@ class DownloadCard extends Component {
 
   startDownload() {
     console.log('starting download for '+this.props.animeFilename)
-    this.setState({
-      status: 'STARTING_DOWNLOAD'
-    })
     this.dlObj.start()
   }
   pauseDownload() {
@@ -108,23 +130,28 @@ class DownloadCard extends Component {
   playDownload() {
     console.log('playing download for '+this.props.animeFilename)
   }
+  clearDownload() {
+    console.log('clearing download for '+this.props.animeFilename)
+    fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
+      console.log('unlink: ', err)
+    })
+    this.props.clearDL(this.props.animeFilename)
+  }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleComplete: (epLink, animeFilename) => dispatch({
-      type: 'COMPLETE_DOWNLOAD',
-      payload: {
-        epLink: epLink,
-        animeFilename: animeFilename,
-        status: 'COMPLETE'
-      }
-    }),
     createdlObj: (animeFilename ,newdlObj) => dispatch({
       type: 'CREATE_DLOBJ',
       payload: {
         id: animeFilename,
         dlObj: newdlObj
+      }
+    }),
+    clearDL: (animeFilename) => dispatch({
+      type: 'CLEAR_DOWNLOAD',
+      payload: {
+        animeFilename: animeFilename
       }
     })
   }
