@@ -27,7 +27,7 @@ export function streamMoe() {
         this.comp = comp
     }
     this.updateState = () => {
-        console.log('updating state from streammoe.js')
+        console.log('updating state from streammoe.js',this.animeFilename,this.comp.state,this.heldState)
         this.comp.setState(Object.assign({}, this.comp.state, this.heldState))
     }
     this.closed = false
@@ -66,7 +66,7 @@ export function streamMoe() {
                     var dlp = fs.createWriteStream(path.join(__dirname, '../downloads/'+this.animeFilename))
                     this.dlReq = request(downloadURL)
                     progress(this.dlReq, { throttle: 500 }).on('progress', (dlState => {
-                        //console.log(dlState)                        
+                        console.log(dlState)                        
                         if(!dlState.time.remaining) {} else {
                             this.heldState = {
                                 status: 'DOWNLOADING',
@@ -118,8 +118,10 @@ export function streamMoe() {
             .catch(err => console.log(err))
     }
     this.delete = () => {
-        this.closed = true
-        this.dlReq.abort()
+        if(this.dlReq) {
+            this.closed = true
+            this.dlReq.abort()
+        }
     }
 }
 

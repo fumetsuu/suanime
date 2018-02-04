@@ -5,10 +5,11 @@ import DownloadCard from './DownloadCard.jsx'
 
 class DownloadsHolder extends Component {
     render() {
+        console.log("its me eeeeeeeeee")
         var dlArray = []
         if(this.props.downloadsArray.length) {
             this.props.downloadsArray.forEach(el => {
-                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle}/>)
+                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename}/>)
             })
         }
         if(this.props.completedArray.length) {

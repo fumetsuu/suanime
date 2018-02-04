@@ -135,7 +135,7 @@ class DownloadCard extends Component {
   clearDownload() {
     console.log('clearing download for '+this.props.animeFilename)
     this.dlObj.delete()
-    // this.props.clearDL(this.props.animeFilename)    
+    this.props.clearDL(this.props.animeFilename)    
     fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
       console.log('unlink: ', err)
     })
