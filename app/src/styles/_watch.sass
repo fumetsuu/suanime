@@ -1,6 +1,6 @@
 .watch-container
     height: 90%
-    width: 75%
+    width: 80%
     position: absolute
     left: 50%
     top: 50%
@@ -9,21 +9,47 @@
         position: relative
         width: 100%
         height: 90%
-        background-color: black
     .anime-player
-        background-color: $black
         position: absolute
         top: 0
         left: 50%
         transform: translateX(-50%)
     .watch-information
-        background-color: $dark-grey
         font-family: 'Source Sans Pro'
-        letter-spacing: 2px
         height: auto
         color: white
+        margin-left: 50%
+        transform: translateX(-50%)
+        margin-top: 20px
+        margin-bottom: 20px
+        display: grid
+        grid-template-rows: 100%
+        grid-template-columns: 100px auto auto 70px 70px
+        .watch-image
+            height: 120px
+            width: 85px
+            background-size: cover
+            margin-right: 10px
+            background-position: center
         .watch-title
-            font-size: 1.4rem
+            font-size: 20px
+            justify-self: start
             .watch-episode
-                font-size: 0.8rem
+                font-size: 12px
                 color: $light-blue
+                text-transform: uppercase
+        .anime-out-link
+            border-radius: 50%
+            width: 50px
+            height: 50px
+            background-size: cover
+            background-position: center
+            justify-self: end
+            background-color: $black
+            &:hover
+                filter: brightness(1.2)
+                cursor: pointer
+        .mal-circle
+            background-image: url('https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png')
+        .masterani-circle
+            background-image: url('https://4.bp.blogspot.com/-YL78r6p1fyg/WdxknlfMQ7I/AAAAAAAAF9c/_s-5rWQiM7Udo0Crgza76dHlE79HFhxSgCPcBGAYYCw/s1600/Masterani.me.png')

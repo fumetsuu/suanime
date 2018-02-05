@@ -1,12 +1,19 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-export default class SideNavLink extends Component {
-  render() {
-    return (
-      <NavLink to={this.props.linkTarget} className="side-nav-link" activeClassName="side-nav-link-active">
-        <i className="material-icons">{this.props.icon}</i>{this.props.label}
-      </NavLink>
-    )
+const SideNavLink = (props) => {
+  var linkClassName
+  if(props.linkTarget=="/watch" && props.disabled==='true') {
+    linkClassName="side-nav-link disabled"
+    console.log(props.disabled, ' from me')
+} else {
+    linkClassName="side-nav-link"
   }
+  return (
+    <NavLink to={props.linkTarget} className={linkClassName} activeClassName="side-nav-link-active">
+    <i className="material-icons">{props.icon}</i>{props.label}
+    </NavLink>
+  )
 }
+
+export default SideNavLink

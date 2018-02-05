@@ -4,7 +4,8 @@ export default function reducer(state = {
     videoFile: null,
     animeName: null,
     epNumber: null,
-    showSideNav: true
+    showSideNav: true,
+    watching: false
 }, action) {
     switch(action.type) {
         case "PLAY_ANIME": {
@@ -14,7 +15,9 @@ export default function reducer(state = {
                 animeName: action.payload.animeName,
                 epNumber: action.payload.epNumber,
                 posterImg: action.payload.posterImg,
-                slug: action.payload.slug
+                slug: action.payload.slug,
+                watching: true
+
             })
         }
         case "TOGGLE_SIDENAV": {

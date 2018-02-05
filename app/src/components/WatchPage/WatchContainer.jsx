@@ -4,7 +4,10 @@ import WatchInformation from './WatchInformation.jsx'
 import { connect } from 'react-redux'
 
 const WatchContainer = (props) => {
-    console.log(props)
+    if(!props.videoFile) {
+        console.log("redirecting to home...")
+        window.location.hash = "#/"
+    }
     return (
     <div className="watch-container">
         <AnimeVideo videoSrc={props.videoFile}/>
