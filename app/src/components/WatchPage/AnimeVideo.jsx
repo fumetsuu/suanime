@@ -7,7 +7,8 @@ export default class AnimeVideo extends Component {
 			<div className="player-wrapper">
 				<ReactPlayer url={this.props.videoSrc} className="anime-player"
 				width='100%'
-				height='100%'/>
+				height='100%'
+				controls="true"/>
 			</div>
 		)
 	}
