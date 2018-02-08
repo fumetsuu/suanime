@@ -1,14 +1,12 @@
 input[type="range"]
-    margin: auto 10px
     -webkit-appearance: none
     position: relative
     overflow: hidden
-    height: 10px
-    width: auto
-    flex-grow: 1
     cursor: pointer
     border-radius: 15px
     outline: none
+    height: 10px
+    margin: auto 10px
 
 ::-webkit-slider-runnable-track 
     background: lighten($dark-grey, 5%)
@@ -21,4 +19,9 @@ input[type="range"]
     background: transparent
     box-shadow: -100vw 0 0 100vw $light-blue
 
-
+.progress-slider
+    flex-grow: 1
+    width: auto
+    
+.volume-slider
+    width: 100px

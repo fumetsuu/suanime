@@ -23,7 +23,8 @@ class AnimeVideo extends Component {
 			played: 0,
 			seeking: false,
 			fullscreen: false,
-			controlsClass: "anime-video-controls"
+			controlsClass: "anime-video-controls",
+			volSliderClass: "volume-slider none"
 		}
 	}
 
@@ -62,11 +63,13 @@ class AnimeVideo extends Component {
 	}
 
 	render() {
-		const { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass } = this.state
+		const { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass, volSliderClass } = this.state
 		return (
-			<div className="player-wrapper"
+			<div className={fullscreen?'player-wrapper video-fullscreen':'player-wrapper'}
 			onMouseEnter={this.showControls.bind(this)}
-			onMouseLeave={this.hideControls.bind(this)}>
+			onMouseLeave={this.hideControls.bind(this)}
+			onClick={this.playPause.bind(this)}
+			onDoubleClick={this.goFullscreen.bind(this)}>
 				<ReactPlayer
 				ref={this.ref.bind(this)} 
 				url={url} 
@@ -81,9 +84,15 @@ class AnimeVideo extends Component {
 				onDuration={this.onDuration.bind(this)}/>
 				<div className={controlsClass} style={{width: this.state.controlsWidth}}>
 					<div className="video-control-button" onClick={this.playPause.bind(this)}><i className="material-icons">{playing?'pause':'play_arrow'}</i></div>
-					<div className="video-control-button" onClick={this.toggleMuted.bind(this)}><i className="material-icons">{muted ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>
+					<div className="video-control-button" onClick={this.toggleMuted.bind(this)} onMouseEnter={this.showVolSlider.bind(this)}><i className="material-icons">{(muted || volume == 0) ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>
+					<input className={volSliderClass}
+					type='range' min={0} max={1} step='any'
+					value={volume}
+					onChange={this.setVolume.bind(this)}
+					onMouseLeave={this.hideVolSlider.bind(this)}
+					/>
 					<div className="progress-text">{moment.duration(duration*played, "seconds").format(this.durationTemplate(duration*played), { trim: false })} / {moment.duration(duration, "seconds").format(this.durationTemplate(duration), { trim: false })}</div>
-					<input
+					<input className="progress-slider"
 					type='range' min={0} max={1} step='any'
 					value={played}
 					onMouseDown={this.onSeekMouseDown.bind(this)}
@@ -148,7 +157,10 @@ class AnimeVideo extends Component {
 	goFullscreen() {
 		screenfull.toggle(document.getElementsByClassName('player-wrapper')[0])
 		this.setState({ fullscreen: !this.state.fullscreen })
-		this.props.askFixWidth()
+	}
+
+	setVolume(e) {
+		this.setState({ volume: parseFloat(e.target.value) })
 	}
 
 	showControls() {
@@ -159,7 +171,20 @@ class AnimeVideo extends Component {
 
 	hideControls() {
 		this.setState({
-			controlsClass: "anime-video-controls none"
+			controlsClass: "anime-video-controls none",
+			volSliderClass: "volume-slider none"
+		})
+	}
+
+	showVolSlider() {
+		this.setState({
+			volSliderClass: "volume-slider"
+		})
+	}
+
+	hideVolSlider() {
+		this.setState({
+			volSliderClass: "volume-slider none"
 		})
 	}
 
