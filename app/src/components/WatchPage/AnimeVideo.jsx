@@ -67,9 +67,7 @@ class AnimeVideo extends Component {
 		return (
 			<div className={fullscreen?'player-wrapper video-fullscreen':'player-wrapper'}
 			onMouseEnter={this.showControls.bind(this)}
-			onMouseLeave={this.hideControls.bind(this)}
-			onClick={this.playPause.bind(this)}
-			onDoubleClick={this.goFullscreen.bind(this)}>
+			onMouseLeave={this.hideControls.bind(this)}>
 				<ReactPlayer
 				ref={this.ref.bind(this)} 
 				url={url} 
@@ -81,7 +79,9 @@ class AnimeVideo extends Component {
 				volume={volume}
 				muted={muted}
 				onProgress={this.onProgress.bind(this)}
-				onDuration={this.onDuration.bind(this)}/>
+				onDuration={this.onDuration.bind(this)}
+				onClick={this.playPause.bind(this)}
+				onDoubleClick={this.goFullscreen.bind(this)}/>
 				<div className={controlsClass} style={{width: this.state.controlsWidth}}>
 					<div className="video-control-button" onClick={this.playPause.bind(this)}><i className="material-icons">{playing?'pause':'play_arrow'}</i></div>
 					<div className="video-control-button" onClick={this.toggleMuted.bind(this)} onMouseEnter={this.showVolSlider.bind(this)}><i className="material-icons">{(muted || volume == 0) ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>

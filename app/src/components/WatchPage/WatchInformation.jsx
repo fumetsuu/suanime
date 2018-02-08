@@ -7,16 +7,23 @@ export default class WatchInformation extends Component {
         super(props)
         this.state = {
             reqWidth: '100%',
-            MALlink: null
+            MALlink: null,
+            animeInfo: ''
         }
     }
 
     componentDidMount() {
-        var jikanSearch = 'http://api.jikan.me/search/anime/'
-        rp(jikanSearch+this.props.animeName.replace(/\s+/g, "_")).then(data => {
-            console.log(JSON.parse(data).result[0].url)
+        var jikanBase = 'http://api.jikan.me'
+        rp(`${jikanBase}/search/anime/`+this.props.animeName.replace(/\s+/g, "_")).then(data => {
+            var first = JSON.parse(data).result[0]
             this.setState({
-                MALlink: JSON.parse(data).result[0].url
+                MALlink: first.url
+            })
+            const malid = first.id
+            rp(`${jikanBase}/anime/${malid}`).then(data => {
+                this.setState({
+                    animeInfo: data
+                })
             })
         })
         this.fixWidths()
@@ -48,6 +55,7 @@ export default class WatchInformation extends Component {
                 <div className="spacer-horizontal"/>
                 <div className="anime-out-link masterani-circle" onClick={this.openMasterani.bind(this)}></div>
                 <div className={malstyle} onClick={this.openMAL.bind(this)}></div>
+                <div className="anime-information">{this.state.animeInfo}</div>
             </div>
         )
     }

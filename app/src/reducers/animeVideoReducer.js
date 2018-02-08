@@ -17,8 +17,8 @@ export default function reducer(state = {
                 epNumber: action.payload.epNumber,
                 posterImg: action.payload.posterImg,
                 slug: action.payload.slug,
-                watching: true
-
+                watching: true,
+                showSideNav: false
             })
         }
         case "TOGGLE_SIDENAV": {

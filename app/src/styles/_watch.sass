@@ -1,94 +1,102 @@
-.watch-container
-    height: 90%
-    width: 80%
+.watch-wrapper
     position: absolute
-    left: 50%
-    top: 50%
-    transform: translate(-50%, -50%)
-    .player-wrapper
-        position: relative
-        width: 100%
+    width: 100%
+    height: 100%
+    overflow-y: auto
+    .watch-container
+        margin-top: 30px
         height: 90%
-        .anime-player
-            position: absolute
-            top: 0
-            left: 50%
-            transform: translateX(-50%)
-        .anime-video-controls
-            background-color: $black
-            height: 40px
-            color: $light-blue
-            position: absolute
-            left: 50%
-            transform: translateX(-50%)
-            bottom: 10px
-            z-index: 10000
-            display: flex
-            user-select: none
-            .video-control-button
-                width: 60px
-                user-select: none
-                &:hover
-                    cursor: pointer
-                    filter: brightness(1.3)
-                .material-icons
-                    width: 100%
-                    line-height: 40px
-                    text-align: center
-                    user-select: none
-            .fullscreen-btn
-                justify-self: end
-            .progress-text, .speed-text
-                font-family: 'Lato'
-                font-size: 12px
-                text-align: center
-                line-height: 40px
-                height: 100%
-                width: 90px
-                color: white
-                user-select: none
-            .speed-text
-                width: 40px
-    .watch-information
-        font-family: 'Source Sans Pro'
-        height: auto
-        color: white
-        margin-left: 50%
-        transform: translateX(-50%)
-        margin-top: 20px
-        margin-bottom: 20px
-        display: grid
-        grid-template-rows: 100%
-        grid-template-columns: 100px auto auto 70px 70px
-        .watch-image
-            height: 120px
-            width: 85px
-            background-size: cover
-            margin-right: 10px
-            background-position: center
-        .watch-title
-            font-size: 20px
-            justify-self: start
-            .watch-episode
-                font-size: 12px
+        width: 80%
+        position: absolute
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        .player-wrapper
+            position: relative
+            width: 100%
+            height: 90%
+            .anime-player
+                position: absolute
+                top: 0
+                left: 50%
+                transform: translateX(-50%)
+            .anime-video-controls
+                background-color: $black
+                height: 40px
                 color: $light-blue
-                text-transform: uppercase
-        .anime-out-link
-            border-radius: 50%
-            width: 50px
-            height: 50px
-            background-size: cover
-            background-position: center
-            justify-self: end
-            background-color: $black
-            &:hover
-                filter: brightness(1.2)
-                cursor: pointer
-        .mal-circle
-            background-image: url('https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png')
-        .masterani-circle
-            background-image: url('https://4.bp.blogspot.com/-YL78r6p1fyg/WdxknlfMQ7I/AAAAAAAAF9c/_s-5rWQiM7Udo0Crgza76dHlE79HFhxSgCPcBGAYYCw/s1600/Masterani.me.png')
-
+                position: absolute
+                left: 50%
+                transform: translateX(-50%)
+                bottom: 10px
+                z-index: 10000
+                display: flex
+                user-select: none
+                .video-control-button
+                    width: 60px
+                    user-select: none
+                    &:hover
+                        cursor: pointer
+                        filter: brightness(1.3)
+                    .material-icons
+                        width: 100%
+                        line-height: 40px
+                        text-align: center
+                        user-select: none
+                .fullscreen-btn
+                    justify-self: end
+                .progress-text, .speed-text
+                    font-family: 'Lato'
+                    font-size: 12px
+                    text-align: center
+                    line-height: 40px
+                    height: 100%
+                    width: 90px
+                    color: white
+                    user-select: none
+                .speed-text
+                    width: 40px
+        .watch-information
+            font-family: 'Source Sans Pro'
+            height: auto
+            color: white
+            margin-left: 50%
+            transform: translateX(-50%)
+            margin-top: 20px
+            margin-bottom: 20px
+            display: grid
+            grid-template-rows: auto auto
+            grid-template-columns: 100px auto auto 70px 70px
+            .watch-image
+                height: 120px
+                width: 85px
+                background-size: cover
+                margin-right: 10px
+                background-position: center
+            .watch-title
+                font-size: 20px
+                justify-self: start
+                .watch-episode
+                    font-size: 12px
+                    color: $light-blue
+                    text-transform: uppercase
+            .anime-out-link
+                border-radius: 50%
+                width: 50px
+                height: 50px
+                background-size: cover
+                background-position: center
+                justify-self: end
+                background-color: $black
+                &:hover
+                    filter: brightness(1.2)
+                    cursor: pointer
+            .mal-circle
+                background-image: url('https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png')
+            .masterani-circle
+                background-image: url('https://4.bp.blogspot.com/-YL78r6p1fyg/WdxknlfMQ7I/AAAAAAAAF9c/_s-5rWQiM7Udo0Crgza76dHlE79HFhxSgCPcBGAYYCw/s1600/Masterani.me.png')
+            .anime-information
+                grid-column: 1/#{6}
+                margin-top: 20px
 .video-fullscreen
     position: absolute !important
     width: 100vw !important

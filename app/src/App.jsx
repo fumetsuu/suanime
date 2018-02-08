@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { HashRouter as Router, NavLink, Route, Switch} from 'react-router-dom'
-
+import TitleBar from 'react-window-titlebar'
+import { remote } from 'electron'
 require('./styles/main.sass')
 
 //components imports
@@ -14,6 +15,7 @@ export default class App extends Component {
 		return (
 			<Router>
 				<div className="wrapper">
+					<TitleBar remote={remote} theme="dark" actionsPos="right" className="title-bar"/>		
 					<SideNav/>
 					<Switch>
 						<Route exact path="/" component={HomeContent}/>

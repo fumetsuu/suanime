@@ -9,10 +9,12 @@ const WatchContainer = (props) => {
         window.location.hash = "#/"
     }
     return (
-    <div className="watch-container">
-        <AnimeVideo videoSrc={props.videoFile}/>
-        <WatchInformation animeName={props.animeName} epNumber={props.epNumber} posterImg={props.posterImg} slug={props.slug}/>
-    </div>
+        <div className="watch-wrapper">
+            <div className="watch-container">
+                <AnimeVideo videoSrc={props.videoFile}/>
+                <WatchInformation animeName={props.animeName} epNumber={props.epNumber} posterImg={props.posterImg} slug={props.slug}/>
+            </div>
+        </div>
     )
 }
 
