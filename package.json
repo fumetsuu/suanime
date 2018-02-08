@@ -33,6 +33,8 @@
     "circular-json": "^0.5.1",
     "download": "^6.2.5",
     "electron-store": "^1.3.0",
+    "moment": "^2.20.1",
+    "moment-duration-format": "^2.2.1",
     "progress-stream": "^2.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -49,6 +51,7 @@
     "request": "^2.83.0",
     "request-progress": "^3.0.0",
     "request-promise": "^4.2.2",
+    "screenfull": "^3.3.2",
     "video-react": "^0.9.4",
     "watch-ignore-webpack-plugin": "^1.0.0"
   }
