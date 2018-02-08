@@ -6,7 +6,7 @@ const moment = require('moment')
 const momentDurationFormatSetup = require("moment-duration-format")
 momentDurationFormatSetup(moment)
 
-export default class AnimeVideo extends Component {
+class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -21,7 +21,9 @@ export default class AnimeVideo extends Component {
 			duration: 0,
 			elapsed: 0,
 			played: 0,
-			seeking: false
+			seeking: false,
+			fullscreen: false,
+			controlsClass: "anime-video-controls"
 		}
 	}
 
@@ -29,6 +31,19 @@ export default class AnimeVideo extends Component {
 		this.fixWidths()
         window.addEventListener('resize', () => {
 			this.fixWidths()
+		})
+		window.addEventListener('keypress', e => {
+			console.log(e.keyCode)
+			switch(e.keyCode) {
+				case 68: case 100: this.incPlaybackRate(); break
+				case 83: case 115: this.decPlaybackRate(); break
+				case 77: case 109: this.toggleMuted(); break
+				case 70: case 102: this.goFullscreen(); break
+				case 75: case 107: this.playPause(); break
+				case 32: this.playPause(); break
+				case 81: case 113: this.seekAmount(-10); break
+				case 69: case 101: this.seekAmount(10); break
+			}
 		})
 		screenfull.on('change', () => {
 			this.fixWidths()
@@ -47,9 +62,11 @@ export default class AnimeVideo extends Component {
 	}
 
 	render() {
-		const { url, playing, volume, muted, played, duration, playbackRate } = this.state
+		const { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass } = this.state
 		return (
-			<div className="player-wrapper">
+			<div className="player-wrapper"
+			onMouseEnter={this.showControls.bind(this)}
+			onMouseLeave={this.hideControls.bind(this)}>
 				<ReactPlayer
 				ref={this.ref.bind(this)} 
 				url={url} 
@@ -62,7 +79,7 @@ export default class AnimeVideo extends Component {
 				muted={muted}
 				onProgress={this.onProgress.bind(this)}
 				onDuration={this.onDuration.bind(this)}/>
-				<div className="anime-video-controls" style={{width: this.state.controlsWidth}}>
+				<div className={controlsClass} style={{width: this.state.controlsWidth}}>
 					<div className="video-control-button" onClick={this.playPause.bind(this)}><i className="material-icons">{playing?'pause':'play_arrow'}</i></div>
 					<div className="video-control-button" onClick={this.toggleMuted.bind(this)}><i className="material-icons">{muted ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>
 					<div className="progress-text">{moment.duration(duration*played, "seconds").format(this.durationTemplate(duration*played), { trim: false })} / {moment.duration(duration, "seconds").format(this.durationTemplate(duration), { trim: false })}</div>
@@ -76,7 +93,7 @@ export default class AnimeVideo extends Component {
 					<div className="speed-text">{playbackRate}</div>  
 					<div className="video-control-button" onClick={this.incPlaybackRate.bind(this)}><i className="material-icons">add_box</i></div>
 					<div className="video-control-button" onClick={this.decPlaybackRate.bind(this)}><i className="material-icons">indeterminate_check_box</i></div>
-					<div className="video-control-button fullscreen-btn" onClick={this.goFullscreen.bind(this)}><i className="material-icons">fullscreen</i></div>
+					<div className="video-control-button fullscreen-btn" onClick={this.goFullscreen.bind(this)}><i className="material-icons">{fullscreen?'fullscreen_exit':'fullscreen'}</i></div>
 					
 				</div>
 			</div>
@@ -114,6 +131,10 @@ export default class AnimeVideo extends Component {
 		this.player.seekTo(parseFloat(e.target.value))
 	}
 
+	seekAmount(seconds) {
+		this.player.seekTo(this.player.getCurrentTime()+seconds)
+	}
+
 	incPlaybackRate() {
 		var newpb = (this.state.playbackRate+0.1).toFixed(2)
 		this.setState({ playbackRate: Number(newpb) })
@@ -126,6 +147,20 @@ export default class AnimeVideo extends Component {
 
 	goFullscreen() {
 		screenfull.toggle(document.getElementsByClassName('player-wrapper')[0])
+		this.setState({ fullscreen: !this.state.fullscreen })
+		this.props.askFixWidth()
+	}
+
+	showControls() {
+		this.setState({
+			controlsClass: "anime-video-controls"
+		})
+	}
+
+	hideControls() {
+		this.setState({
+			controlsClass: "anime-video-controls none"
+		})
 	}
 
 	durationTemplate(secs) {
@@ -133,3 +168,5 @@ export default class AnimeVideo extends Component {
 	}
 
 }
+
+export default AnimeVideo

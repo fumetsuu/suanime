@@ -5,7 +5,8 @@ export default function reducer(state = {
     animeName: null,
     epNumber: null,
     showSideNav: true,
-    watching: false
+    watching: false,
+    fixWidth: 1
 }, action) {
     switch(action.type) {
         case "PLAY_ANIME": {
