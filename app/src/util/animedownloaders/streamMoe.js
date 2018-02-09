@@ -29,7 +29,6 @@ export function streamMoe() {
         this.comp = comp
     }
     this.updateState = () => {
-        console.log('updating state from streammoe.js',this.animeFilename,this.comp.state,this.heldState)
         this.comp.setState(Object.assign({}, this.comp.state, this.heldState))
     }
     this.closed = false

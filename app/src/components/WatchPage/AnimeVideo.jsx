@@ -51,9 +51,9 @@ class AnimeVideo extends Component {
 			}
 		})
 		screenfull.on('change', () => {
-			this.setState({ fullscreen: !this.state.fullscreen })
-			console.log(this.state.fullscreen, ' meeee')		
-			this.fixWidths()			
+			this.setState({ fullscreen: !this.state.fullscreen }, () => {
+				this.fixWidths()			
+			})
 		})
 	}
 
@@ -164,6 +164,8 @@ class AnimeVideo extends Component {
 
 	seekAmount(seconds) {
 		this.player.seekTo(this.player.getCurrentTime()+seconds)
+		playedSeconds = this.state.played*this.state.duration
+		resumeFrom = true
 	}
 
 	incPlaybackRate() {

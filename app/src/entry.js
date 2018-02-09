@@ -3,6 +3,8 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux'
 import App from './App.jsx';
 import store from './store.js'
+const fs = require('fs')
+const path = require('path')
 
 var eStore = require('electron-store')
 global.estore = new eStore()
@@ -26,6 +28,10 @@ if(!global.estore.get('initialised')) {
             completed: global.estore.get("storedCompleted")
         }
     })
+}
+
+if(!fs.existsSync(path.join(__dirname, '../downloads/'))) {
+    fs.mkdirSync(path.join(__dirname, '../downloads/'))
 }
 
 render(
