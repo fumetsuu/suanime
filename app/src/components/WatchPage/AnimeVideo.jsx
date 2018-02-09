@@ -9,6 +9,7 @@ let playbackRate = 1
 let volume = 1
 let resumeFrom = false
 let playedSeconds = 0
+let vidIdentifier = null
 class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
@@ -68,11 +69,12 @@ class AnimeVideo extends Component {
 	}
 
 	readyVideo() {
-		if(resumeFrom) {
+		if(resumeFrom && vidIdentifier == this.props.videoSrc) {
 			console.log("ohhhhhh", playedSeconds)
 			this.player.seekTo(playedSeconds)
 			resumeFrom = false		
-		}			
+		}
+		vidIdentifier=this.props.videoSrc			
 	}
 
 	render() {
