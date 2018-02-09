@@ -106,20 +106,25 @@
                     height: 16px
                 .alt-titles
                     font-family: 'Lato'
-                    font-size: 14px
+                    font-size: 18px
                 .primary-info
                     height: 50px
-                    width: 80%
-                    margin-left: 10%
+                    -webkit-margin-start: 0
+                    padding: 0
                     list-style: none
                     display: flex
+                    flex-wrap: wrap
+                    justify-content: flex-start
                     & > li
                         display: inline
                         font-family: 'Lato'
                         line-height: 50px
                         font-size: 18px
-                        width: 100%
-                        margin: 0 5%
+                        margin: 0 10px 0 0
+                        padding: 0 20px
+                        background-color: $dark-grey
+                        border: 1px solid $black
+                        border-radius: 8px
                 .synopsis
                     font-family: 'Lato'
                     font-size: 14px
@@ -132,7 +137,7 @@
                     flex-wrap: wrap
                     justify-content: flex-start
                     tbody
-                        margin: 5px
+                        margin: 5px 10px 5px 0
                         background-color: $dark-grey
                         border-radius: 8px
                         border: 1px solid $black
@@ -143,7 +148,11 @@
                             border-bottom: 1px solid $grey
                             li
                                 list-style: none
-
+.info-clickable
+    &:hover
+        color: $light-blue
+        cursor: pointer
+        text-decoration: underline
 .video-fullscreen
     position: absolute !important
     width: 100vw !important

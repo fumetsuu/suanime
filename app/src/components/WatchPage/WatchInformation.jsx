@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 const rp = require('request-promise')
 import screenfull from 'screenfull'
+const h2p = require('html2plaintext')
 
 export default class WatchInformation extends Component {
     constructor(props) {
@@ -22,18 +23,19 @@ export default class WatchInformation extends Component {
             const malid = first.id
             rp(`${jikanBase}/anime/${malid}`).then(data => {
                 data = JSON.parse(data)
+                let seasonLink = `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}`
                 this.setState({
                     animeInfo: 
                     <div className="anime-information">
                         <div className="tiny-header">Alt. Titles</div>
                         <div className="alt-titles">{data.title_japanese? data.title_japanese:''}{data.title_english ? ', '+data.title_english : ''}{data.title_synonyms ? ', '+data.title_synonyms : ''}</div>
                         <ul className="primary-info">
-                            <li className="blue">{data.score}</li>
+                            <li>{data.score}</li>
                             <li>#{data.rank}</li>
-                            <li>{data.premiered}</li>
+                            <li className="info-clickable" onClick={() => this.browserLink(seasonLink)}>{data.premiered}</li>
                         </ul>
                         <div className="tiny-header">Synopsis</div>
-                        <div className="synopsis">{data.synopsis}</div>
+                        <div className="synopsis">{h2p(data.synopsis)}hey???????</div>
                         <table className="secondary-info">
                             <tbody>
                                 <tr>
@@ -131,19 +133,11 @@ export default class WatchInformation extends Component {
                     <div className="watch-episode">{this.props.epNumber}</div>
                 </div>
                 <div className="spacer-horizontal"/>
-                <div className="anime-out-link masterani-circle" onClick={this.openMasterani.bind(this)}></div>
-                <div className={malstyle} onClick={this.openMAL.bind(this)}></div>
+                <div className="anime-out-link masterani-circle" onClick={() => this.browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
+                <div className={malstyle} onClick={() => this.browserLink(this.state.MALlink)}></div>
                 {this.state.animeInfo}
             </div>
         )
-    }
-    openMasterani() {
-        require('electron').shell.openExternal(`https://www.masterani.me/anime/info/${this.props.slug}`)
-        console.log(this.props.slug)
-    }
-
-    openMAL() {
-        require('electron').shell.openExternal(this.state.MALlink)
     }
 
     browserLink(url) { //this is opening even without having to click
@@ -155,6 +149,6 @@ export default class WatchInformation extends Component {
     }
 
     nameList(data) {
-        return data.map(el => <li>{el.name}</li>)
+        return data.map((el, i) => <span><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>this.browserLink(el.url)}>{el.name}</span></span>)
     }
 }
