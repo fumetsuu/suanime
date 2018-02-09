@@ -13,7 +13,7 @@ class DownloadsHolder extends Component {
         }
         if(this.props.completedArray.length) {
             this.props.completedArray.forEach(el => {
-                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} elapsed={el.props.elapsed} key={el.props.animeFilename}/>)
+                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} />)
             })
         }
         return (

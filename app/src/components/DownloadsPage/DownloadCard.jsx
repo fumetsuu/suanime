@@ -16,7 +16,8 @@ class DownloadCard extends Component {
         totalSize: this.props.totalSize,
         percentage: '100',
         elapsed: this.props.elapsed,
-        remaining: '0 sec'
+        remaining: '0 sec',
+        completeDate: this.props.completeDate
       }
     } else {
       var thisdlObj
@@ -85,7 +86,7 @@ class DownloadCard extends Component {
       }
       case 'COMPLETED': {
         controlIcon = "live_tv"
-        statusText = "Completed"
+        statusText = "Completed"+this.state.completeDate?' - '+this.state.completeDate:''
         controlAction = this.playDownload.bind(this)
         break
       }

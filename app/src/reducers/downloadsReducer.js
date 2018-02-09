@@ -42,6 +42,7 @@ export default function reducer(state={
                     newCompletedProps = el
                     newCompletedProps.props['totalSize'] = action.payload.totalSize
                     newCompletedProps.props['elapsed'] = action.payload.elapsed
+                    newCompletedProps.props['completeDate'] = action.payload.completeDate
                     return false
                 }
                 return true

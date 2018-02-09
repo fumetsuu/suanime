@@ -179,7 +179,8 @@ export function streamMoe() {
                         payload: {
                             animeFilename: this.animeFilename,
                             totalSize: this.comp.state.totalSize,
-                            elapsed: this.comp.state.elapsed
+                            elapsed: this.comp.state.elapsed,
+                            completeDate: new Date().toLocaleString()
                         }
                     })
                 } else {

@@ -35,7 +35,7 @@ export default class WatchInformation extends Component {
                             <li className="info-clickable" onClick={() => this.browserLink(seasonLink)}>{data.premiered}</li>
                         </ul>
                         <div className="tiny-header">Synopsis</div>
-                        <div className="synopsis">{h2p(data.synopsis)}hey???????</div>
+                        <div className="synopsis">{h2p(data.synopsis)}</div>
                         <table className="secondary-info">
                             <tbody>
                                 <tr>
