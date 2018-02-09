@@ -20,12 +20,12 @@ export default function reducer(state={
                 }
             }
             var newDL = action.payload.animeFilename
-            global.estore.set("storedDownloadsArray", [...global.estore.get("storedDownloadsArray"), newDLProps])
-            global.estore.set("storedDownloading", [...global.estore.get("storedDownloading"), newDL])
+            global.estore.set("storedDownloadsArray", [newDLProps, ...global.estore.get("storedDownloadsArray")])
+            global.estore.set("storedDownloading", [newDL, ...global.estore.get("storedDownloading")])
             return Object.assign({}, state, {
                 //pass props instead of entire component
-                downloadsArray: [...state.downloadsArray, newDLProps],
-                downloading: [...state.downloading, newDL],
+                downloadsArray: [newDLProps, ...state.downloadsArray],
+                downloading: [newDL, ...state.downloading],
                 epLink: action.payload.epLink,
                 animeFilename: action.payload.animeFilename,
                 posterImg: action.payload.posterImg
@@ -35,7 +35,7 @@ export default function reducer(state={
             var newDownloading = state.downloading.filter(el => el!=action.payload.animeFilename)
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = action.payload.animeFilename
-            global.estore.set("storedCompleted", [...global.estore.get("storedCompleted"), newCompleted])
+            global.estore.set("storedCompleted", [newCompleted, ...global.estore.get("storedCompleted")])
             var newCompletedProps
             var newDownloadsArray = state.downloadsArray.filter(el => {
                 if(el.props.animeFilename == action.payload.animeFilename) {
@@ -47,16 +47,16 @@ export default function reducer(state={
                 return true
             })
             global.estore.set("storedDownloadsArray", newDownloadsArray)
-            var newCompletedArray = [...global.estore.get("storedCompletedArray"), newCompletedProps]
+            var newCompletedArray = [newCompletedProps, ...global.estore.get("storedCompletedArray")]
             global.estore.set("storedCompletedArray", newCompletedArray)
             return Object.assign({}, state, {
                 downloading: newDownloading,
-                completed: [...state.completed, newCompleted],
+                completed: [newCompleted, ...state.completed],
                 downloadsArray: newDownloadsArray,
                 completedArray: newCompletedArray
             })
         }
-        case "CLEAR_DOWNLOAD": { //PROBLEM IS FIXED
+        case "CLEAR_DOWNLOAD": {
             var newDownloading = state.downloading.filter(el => el!=action.payload.animeFilename)
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = state.completed.filter(el => el!=action.payload.animeFilename)

@@ -169,13 +169,13 @@ class AnimeVideo extends Component {
 	}
 
 	incPlaybackRate() {
-		var newpb = (parseFloat(this.state.playbackRate)+0.1).toFixed(2)
+		var newpb = (parseFloat(this.state.playbackRate)+0.1).toFixed(2)>16?16:(parseFloat(this.state.playbackRate)+0.1).toFixed(2)
 		this.setState({ playbackRate: newpb })
 		playbackRate = newpb
 	}
 
 	decPlaybackRate() {
-		var newpb = (parseFloat(this.state.playbackRate)-0.1).toFixed(2)
+		var newpb = (parseFloat(this.state.playbackRate)-0.1).toFixed(2)<0?0:(parseFloat(this.state.playbackRate)-0.1).toFixed(2)
 		this.setState({ playbackRate: newpb })
 		playbackRate = newpb
 	}
