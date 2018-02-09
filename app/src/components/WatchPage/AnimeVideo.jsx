@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
-import { findDOMNode } from 'react-dom'
+import { connect } from 'react-redux'
 import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
 const moment = require('moment')
 const momentDurationFormatSetup = require("moment-duration-format")
 momentDurationFormatSetup(moment)
-
+let playbackRate = 1
+let volume = 1
+let resumeFrom = false
+let playedSeconds = 0
 class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
@@ -13,13 +16,13 @@ class AnimeVideo extends Component {
 			controlsWidth: '95%',
 			url: this.props.videoSrc,
 			playing: false,
-			volume: 1,
+			volume: volume,
 			muted: false,
 			played: 0,
 			duration: 0,
-			playbackRate: 1,
+			playbackRate: playbackRate,
 			duration: 0,
-			elapsed: 0,
+			playedSeconds: 0,
 			played: 0,
 			seeking: false,
 			fullscreen: false,
@@ -47,7 +50,9 @@ class AnimeVideo extends Component {
 			}
 		})
 		screenfull.on('change', () => {
-			this.fixWidths()
+			this.setState({ fullscreen: !this.state.fullscreen })
+			console.log(this.state.fullscreen, ' meeee')		
+			this.fixWidths()			
 		})
 	}
 
@@ -60,6 +65,14 @@ class AnimeVideo extends Component {
 
 	ref(player) {
 		this.player = player
+	}
+
+	readyVideo() {
+		if(resumeFrom) {
+			console.log("ohhhhhh", playedSeconds)
+			this.player.seekTo(playedSeconds)
+			resumeFrom = false		
+		}			
 	}
 
 	render() {
@@ -81,7 +94,8 @@ class AnimeVideo extends Component {
 				onProgress={this.onProgress.bind(this)}
 				onDuration={this.onDuration.bind(this)}
 				onClick={this.playPause.bind(this)}
-				onDoubleClick={this.goFullscreen.bind(this)}/>
+				onDoubleClick={this.goFullscreen.bind(this)}
+				onReady={this.readyVideo.bind(this)}/>
 				<div className={controlsClass} style={{width: this.state.controlsWidth}}>
 					<div className="video-control-button" onClick={this.playPause.bind(this)}><i className="material-icons">{playing?'pause':'play_arrow'}</i></div>
 					<div className="video-control-button" onClick={this.toggleMuted.bind(this)} onMouseEnter={this.showVolSlider.bind(this)}><i className="material-icons">{(muted || volume == 0) ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>
@@ -123,7 +137,10 @@ class AnimeVideo extends Component {
 
 	onProgress(state) {
 	if (!this.state.seeking) {
-		this.setState(state)
+		this.setState(state, () => {
+			playedSeconds = this.state.playedSeconds
+			resumeFrom = true
+		})
 		}
 	}
 
@@ -132,7 +149,10 @@ class AnimeVideo extends Component {
 	}
 	
 	onSeekChange(e) {
-		this.setState({ played: parseFloat(e.target.value) })
+		this.setState({ played: parseFloat(e.target.value) }, () => {
+			playedSeconds = this.state.played*this.state.duration
+			resumeFrom = true
+		})
 	}
 
 	onSeekMouseUp(e) {
@@ -145,22 +165,24 @@ class AnimeVideo extends Component {
 	}
 
 	incPlaybackRate() {
-		var newpb = (this.state.playbackRate+0.1).toFixed(2)
-		this.setState({ playbackRate: Number(newpb) })
+		var newpb = (parseFloat(this.state.playbackRate)+0.1).toFixed(2)
+		this.setState({ playbackRate: newpb })
+		playbackRate = newpb
 	}
 
 	decPlaybackRate() {
-		var newpb = (this.state.playbackRate-0.1).toFixed(2)
-		this.setState({ playbackRate: Number(newpb) })
+		var newpb = (parseFloat(this.state.playbackRate)-0.1).toFixed(2)
+		this.setState({ playbackRate: newpb })
+		playbackRate = newpb
 	}
 
 	goFullscreen() {
 		screenfull.toggle(document.getElementsByClassName('player-wrapper')[0])
-		this.setState({ fullscreen: !this.state.fullscreen })
 	}
 
 	setVolume(e) {
 		this.setState({ volume: parseFloat(e.target.value) })
+		volume = parseFloat(e.target.value)
 	}
 
 	showControls() {
