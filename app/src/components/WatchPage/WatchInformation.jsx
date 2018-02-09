@@ -21,8 +21,86 @@ export default class WatchInformation extends Component {
             })
             const malid = first.id
             rp(`${jikanBase}/anime/${malid}`).then(data => {
+                data = JSON.parse(data)
                 this.setState({
-                    animeInfo: data
+                    animeInfo: 
+                    <div className="anime-information">
+                        <div className="tiny-header">Alt. Titles</div>
+                        <div className="alt-titles">{data.title_japanese? data.title_japanese:''}{data.title_english ? ', '+data.title_english : ''}{data.title_synonyms ? ', '+data.title_synonyms : ''}</div>
+                        <ul className="primary-info">
+                            <li className="blue">{data.score}</li>
+                            <li>#{data.rank}</li>
+                            <li>{data.premiered}</li>
+                        </ul>
+                        <div className="tiny-header">Synopsis</div>
+                        <div className="synopsis">{data.synopsis}</div>
+                        <table className="secondary-info">
+                            <tbody>
+                                <tr>
+                                    <td>Status:</td>
+                                    <td>{data.status}</td>
+                                </tr>
+                                <tr>
+                                    <td>Type:</td>
+                                    <td>{data.type}</td>
+                                </tr>
+                                <tr>
+                                    <td>Episodes:</td>
+                                    <td>{data.episodes}</td>
+                                </tr>
+                                <tr>
+                                    <td>Duration:</td>
+                                    <td>{data.duration}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td>Source:</td>
+                                    <td>{data.source}</td>
+                                </tr>
+                                <tr>
+                                    <td>Producer(s):</td>
+                                    <td>{this.nameList(data.producer)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Studio(s):</td>
+                                    <td>{this.nameList(data.studio)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Broadcast:</td>
+                                    <td>{data.broadcast}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td>Favourites:</td>
+                                    <td>{data.favorites}</td>
+                                </tr>
+                                <tr>
+                                    <td>Popularity:</td>
+                                    <td>{data.popularity}</td>
+                                </tr>
+                                <tr>
+                                    <td>Members:</td>
+                                    <td>{data.members}</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td>Genres:</td>
+                                    <td>{this.nameList(data.genre)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Openings:</td>
+                                    <td>{this.linedList(data.opening_theme)}</td>
+                                </tr>
+                                <tr>
+                                    <td>Endings:</td>
+                                    <td>{this.linedList(data.ending_theme)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 })
             })
         })
@@ -55,15 +133,28 @@ export default class WatchInformation extends Component {
                 <div className="spacer-horizontal"/>
                 <div className="anime-out-link masterani-circle" onClick={this.openMasterani.bind(this)}></div>
                 <div className={malstyle} onClick={this.openMAL.bind(this)}></div>
-                <div className="anime-information">{this.state.animeInfo}</div>
+                {this.state.animeInfo}
             </div>
         )
     }
     openMasterani() {
         require('electron').shell.openExternal(`https://www.masterani.me/anime/info/${this.props.slug}`)
+        console.log(this.props.slug)
     }
 
     openMAL() {
         require('electron').shell.openExternal(this.state.MALlink)
+    }
+
+    browserLink(url) { //this is opening even without having to click
+        require('electron').shell.openExternal(url)        
+    }
+
+    linedList(data) {
+        return data.map(el => <li>{el}</li>)
+    }
+
+    nameList(data) {
+        return data.map(el => <li>{el.name}</li>)
     }
 }

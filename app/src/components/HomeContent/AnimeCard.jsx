@@ -68,8 +68,7 @@ class AnimeCard extends Component {
     console.log(videoFile)
     var epNumber = 'Episode '+this.props.animeDataRecent.episode
     var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
-    var slug = this.props.animeDataRecent.slug
-    console.log('time to play anime hehe')
+    var slug = this.props.animeDataRecent.anime.slug
     this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
     window.location.hash="#/watch"
   }
