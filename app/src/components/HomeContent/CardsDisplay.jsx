@@ -25,7 +25,7 @@ export default class CardsDisplay extends Component {
             releasesData = releases
             for(var i = 0 ; i < NUM_OF_CARDS; i++) {
                 this.setState({
-                    cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releases[i]} key={i}/>]
+                    cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releases[i]} key={releases[i].anime.id}/>]
                 })
             }
             maxPage = Math.ceil(releases.length / NUM_OF_CARDS)-1
@@ -34,7 +34,11 @@ export default class CardsDisplay extends Component {
     }
 
     componentDidMount() {
-        window.addEventListener('resize', () => {addSpacerCards(this)})
+        window.addEventListener('resize', () => {
+            if(window.location.hash == "#/") {
+                addSpacerCards(this)
+            }
+        })
     }
 
     render() {
@@ -90,11 +94,16 @@ export default class CardsDisplay extends Component {
             }, 1)
         })
     }
+
+    addSpacerCards() {
+
+    }
+
 }
 
 function addSpacerCards(comp) {
     comp.setState({
-        cardsArray: comp.state.cardsArray.filter(el =>      el.props.className!="invisible card-container"
+        cardsArray: comp.state.cardsArray.filter(el => el.props.className!="invisible card-container"
         )
     })
     var cardWidth = document.querySelector('.card-container').clientWidth+20
@@ -104,7 +113,7 @@ function addSpacerCards(comp) {
     if(cardsInLastRow!=0) {
         for(var i = 0; i < cardsInRow-cardsInLastRow; i++) {
             comp.setState({
-                cardsArray: [...comp.state.cardsArray, <div className="invisible card-container"/>]
+                cardsArray: [...comp.state.cardsArray, <div key={`invis_spacer_${i}`} className="invisible card-container"/>]
             })
         }
     }

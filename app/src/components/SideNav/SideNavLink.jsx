@@ -5,7 +5,6 @@ const SideNavLink = (props) => {
   var linkClassName
   if(props.linkTarget=="/watch" && props.disabled==='true') {
     linkClassName="side-nav-link disabled"
-    console.log(props.disabled, ' from me')
 } else {
     linkClassName="side-nav-link"
   }

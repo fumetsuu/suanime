@@ -11,7 +11,6 @@ export default function reducer(state = {
 }, action) {
     switch(action.type) {
         case "PLAY_ANIME": {
-            console.log(action)
             return Object.assign({}, state, {
                 videoFile: action.payload.videoFile,
                 animeName: action.payload.animeName,

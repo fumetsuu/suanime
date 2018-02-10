@@ -145,10 +145,10 @@ export default class WatchInformation extends Component {
     }
 
     linedList(data) {
-        return data.map(el => <li>{el}</li>)
+        return data.map((el, i) => <li key={i}>{el}</li>)
     }
 
     nameList(data) {
-        return data.map((el, i) => <span><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>this.browserLink(el.url)}>{el.name}</span></span>)
+        return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>this.browserLink(el.url)}>{el.name}</span></span>)
     }
 }

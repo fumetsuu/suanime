@@ -32,7 +32,6 @@ class AnimeVideo extends Component {
 			controlsClass: "anime-video-controls",
 			volSliderClass: "volume-slider none"
 		}
-		console.log("hhhhhhhhhhh")
 		window.removeEventListener('keypress', hotkeyEvents, true) //fixes multiple triggers
 		window.addEventListener('keypress', hotkeyEvents, true)
 		screenfull.off('change', fullscreenEvent)
@@ -210,24 +209,24 @@ class AnimeVideo extends Component {
 }
 
 const hotkeyEvents = e => {
-	switch(e.keyCode) {
-		case 68: case 100: _this.incPlaybackRate(); break
-		case 83: case 115: _this.decPlaybackRate(); break
-		case 77: case 109: _this.toggleMuted(); break
-		case 70: case 102: console.log("hy44444key"); _this.goFullscreen(); break
-		case 75: case 107: _this.playPause(); break
-		case 32: _this.playPause(); break
-		case 113: _this.seekAmount(-10); break
-		case 81: _this.seekAmount(-60); break
-		case 101: _this.seekAmount(10); break
-		case 69: _this.seekAmount(60); break
+	if(window.location.hash == "#/watch") {
+		switch(e.keyCode) {
+			case 68: case 100: _this.incPlaybackRate(); break
+			case 83: case 115: _this.decPlaybackRate(); break
+			case 77: case 109: _this.toggleMuted(); break
+			case 70: case 102: _this.goFullscreen(); break
+			case 75: case 107: _this.playPause(); break
+			case 32: _this.playPause(); break
+			case 113: _this.seekAmount(-10); break
+			case 81: _this.seekAmount(-60); break
+			case 101: _this.seekAmount(10); break
+			case 69: _this.seekAmount(60); break
+		}
 	}
 }
 
 const fullscreenEvent = () => {
-	console.log('screenful: ', screenfull.isFullscreen)
 	_this.setState({ fullscreen: !_this.state.fullscreen }, () => {
-		console.log('fullscreen: ', _this.state.fullscreen)
 		_this.fixWidths()			
 	})
 }

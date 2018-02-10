@@ -65,7 +65,6 @@ class AnimeCard extends Component {
     var animeName = this.props.animeDataRecent.anime.title
     var animeFilename = `${animeName} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
     var videoFile = path.join(__dirname, ('../downloads/'+animeFilename))
-    console.log(videoFile)
     var epNumber = 'Episode '+this.props.animeDataRecent.episode
     var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
     var slug = this.props.animeDataRecent.anime.slug

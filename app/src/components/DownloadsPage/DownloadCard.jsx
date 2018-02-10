@@ -119,44 +119,36 @@ class DownloadCard extends Component {
   }
 
   startDownload() {
-    console.log('starting download for '+this.props.animeFilename)
     this.dlObj.start()
   }
   pauseDownload() {
-    console.log('pausing download for '+this.props.animeFilename)
     this.setState({
       status: 'PAUSED'
     })
     this.dlObj.pause()
   }
   continueDownload() {
-    console.log('continuing download for '+this.props.animeFilename)
     this.setState({
       status: 'DOWNLOADING'
     })
     this.dlObj.continue()
   }
   playDownload() {
-    console.log('playing download for '+this.props.animeFilename)
     var animeName = this.props.animeName
     var videoFile = path.join(__dirname, ('../downloads/'+this.props.animeFilename))
     var epNumber = this.props.epTitle
     var posterImg = this.props.posterImg
     var slug = this.props.epLink.split("watch/")[1].split("/")[0]
-    console.log('time to play anime hehe')
     this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
     window.location.hash="#/watch"
   }
   clearDownload() {
-    if(confirm("yo u SURE")) {
-      console.log('clearing download for '+this.props.animeFilename)
+    if(confirm("Are you sure you want to delete "+this.props.animeFilename+"?")) {
       if(this.dlObj) {
         this.dlObj.delete()
       }
       this.props.clearDL(this.props.animeFilename)    
-      fs.unlink(path.join(__dirname, '../downloads/'+this.props.animeFilename), err => {
-        console.log('unlink: ', err)
-      })
+      fs.unlinkSync(path.join(__dirname, '../downloads/'+this.props.animeFilename))
     }
   }
 }

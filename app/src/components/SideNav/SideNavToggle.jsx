@@ -17,8 +17,6 @@ const mapDispatchToProps = dispatch => {
         dispatch({
           type: 'TOGGLE_SIDENAV'
           })
-      } else {
-        console.log("cant close sidenav on this windowd")
       }
     }
   }
