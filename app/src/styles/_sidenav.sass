@@ -14,7 +14,7 @@
     display: grid
     overflow-x: hidden
     grid-template-columns: 100%
-    grid-template-rows: repeat(4, 100px) auto repeat(2, 100px)
+    grid-template-rows: repeat(6, 100px) auto 80px
     .title
         width: 250px
         line-height: 100px
@@ -37,6 +37,21 @@
         user-select: none
         &:hover
             cursor: pointer
+    .settings-about
+        display: flex
+        width: 250px
+        height: 80px
+    .small
+        width: 125px
+        height: 80px 
+        line-height: 80px
+        &:hover
+            cursor: pointer
+            background-color: darken($dark-grey, 5%)
+        .material-icons
+            text-align: center
+            vertical-align: middle
+            color: $light-blue
     .side-nav-link
         text-align: center
         width: 250px

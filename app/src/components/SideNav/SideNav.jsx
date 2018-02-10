@@ -17,7 +17,6 @@ class SideNav extends Component {
       this.setState({
         showToggle: toggableHashes.includes(window.location.hash)
       })
-      console.log(this.setState.showToggle, window.location.hash)
     })
   }
 
@@ -30,13 +29,17 @@ class SideNav extends Component {
     return (
       <div className="side-nav" style={{ width: sideWidth }}>
         <Title/>
+        <SideNavLink icon="search" label="Search" linkTarget="/search"/>
+        <SideNavLink icon="event" label="Seasonal" linkTarget="/seasonal"/>
         <SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>
         <SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
         <SideNavLink icon="live_tv" label="Watch" linkTarget="/watch" disabled={watchDisabled}/>
         <div className="spacer-vertical"/>
         {this.state.showToggle ? <SideNavToggle toggleLeft={toggleLeft} toggleIcon={toggleIcon}/> : ''}
-        <SideNavLink icon="settings" label="Settings" linkTarget="/settings"/>
-        <SideNavLink icon="info" label="About" linkTarget="/about"/>
+        <div className="settings-about">
+          <SideNavLink icon="settings" label="" linkTarget="/settings" small="true"/>
+          <SideNavLink icon="info" label="" linkTarget="/about" small="true"/>
+        </div>
       </div>
     )
   }
