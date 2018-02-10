@@ -5,12 +5,28 @@ import { withRouter } from 'react-router-dom'
 import Title from './Title.jsx'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
+const toggableHashes = ["#/watch"]
 
-const SideNav = (props) => {
-  var sideWidth = props.show ? '250px' : '0'
-  var toggleLeft = props.show ? '222px' : '-20px'
-  var toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
-  var watchDisabled = props.watching ? 'false' : 'true'
+class SideNav extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showToggle: toggableHashes.includes(window.location.hash)
+    }
+    window.addEventListener('hashchange', () => {
+      this.setState({
+        showToggle: toggableHashes.includes(window.location.hash)
+      })
+      console.log(this.setState.showToggle, window.location.hash)
+    })
+  }
+
+  render() {
+    var props = this.props
+    var sideWidth = props.show ? '250px' : '0'
+    var toggleLeft = props.show ? '222px' : '-20px'
+    var toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
+    var watchDisabled = props.watching ? 'false' : 'true'
     return (
       <div className="side-nav" style={{ width: sideWidth }}>
         <Title/>
@@ -18,11 +34,12 @@ const SideNav = (props) => {
         <SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
         <SideNavLink icon="live_tv" label="Watch" linkTarget="/watch" disabled={watchDisabled}/>
         <div className="spacer-vertical"/>
-        <SideNavToggle toggleLeft={toggleLeft} toggleIcon={toggleIcon}/>
+        {this.state.showToggle ? <SideNavToggle toggleLeft={toggleLeft} toggleIcon={toggleIcon}/> : ''}
         <SideNavLink icon="settings" label="Settings" linkTarget="/settings"/>
         <SideNavLink icon="info" label="About" linkTarget="/about"/>
       </div>
     )
+  }
 }
 
 const mapStateToProps = state => {
