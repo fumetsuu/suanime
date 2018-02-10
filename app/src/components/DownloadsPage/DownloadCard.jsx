@@ -86,7 +86,7 @@ class DownloadCard extends Component {
       }
       case 'COMPLETED': {
         controlIcon = "live_tv"
-        statusText = "Completed"+this.state.completeDate?' - '+this.state.completeDate:''
+        statusText = `Completed${this.state.completeDate?' - '+this.state.completeDate:''}`
         controlAction = this.playDownload.bind(this)
         break
       }

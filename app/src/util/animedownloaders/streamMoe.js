@@ -166,12 +166,14 @@ export function streamMoe() {
                     new Notification('Download Complete', {
                         body: this.animeFilename+' has finished downloading'
                     })
+                    var completeDate = new Date().toLocaleString()
                     this.heldState = {
                         status: 'COMPLETED',
                         speed: '',
                         progressSize: this.comp.state.totalSize,
                         percentage: '100',
-                        remaining: '0 sec'
+                        remaining: '0 sec',
+                        completeDate: completeDate
                     }
                     this.comp.setState(this.heldState)
                     store.dispatch({
@@ -180,7 +182,7 @@ export function streamMoe() {
                             animeFilename: this.animeFilename,
                             totalSize: this.comp.state.totalSize,
                             elapsed: this.comp.state.elapsed,
-                            completeDate: new Date().toLocaleString()
+                            completeDate: completeDate
                         }
                     })
                 } else {

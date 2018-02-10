@@ -15,7 +15,7 @@ export default class WatchInformation extends Component {
 
     componentDidMount() {
         var jikanBase = 'http://api.jikan.me'
-        rp(`${jikanBase}/search/anime/`+this.props.animeName.replace(/\s+/g, "_")).then(data => {
+        rp(`${jikanBase}/search/anime/`+this.props.animeName.replace(/\s+/g, "+")).then(data => {
             var first = JSON.parse(data).result[0]
             this.setState({
                 MALlink: first.url
@@ -80,7 +80,7 @@ export default class WatchInformation extends Component {
                                 </tr>
                                 <tr>
                                     <td>Popularity:</td>
-                                    <td>{data.popularity}</td>
+                                    <td>#{data.popularity}</td>
                                 </tr>
                                 <tr>
                                     <td>Members:</td>

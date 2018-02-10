@@ -10,9 +10,11 @@ let volume = 1
 let resumeFrom = false
 let playedSeconds = 0
 let vidIdentifier = null
+let _this = null
 class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
+		_this = this
 		this.state = {
 			controlsWidth: '95%',
 			url: this.props.videoSrc,
@@ -30,6 +32,11 @@ class AnimeVideo extends Component {
 			controlsClass: "anime-video-controls",
 			volSliderClass: "volume-slider none"
 		}
+		console.log("hhhhhhhhhhh")
+		window.removeEventListener('keypress', hotkeyEvents, true) //fixes multiple triggers
+		window.addEventListener('keypress', hotkeyEvents, true)
+		screenfull.off('change', fullscreenEvent)
+		screenfull.on('change', fullscreenEvent)
 	}
 
 	componentDidMount() {
@@ -37,24 +44,7 @@ class AnimeVideo extends Component {
         window.addEventListener('resize', () => {
 			this.fixWidths()
 		})
-		window.addEventListener('keypress', e => {
-			console.log(e.keyCode)
-			switch(e.keyCode) {
-				case 68: case 100: this.incPlaybackRate(); break
-				case 83: case 115: this.decPlaybackRate(); break
-				case 77: case 109: this.toggleMuted(); break
-				case 70: case 102: this.goFullscreen(); break
-				case 75: case 107: this.playPause(); break
-				case 32: this.playPause(); break
-				case 81: case 113: this.seekAmount(-10); break
-				case 69: case 101: this.seekAmount(10); break
-			}
-		})
-		screenfull.on('change', () => {
-			this.setState({ fullscreen: !this.state.fullscreen }, () => {
-				this.fixWidths()			
-			})
-		})
+
 	}
 
 	fixWidths() {
@@ -70,11 +60,10 @@ class AnimeVideo extends Component {
 
 	readyVideo() {
 		if(resumeFrom && vidIdentifier == this.props.videoSrc) {
-			console.log("ohhhhhh", playedSeconds)
 			this.player.seekTo(playedSeconds)
 			resumeFrom = false		
 		}
-		vidIdentifier=this.props.videoSrc			
+		vidIdentifier=this.props.videoSrc
 	}
 
 	render() {
@@ -163,8 +152,8 @@ class AnimeVideo extends Component {
 	}
 
 	seekAmount(seconds) {
+		playedSeconds = this.player.getCurrentTime()+seconds		
 		this.player.seekTo(this.player.getCurrentTime()+seconds)
-		playedSeconds = this.state.played*this.state.duration
 		resumeFrom = true
 	}
 
@@ -218,6 +207,29 @@ class AnimeVideo extends Component {
 		return secs >= 3600 ? " hh:mm:ss" : " mm:ss"
 	}
 
+}
+
+const hotkeyEvents = e => {
+	switch(e.keyCode) {
+		case 68: case 100: _this.incPlaybackRate(); break
+		case 83: case 115: _this.decPlaybackRate(); break
+		case 77: case 109: _this.toggleMuted(); break
+		case 70: case 102: console.log("hy44444key"); _this.goFullscreen(); break
+		case 75: case 107: _this.playPause(); break
+		case 32: _this.playPause(); break
+		case 113: _this.seekAmount(-10); break
+		case 81: _this.seekAmount(-60); break
+		case 101: _this.seekAmount(10); break
+		case 69: _this.seekAmount(60); break
+	}
+}
+
+const fullscreenEvent = () => {
+	console.log('screenful: ', screenfull.isFullscreen)
+	_this.setState({ fullscreen: !_this.state.fullscreen }, () => {
+		console.log('fullscreen: ', _this.state.fullscreen)
+		_this.fixWidths()			
+	})
 }
 
 export default AnimeVideo
