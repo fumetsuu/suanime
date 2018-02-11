@@ -320,7 +320,7 @@
     71: Horror
     66: Josei
     95: Kids
-    77: Magic
+    88: Magic
     75: Martial Arts
     85: Mecha
     83: Military
@@ -344,7 +344,7 @@
     76: Super Power
     80: Supernatural
     74: Thriller
-    71: Vampire
+    81: Vampire
     98: Yaoi
     97: Yuri
   ```
