@@ -9,8 +9,11 @@ class SearchResults extends Component {
         super(props)
         this.state = {
             resultCards: [],
-            nullSearch: false
+            nullSearch: false,
+            pagePrev: null,
+            pageNext: null
         }
+        this.stateFromURL = this.stateFromURL.bind(this)
     }
     
     generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre) {
@@ -29,25 +32,20 @@ class SearchResults extends Component {
     
     componentWillMount() {
         const defaultURL = "https://www.masterani.me/api/anime/filter?order=score_desc"
-        var resultCards = []
-        rp({uri: defaultURL, json: true}).then(response => {
-            response.data.forEach(animeInfo => {
-                resultCards.push(<ResultCard animeData={animeInfo} key={animeInfo.id}/>)
-            })
-            this.setState({ resultCards })
-        }).catch(err => {
-            console.log(err)
-            //network error
-        })
+        this.stateFromURL(defaultURL)
     }
     
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ resultCards: [], nullSearch: false })
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
         const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
+        this.stateFromURL(searchURL)
+    }
+
+    stateFromURL(url) {
+        this.setState({ resultCards: [], nullSearch: false })        
         var resultCards = []        
-        rp({uri: searchURL, json: true}).then(response => {
+        rp({uri: url, json: true}).then(response => {
             if(response.data && !response.data.length && !Array.isArray(response) || (Array.isArray(response) && !response.length)) {
                 this.setState({ nullSearch: true })
             } else {
@@ -55,7 +53,12 @@ class SearchResults extends Component {
                 resData.forEach(animeInfo => {
                     resultCards.push(<ResultCard animeData={animeInfo} key={animeInfo.id}/>)
                 })
-                this.setState({ resultCards })
+                var pagePrev = null, pageNext = null
+                if(!Array.isArray(response)) {
+                    pagePrev = response.prev_page_url ? url+'&page='+(response.current_page-1) : null
+                    pageNext = response.next_page_url ? url+'&page='+(response.current_page+1) : null
+                }
+                this.setState({ resultCards, pagePrev, pageNext })
             }
         }).catch(err => {
             console.log(err)
@@ -70,10 +73,19 @@ class SearchResults extends Component {
         if(!this.state.resultCards.length) {
             return <Loader loaderClass="central-loader"></Loader>
         }
+        let { pagePrev, pageNext } = this.state
+        var pagePrevClass = pagePrev ? 'pag-btn' : 'pag-btn disabled'
+        var pageNextClass = pageNext ? 'pag-btn' : 'pag-btn disabled'
         return (
             <div className="search-results-wrapper">
                 <div className="search-results-display">
                     {this.state.resultCards}
+                </div>
+                <div className="pagination">
+                    <div className="spacer-horizontal"/>
+                    <div className={pagePrevClass} onClick={() => {this.stateFromURL(pagePrev)}}><i className="material-icons">chevron_left</i></div>
+                    <div className={pageNextClass} onClick={() => {this.stateFromURL(pageNext)}}><i className="material-icons" >chevron_right</i></div>
+                    <div className="spacer-horizontal"></div>
                 </div>
             </div>
         )

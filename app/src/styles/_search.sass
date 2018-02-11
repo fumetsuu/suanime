@@ -83,13 +83,22 @@
         .search-results-wrapper
             width: 100%
             height: auto
+            display: grid
+            grid-template-rows: auto 80px
             .search-results-display
                 width: 100%
                 height: auto
                 display: flex
                 flex-wrap: wrap
+                animation: fadeIn 1s
         .null-search
             font-size: 2rem
             color: $light-grey
             opacity: 0.7
             padding: 50px
+
+@keyframes fadeIn
+    from
+        opacity: 0
+    to
+        opacity: 1
