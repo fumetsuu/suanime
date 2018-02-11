@@ -8,11 +8,16 @@ class SearchResults extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            resultCards: []
+            resultCards: [],
+            nullSearch: false
         }
     }
     
     generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre) {
+        if(searchValue) {
+            const baseURL = 'https://www.masterani.me/api/anime/search?search='
+            return baseURL+searchValue
+        }
         const baseURL = 'https://www.masterani.me/api/anime/filter?'
         var sortAdd = 'order='+searchSort.value
         var typeAdd = searchType.value != 'default' ? '&type='+searchType.value : ''
@@ -30,28 +35,48 @@ class SearchResults extends Component {
                 resultCards.push(<ResultCard animeData={animeInfo} key={animeInfo.id}/>)
             })
             this.setState({ resultCards })
+        }).catch(err => {
+            console.log(err)
+            //network error
         })
     }
     
 
     componentWillReceiveProps(nextProps) {
+        this.setState({ resultCards: [], nullSearch: false })
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
-        console.log('hey', this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre))
-        this.setState({ firstLoad: false})
+        const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
+        var resultCards = []        
+        rp({uri: searchURL, json: true}).then(response => {
+            if(response.data && !response.data.length && !Array.isArray(response) || (Array.isArray(response) && !response.length)) {
+                this.setState({ nullSearch: true })
+            } else {
+                var resData = Array.isArray(response) ? response : response.data
+                resData.forEach(animeInfo => {
+                    resultCards.push(<ResultCard animeData={animeInfo} key={animeInfo.id}/>)
+                })
+                this.setState({ resultCards })
+            }
+        }).catch(err => {
+            console.log(err)
+            //network error
+        })
     }
 
     render() {
+        if(this.state.nullSearch) {
+            return <div className="null-search">No Results!</div>
+        }
         if(!this.state.resultCards.length) {
             return <Loader loaderClass="central-loader"></Loader>
-        } else {
-            return (
-                <div className="search-results-wrapper">
-                    <div className="search-results-display">
-                        {this.state.resultCards}
-                    </div>
-                </div>
-                )
         }
+        return (
+            <div className="search-results-wrapper">
+                <div className="search-results-display">
+                    {this.state.resultCards}
+                </div>
+            </div>
+        )
     }
 }
 

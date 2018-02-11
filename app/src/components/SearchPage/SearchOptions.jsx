@@ -18,11 +18,16 @@ class SearchOptions extends Component {
     }
 
     render() {
+        var searchBarClass = "search-bar"
+        var searchValid = (this.state.searchValue.length > 0 && this.state.searchValue.length < 3)
+        searchBarClass += searchValid ? " search-invalid" : ''
+        var searchButtonClass = "search-bar-button"
+        searchButtonClass += searchValid ? " disabled" : ''
         return (
         <div className="search-options" onSubmit={this.fireSearch.bind(this)}>
             <form className="search-bar-container">
-                <input type="text" className="search-bar" placeholder="Search Anime..." onChange={this.handleSearchChange.bind(this)}/>
-                <button type="submit" value="submit" className="search-bar-button"><i className="material-icons">search</i></button>
+                <input type="text" className={searchBarClass} placeholder="Search Anime..." onChange={this.handleSearchChange.bind(this)}/>
+                <button type="submit" value="submit" className={searchButtonClass}><i className="material-icons">search</i></button>
             </form>
             <div className="dropdown-container">
             <div className="small-header">SORT</div>

@@ -20,9 +20,9 @@ export const statusOptions = [
 ]
 export const genreOptions = [
     {value: 'default', label: 'ALL'},
-    {value: '57', label: 'ACTION'},
-    {value: '58', label: 'ADVENTURE'},
-    {value: '69', label: 'CARS'},
+    {value: '57', label: 'Action'},
+    {value: '58', label: 'Adventure'},
+    {value: '69', label: 'Cars'},
     {value: '59', label: 'Comedy'},
     {value: '84', label: 'Dementia'},
     {value: '86', label: 'Demons'},
