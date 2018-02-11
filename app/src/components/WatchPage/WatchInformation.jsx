@@ -28,7 +28,7 @@ export default class WatchInformation extends Component {
                     animeInfo: 
                     <div className="anime-information">
                         <div className="tiny-header">Alt. Titles</div>
-                        <div className="alt-titles">{data.title_japanese? data.title_japanese:''}{data.title_english ? ', '+data.title_english : ''}{data.title_synonyms ? ', '+data.title_synonyms : ''}</div>
+                        <div className="alt-titles">{data.title_japanese? h2p(data.title_japanese):''}{data.title_english ? ', '+h2p(data.title_english) : ''}{data.title_synonyms ? ', '+h2p(data.title_synonyms) : ''}</div>
                         <ul className="primary-info">
                             <li>{data.score}</li>
                             <li>#{data.rank}</li>

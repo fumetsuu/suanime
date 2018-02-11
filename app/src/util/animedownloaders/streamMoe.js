@@ -31,9 +31,9 @@ export function streamMoe() {
     this.updateState = () => {
         this.comp.setState(Object.assign({}, this.comp.state, this.heldState))
     }
-    this.closed = false
     this.dlReq = null
     this.start = () => {
+        this.closed = false
         this.heldState.status = "STARTING_DOWNLOAD"
         this.comp.setState(this.heldState)
         rp(this.masteraniWatchURL)

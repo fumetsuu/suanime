@@ -10,6 +10,7 @@ import SideNav from './components/SideNav/SideNav.jsx'
 import HomeContent from './components/HomeContent/HomeContent.jsx'
 import DownloadsPage from './components/DownloadsPage/DownloadsContainer.jsx'
 import WatchPage from './components/WatchPage/WatchContainer.jsx'
+import SearchPage from './components/SearchPage/SearchContainer.jsx'
 export default class App extends Component {
 	render() {
 		return (
@@ -21,6 +22,7 @@ export default class App extends Component {
 						<Route exact path="/" component={HomeContent}/>
 						<Route path="/downloads" component={DownloadsPage}/>
 						<Route path="/watch" component={WatchPage}/>
+						<Route path="/search" component={SearchPage}/>
 					</Switch>
 				</div>
 			</Router>
