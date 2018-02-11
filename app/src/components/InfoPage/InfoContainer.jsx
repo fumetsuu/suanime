@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 const rp = require('request-promise')
 import Loader from '../Loader/Loader.jsx'
 import InfoHeader from './InfoHeader.jsx'
+import InfoMain from './InfoMain.jsx'
+import InfoEpisodes from './InfoEpisodes.jsx'
 import { connect } from 'react-redux'
 
 class InfoContainer extends Component {
@@ -31,10 +33,13 @@ class InfoContainer extends Component {
         let { MALData } = this.state
         let { title, title_english, title_japanese, link_canonical } = MALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
+        //pass maldata to infomain and masterani slug to episodes
         return (
         <div className="info-wrapper">
             <div className="info-container">
                 <InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} masteraniLink={masteraniLink}/>
+                <InfoMain/> 
+                <InfoEpisodes/>
             </div>
         </div>
         )

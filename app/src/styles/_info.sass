@@ -8,9 +8,13 @@
         color: white
         font-family: 'Lato'
         transition: 0.3s
+        display: grid
+        grid-template-columns: 1fr 1fr
+        grid-template-rows: 100px auto
         .info-header
             width: 100%
             height: 82px
+            grid-column: 1/#{3}
             display: grid
             grid-template-columns: auto auto repeat(2, 70px)
             .info-header-title
@@ -40,3 +44,12 @@
                 background-image: url('https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png')
             .masterani-circle
                 background-image: url('https://4.bp.blogspot.com/-YL78r6p1fyg/WdxknlfMQ7I/AAAAAAAAF9c/_s-5rWQiM7Udo0Crgza76dHlE79HFhxSgCPcBGAYYCw/s1600/Masterani.me.png')
+        .info-main
+            width: 100%
+            height: auto
+            background-color: red
+        .info-episodes
+            width: 100%
+            height: 75%
+            background-color: orange
+            overflow-y: auto
