@@ -14,6 +14,7 @@ class SearchResults extends Component {
             pageNext: null
         }
         this.stateFromURL = this.stateFromURL.bind(this)
+        this.addSpacerCards = this.addSpacerCards.bind(this)
     }
     
     generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre) {
@@ -29,7 +30,14 @@ class SearchResults extends Component {
         return baseURL+sortAdd+typeAdd+statusAdd+genreAdd
     }
 
-    
+    componentDidMount() {
+        window.addEventListener('resize', this.addSpacerCards, false)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.addSpacerCards, false)
+    }
+
     componentWillMount() {
         const defaultURL = "https://www.masterani.me/api/anime/filter?order=score_desc"
         this.stateFromURL(defaultURL)
@@ -58,7 +66,7 @@ class SearchResults extends Component {
                     pagePrev = response.prev_page_url ? url+'&page='+(response.current_page-1) : null
                     pageNext = response.next_page_url ? url+'&page='+(response.current_page+1) : null
                 }
-                this.setState({ resultCards, pagePrev, pageNext })
+                this.setState({ resultCards, pagePrev, pageNext }, () => { this.addSpacerCards() })
             }
         }).catch(err => {
             console.log(err)
@@ -89,6 +97,26 @@ class SearchResults extends Component {
                 </div>
             </div>
         )
+    }
+
+    addSpacerCards() {
+        this.setState({
+            resultCards: this.state.resultCards.filter(el => el.props.className!="invisible result-card-container"
+            )
+        })
+        var cardWidth = document.querySelector('.result-card-container').clientWidth+10
+        var containerWidth = document.querySelector('.search-results-display').clientWidth
+        var cardsInRow = Math.floor(containerWidth / cardWidth)
+        var cardsInLastRow = this.state.resultCards.length % cardsInRow
+        if(cardsInLastRow!=0) {
+            var temparr = []
+            for(var i = 0; i < cardsInRow-cardsInLastRow; i++) {
+                temparr.push(<div key={`invis_spacer_${i}`} className="invisible result-card-container"/>)
+            }
+            this.setState({
+                resultCards: [...this.state.resultCards, ...temparr]
+            })
+        }
     }
 }
 

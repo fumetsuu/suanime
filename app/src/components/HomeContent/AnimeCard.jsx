@@ -36,7 +36,7 @@ class AnimeCard extends Component {
       playClass = "none"
     }
     content = 
-      <div className="card-container">
+      <div className="card-container" onClick={this.launchInfoPage.bind(this)}>
         <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
         <div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
         <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
@@ -71,6 +71,15 @@ class AnimeCard extends Component {
     this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
     window.location.hash="#/watch"
   }
+
+  launchInfoPage() {
+    var animeName = this.props.animeDataRecent.anime.title
+    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
+    var slug = this.props.animeDataRecent.anime.slug
+    var animeID = this.props.animeDataRecent.anime.id
+    this.props.launchInfo(animeName, posterImg, slug, animeID)
+    window.location.hash = "#/info"
+  }
 }
 
 const mapStateToProps = state => {
@@ -100,6 +109,15 @@ const mapDispatchToProps = dispatch => {
         epNumber: epNumber,
         posterImg: posterImg,
         slug: slug
+      }
+    }),
+    launchInfo: (animeName, posterImg, slug, animeID) => dispatch({
+      type: 'LAUNCH_INFO',
+      payload: {
+        animeName: animeName,
+        posterImg: posterImg,
+        slug: slug,
+        animeID: animeID
       }
     })
   }
