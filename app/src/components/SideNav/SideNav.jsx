@@ -25,7 +25,7 @@ class SideNav extends Component {
     var sideWidth = props.show ? '250px' : '0'
     var toggleLeft = props.show ? '222px' : '-20px'
     var toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
-    var watchDisabled = props.watching ? 'false' : 'true'
+    var watchDisabled = props.watching ? false : true
     return (
       <div className="side-nav" style={{ width: sideWidth }}>
         <Title/>
