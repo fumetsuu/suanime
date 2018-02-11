@@ -79,7 +79,7 @@ class SearchResults extends Component {
             return <div className="null-search">No Results!</div>
         }
         if(!this.state.resultCards.length) {
-            return <Loader loaderClass="central-loader"></Loader>
+            return <Loader loaderClass="central-loader"/>
         }
         let { pagePrev, pageNext } = this.state
         var pagePrevClass = pagePrev ? 'pag-btn' : 'pag-btn disabled'

@@ -5,7 +5,8 @@ import { withRouter } from 'react-router-dom'
 import Title from './Title.jsx'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
-const toggableHashes = ["#/watch"]
+import { sidenavtoggle } from '../../util/sidenavtoggle.js'
+const toggableHashes = ["#/watch", "#/info"]
 
 class SideNav extends Component {
   constructor(props) {
@@ -14,9 +15,13 @@ class SideNav extends Component {
       showToggle: toggableHashes.includes(window.location.hash)
     }
     window.addEventListener('hashchange', () => {
+      var toggable = toggableHashes.includes(window.location.hash)
       this.setState({
-        showToggle: toggableHashes.includes(window.location.hash)
+        showToggle: toggable
       })
+      if(toggable) {
+        sidenavtoggle()
+      }
     })
   }
 

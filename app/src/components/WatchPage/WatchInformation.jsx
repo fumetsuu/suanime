@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 const rp = require('request-promise')
 import screenfull from 'screenfull'
+import { browserLink } from '../../util/browserlink';
 const h2p = require('html2plaintext')
 
 export default class WatchInformation extends Component {
@@ -32,7 +33,7 @@ export default class WatchInformation extends Component {
                         <ul className="primary-info">
                             <li>{data.score}</li>
                             <li>#{data.rank}</li>
-                            <li className="info-clickable" onClick={() => this.browserLink(seasonLink)}>{data.premiered}</li>
+                            <li className="info-clickable" onClick={() => browserLink(seasonLink)}>{data.premiered}</li>
                         </ul>
                         <div className="tiny-header">Synopsis</div>
                         <div className="synopsis">{h2p(data.synopsis)}</div>
@@ -133,22 +134,17 @@ export default class WatchInformation extends Component {
                     <div className="watch-episode">{this.props.epNumber}</div>
                 </div>
                 <div className="spacer-horizontal"/>
-                <div className="anime-out-link masterani-circle" onClick={() => this.browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
-                <div className={malstyle} onClick={() => this.browserLink(this.state.MALlink)}></div>
+                <div className="anime-out-link masterani-circle" onClick={() => browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
+                <div className={malstyle} onClick={() => browserLink(this.state.MALlink)}></div>
                 {this.state.animeInfo}
             </div>
         )
     }
-
-    browserLink(url) { //this is opening even without having to click
-        require('electron').shell.openExternal(url)        
-    }
-
     linedList(data) {
         return data.map((el, i) => <li key={i}>{h2p(el)}</li>)
     }
 
     nameList(data) {
-        return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>this.browserLink(el.url)}>{h2p(el.name)}</span></span>)
+        return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>browserLink(el.url)}>{h2p(el.name)}</span></span>)
     }
 }
