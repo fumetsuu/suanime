@@ -25,6 +25,11 @@ export default function reducer(state = {
                 showSideNav: !state.showSideNav
             })
         }
+        case "HIDE_SIDENAV": {
+            return Object.assign({}, state, {
+                showSideNav: false
+            })
+        }
         default: return state
     }
 }

@@ -23,7 +23,7 @@ export default class InfoEpisodes extends Component {
     var epCards = []
     rp({ uri: reqURL, json: true }).then(data => {
       data.episodes.forEach(ep => {
-        epCards.push(<InfoEpisodeCard key={ep.info.id} epData={ep.info} broadData={data.info}/>)
+        epCards.push(<InfoEpisodeCard key={ep.info.id} epData={ep.info} broadData={data.info} poster={data.poster}/>)
       })
       this.setState({
         isLoading: false,

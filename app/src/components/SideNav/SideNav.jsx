@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom'
 import Title from './Title.jsx'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
-import { sidenavtoggle } from '../../util/sidenavtoggle.js'
+import { sidenavhide, sidenavtoggle } from '../../util/sidenavtoggle.js'
 const toggableHashes = ["#/watch", "#/info"]
 
 class SideNav extends Component {
@@ -20,7 +20,7 @@ class SideNav extends Component {
         showToggle: toggable
       })
       if(toggable) {
-        sidenavtoggle()
+        sidenavhide()
       }
     })
   }
