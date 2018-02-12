@@ -29,7 +29,7 @@ class InfoContainer extends Component {
         if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
-        let { slug } = this.props
+        let { slug, animeID } = this.props
         let { MALData } = this.state
         let { title, title_english, title_japanese, link_canonical } = MALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
@@ -38,8 +38,8 @@ class InfoContainer extends Component {
         <div className="info-wrapper">
             <div className="info-container">
                 <InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} masteraniLink={masteraniLink}/>
-                <InfoMain/> 
-                <InfoEpisodes/>
+                <InfoMain MALData={MALData}/> 
+                <InfoEpisodes slug={slug} animeID={animeID}/>
             </div>
         </div>
         )

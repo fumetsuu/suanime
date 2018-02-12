@@ -47,9 +47,71 @@
         .info-main
             width: 100%
             height: auto
-            background-color: red
+            display: grid
+            grid-template-rows: 80px auto auto 50px
+            .primary-stats
+                width: 100%
+                font-family: 'Source Sans Pro'
+                text-transform: uppercase
+                font-size: 30px
+                .primary-stat
+                    display: inline-block
+            .secondary-stats-container
+                width: 100%
+                height: auto
+                display: grid
+                grid-template-columns: 225px auto
+                .anime-image
+                    width: 200px
+                    height: 280px
+                    background-position: center
+                    background-size: cover
+                .secondary-stats
+                    width: 95%
+                    height: 80%
+                    margin-top: 5%
+                    border-collapse: collapse
+                    tbody
+                        margin: 20px
+                        tr td
+                            padding: 3px
+                            font-family: 'Lato'
+                            font-size: 12px
+                            color: $light-grey
+                        .data-label
+                            font-size: 16px
+                            color: white
+                            font-family: 'Source Sans Pro'
+                            font-weight: 900
+            .synopsis-main
+                font-family: 'Lato'
+                font-size: 14px
+                font-style: italic
+                margin: 30px 0
+                padding-right: 50px
+                color: lighten($light-grey, 5%)
+                font-style: italic
+            .genres
+                -webkit-padding-start: 0
+                font-family: 'Source Sans Pro'
+                font-weight: 900
+                font-size: 10px
+                text-transform: uppercase
+                .info-clickable
+                    vertical-align: middle
+                .vertical-blue
+                    height: 18px
+                    width: 2px
         .info-episodes
             width: 100%
             height: 75%
             background-color: orange
             overflow-y: auto
+    
+.vertical-blue
+    display: inline-block
+    width: 3px
+    height: 36px
+    margin: 0 20px
+    vertical-align: middle
+    background-color: $light-blue
