@@ -34,7 +34,7 @@ export default class InfoMain extends Component {
                 <td>{broadcast}</td>
             </tr>
             <tr>
-              <td className="data-label">Studios:</td>
+              <td className="data-label">Studio:</td>
               <td>{studio[0].name}</td>
             </tr>
             <tr>
