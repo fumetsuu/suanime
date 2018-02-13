@@ -1,21 +1,78 @@
 import React, { Component } from 'react'
+import popura from 'popura'
+import { browserLink } from '../../util/browserlink';
+const pclient = popura()
 
 export default class IntegrationLogin extends Component {
-  render() {
-    return (
-        <div className="integration-login-wrapper">
-            <div className="integration-login">
-                <div className="login-title">Login</div>
-                <div className="horizontal-spacer"/>
-                <div className="register-button"><i className="material-icons">person_add</i></div>
-                <div className="MAL-button"/>
-                <form className="creds-form">
-                    <input type="text" className="username-text" placeholder="username"/>
-                    <input type="password" className="password-text" placeholder="password"/>
-                    <button type="submit" value="submit" className="mal-login-submit"><i className="material-icons">chevron_right</i></button>
-                </form>
+    constructor(props) {
+        super(props)
+        this.state = {
+            user: '',
+            pass: '',
+            loggingIn: false,
+            loginstatus: 200
+        }
+        this.handleUsernameChange = this.handleUsernameChange.bind(this)
+        this.handlePasswordChange = this.handlePasswordChange.bind(this)
+        this.MALLogin = this.MALLogin.bind(this)
+    }
+    
+    render() {
+        let { loggingIn, loginstatus } = this.state
+        var formsClass = loggingIn ? 'disabled' : ''
+        var loginButtonText = loggingIn ? 'logging in . . .' : (loginstatus == 401 ? 'invalid username or password' : loginstatus == 403 ? 'too many attempts, try again later' : (<i className="material-icons">chevron_right</i>))
+        var loginButtonClass = "mal-login-submit"
+        loginButtonClass+= loggingIn ? " disabled" : ''
+        loginButtonClass+= loginstatus!=200?" red disabled" : ''
+        return (
+            <div className="integration-login-wrapper">
+                <div className="integration-login">
+                    <div className="login-title">Login</div>
+                    <div className="horizontal-spacer"/>
+                    <div className="register-button" onClick={() => {browserLink('https://myanimelist.net/register.php')}}><i className="material-icons">person_add</i></div>
+                    <div className="MAL-button" onClick={() => {browserLink('https://myanimelist.net/')}}/>
+                    <form className="creds-form" onSubmit={this.MALLogin}>
+                        <input type="text" className={formsClass} placeholder="username" onChange={this.handleUsernameChange}/>
+                        <input type="password" className={formsClass} placeholder="password" onChange={this.handlePasswordChange}/>
+                        <button type="submit" value="submit" className={loginButtonClass}>{loginButtonText}</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    )
-  }
+        )
+    }
+
+    handleUsernameChange(e) {
+        this.setState({ user: e.target.value, loginstatus: 200 })
+    }
+
+    handlePasswordChange(e) {
+        this.setState({ pass: e.target.value, loginstatus: 200 })
+    }
+
+    MALLogin() {
+        //loading screen . . .
+        this.setState({ loggingIn: true, loginstatus: 200 })
+        let { user, pass } = this.state
+        pclient.setUser(user, pass)
+        let loginstatus
+        pclient.verifyAuth().then(res => {
+                console.log("Logged in as "+res.username)
+                loginstatus = 200
+                this.setState({ loggingIn: false, loginstatus })
+                global.estore.set("mal", {
+                    user: this.state.user,
+                    pass: this.state.pass
+                })
+                window.location.hash = "#/integration/animelist"             
+        }).catch(err => {
+            if(err.statusCode==401) {
+                console.log("Incorrect Username or Password!")
+                loginstatus = 401
+            } else if(err.statusCode==403) {
+                console.log("Too many failed attempts!")
+                loginstatus = 403
+            }
+            this.setState({ loggingIn: false, loginstatus })                        
+        })
+    }
 }

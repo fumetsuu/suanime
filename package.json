@@ -39,6 +39,7 @@
     "html2plaintext": "^2.0.1",
     "moment": "^2.20.1",
     "moment-duration-format": "^2.2.1",
+    "popura": "^1.2.5",
     "progress-stream": "^2.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
