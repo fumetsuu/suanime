@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 const rp = require('request-promise')
 import screenfull from 'screenfull'
 import { browserLink } from '../../util/browserlink';
+import { fixURL } from '../../util/util';
 const h2p = require('html2plaintext')
 
 export default class WatchInformation extends Component {
@@ -16,7 +17,7 @@ export default class WatchInformation extends Component {
 
     componentDidMount() {
         var jikanBase = 'http://api.jikan.me'
-        rp(`${jikanBase}/search/anime/`+encodeURIComponent(this.props.animeName)).then(data => {
+        rp(`${jikanBase}/search/anime/`+fixURL(this.props.animeName)).then(data => {
             var first = JSON.parse(data).result[0]
             this.setState({
                 MALlink: first.url

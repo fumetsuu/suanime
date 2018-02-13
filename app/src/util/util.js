@@ -37,3 +37,7 @@ export function convertSec(sec) {
             (m == 0 ? '' : `${m} min `) +
             (s == 0 ? '' : `${s} sec `)
 }
+
+export function fixURL(url) {
+    return encodeURIComponent(url.replace('/', ""))
+}

@@ -5,6 +5,7 @@ import InfoHeader from './InfoHeader.jsx'
 import InfoMain from './InfoMain.jsx'
 import InfoEpisodes from './InfoEpisodes.jsx'
 import { connect } from 'react-redux'
+import { fixURL } from '../../util/util.js'
 
 class InfoContainer extends Component {
     constructor(props) {
@@ -21,7 +22,7 @@ class InfoContainer extends Component {
 
     componentDidMount() {
         let { animeName } = this.props
-        const searchURL = `http://api.jikan.me/search/anime/${encodeURIComponent(animeName)}`
+        const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
         this.stateFromMAL(searchURL)
     }
     
