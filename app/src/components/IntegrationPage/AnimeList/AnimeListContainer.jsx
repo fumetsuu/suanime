@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-
-export default class AnimeListContainer extends Component {
+import { connect } from 'react-redux'
+class AnimeListContainer extends Component {
     constructor(props) {
         super(props)
         this.logout = this.logout.bind(this)   
@@ -21,3 +21,11 @@ export default class AnimeListContainer extends Component {
         window.location.hash = "#/integration/login"
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        pclient: state.animelistReducer.pclient
+    }
+}
+
+export default connect(mapStateToProps)(AnimeListContainer)

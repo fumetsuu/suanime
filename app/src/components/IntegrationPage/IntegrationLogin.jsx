@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import popura from 'popura'
 import { browserLink } from '../../util/browserlink';
-const pclient = popura()
+import { connect } from 'react-redux'
 
-export default class IntegrationLogin extends Component {
+class IntegrationLogin extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -12,6 +11,7 @@ export default class IntegrationLogin extends Component {
             loggingIn: false,
             loginstatus: 200
         }
+        this.pclient = props.pclient
         this.handleUsernameChange = this.handleUsernameChange.bind(this)
         this.handlePasswordChange = this.handlePasswordChange.bind(this)
         this.MALLogin = this.MALLogin.bind(this)
@@ -50,12 +50,11 @@ export default class IntegrationLogin extends Component {
     }
 
     MALLogin() {
-        //loading screen . . .
         this.setState({ loggingIn: true, loginstatus: 200 })
         let { user, pass } = this.state
-        pclient.setUser(user, pass)
+        this.pclient.setUser(user, pass)
         let loginstatus
-        pclient.verifyAuth().then(res => {
+        this.pclient.verifyAuth().then(res => {
                 console.log("Logged in as "+res.username)
                 loginstatus = 200
                 this.setState({ loggingIn: false, loginstatus })
@@ -63,6 +62,7 @@ export default class IntegrationLogin extends Component {
                     user: this.state.user,
                     pass: this.state.pass
                 })
+                this.props.setClient(this.pclient)
                 window.location.hash = "#/integration/animelist"             
         }).catch(err => {
             if(err.statusCode==401) {
@@ -76,3 +76,23 @@ export default class IntegrationLogin extends Component {
         })
     }
 }
+
+const mapStateToProps = state => {
+    console.log(state.animelistReducer.pclient)
+    return {
+        pclient: state.animelistReducer.pclient
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setClient: pclient => dispatch({
+            type: 'SET_CLIENT',
+            payload: {
+                pclient: pclient
+            }
+        })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(IntegrationLogin)
