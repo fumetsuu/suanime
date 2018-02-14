@@ -10,7 +10,8 @@ Todo
 - [ ] queued/automatic downloads
 - [ ] anime airing schedule
 - [ ] seasonal anime
-search page back button
+- [ ] search page back button
+- [ ] mal update history
 
 ## development
 - [ ] refactor home page code
