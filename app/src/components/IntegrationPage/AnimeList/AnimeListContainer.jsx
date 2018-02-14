@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import ListCard from './ListCard.jsx'
 class AnimeListContainer extends Component {
     constructor(props) {
         super(props)
@@ -7,7 +8,7 @@ class AnimeListContainer extends Component {
             isLoading: true,
             listCards: [],
             listData: null,
-            listStatus: 'CW',
+            listStatus: 1,
             listSort: 'TITLE',
             listView: 'ROWS',
             listInfo: []
@@ -16,6 +17,7 @@ class AnimeListContainer extends Component {
         this.pclient = this.props.pclient
         this.logout = this.logout.bind(this)  
         this.getList = this.getList.bind(this)
+        this.updateDisplay = this.updateDisplay.bind(this)
         
         this.getList()
     }
@@ -48,7 +50,7 @@ class AnimeListContainer extends Component {
                     <div className="view-mode square"><i className="material-icons">view_module</i></div>
                 </div>
                 <div className="animelist-display">
-                    cards go here haaaaaayyyyyyyyyyyyyyy
+                    {this.state.listCards}
                 </div>
             </div>
         </div>
@@ -63,12 +65,36 @@ class AnimeListContainer extends Component {
     getList() {
         this.pclient.getAnimeList()
             .then(res => {
+                console.log(res)
                 let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
                 this.setState({
-                    listInfo: [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch]
+                    listInfo: [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch],
+                    listData: res.list
+                }, () => {
+                    console.log("HI")
+                    this.updateDisplay()
                 })
             })
             .catch(err => console.log(err))
+    }
+
+    updateDisplay() {
+        let { listData, listStatus } = this.state
+        if(listData) {
+            var listCards = []
+            var statusFilteredData = listData.filter(anime => anime.my_status==listStatus)
+            //may have to use switch-case for different sorting types possibly
+            var sortFilteredData = statusFilteredData.sort((a1, a2) => {
+                var a1title = a1.series_title.toLowerCase(),
+                    a2title = a2.series_title.toLowerCase()
+                return a1title <= a2title ? -1 : 1
+            })
+            sortFilteredData.forEach(animeData => {
+                listCards.push(<ListCard key={animeData.series_animedb_id} animeData={animeData}/>)
+            })
+            console.log(listCards)
+            this.setState({ listCards })
+        }
     }
 
 }
