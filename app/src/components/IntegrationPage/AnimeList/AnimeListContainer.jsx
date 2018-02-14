@@ -3,19 +3,34 @@ import { connect } from 'react-redux'
 class AnimeListContainer extends Component {
     constructor(props) {
         super(props)
-        this.logout = this.logout.bind(this)   
+        this.state = {
+            isLoading: true,
+            listCards: [],
+            listData: null,
+            listStatus: 'CW',
+            listSort: 'TITLE',
+            listView: 'ROWS',
+            listInfo: []
+        }
+
+        this.pclient = this.props.pclient
+        this.logout = this.logout.bind(this)  
+        this.getList = this.getList.bind(this)
+        
+        this.getList()
     }
     
     render() {
+        let [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch] = this.state.listInfo
         return (
         <div className="animelist-wrapper">
             <div className="tabs-area">
-                <div className="status-tab">Currently Watching</div>
-                <div className="status-tab status-tab-active">Completed</div>
-                <div className="status-tab">On Hold</div>
-                <div className="status-tab">Dropped</div>
-                <div className="status-tab">Plan to watch</div>
-                <div className="username">fumetsu</div>
+                <div className="status-tab">Currently Watching {`(${user_watching})`}</div>
+                <div className="status-tab status-tab-active">Completed {`(${user_completed})`}</div>
+                <div className="status-tab">On Hold {`(${user_onhold})`}</div>
+                <div className="status-tab">Dropped {`(${user_dropped})`}</div>
+                <div className="status-tab">Plan to watch {`(${user_plantowatch})`}</div>
+                <div className="username"> {user_name}</div>
                 <div className="square info"><i className="material-icons">info</i></div>
                 <div className="square logout" onClick={this.logout}><i className="material-icons">exit_to_app</i></div>
             </div>
@@ -44,6 +59,18 @@ class AnimeListContainer extends Component {
         global.estore.delete("mal")
         window.location.hash = "#/integration/login"
     }
+
+    getList() {
+        this.pclient.getAnimeList()
+            .then(res => {
+                let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
+                this.setState({
+                    listInfo: [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch]
+                })
+            })
+            .catch(err => console.log(err))
+    }
+
 }
 
 const mapStateToProps = state => {
