@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Dropdown from 'react-dropdown'
 import GenreSearch from './GenreSearch.jsx'
 import { sortOptions, typeOptions, statusOptions, genreOptions } from './searchOptionsData.js'
+import { search } from '../../actions/actions.js'
 
 import { connect } from 'react-redux'
 
@@ -87,16 +88,9 @@ class SearchOptions extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        search: (searchValue, searchSort, searchType, searchStatus, searchGenre) => dispatch({
-            type: "SEARCH",
-            payload: {
-                searchValue: searchValue,
-                searchSort: searchSort,
-                searchType: searchType,
-                searchStatus: searchStatus,
-                searchGenre: searchGenre
-            }
-        })
+        search: (searchValue, searchSort, searchType, searchStatus, searchGenre) => dispatch(
+            search(searchValue, searchSort, searchType, searchStatus, searchGenre)
+        )
     }
 }
 

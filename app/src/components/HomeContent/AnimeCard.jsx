@@ -3,6 +3,7 @@ const path = require('path')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { convertMS } from '../../util/util.js'
+import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
 const rp = require('request-promise')
 
 let content
@@ -91,35 +92,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch({
-      type: 'QUEUE_DOWNLOAD',
-      payload: {
-        epLink: epLink,
-        animeFilename: animeFilename,
-        posterImg: posterImg,
-        animeName: animeName,
-        epTitle: epTitle
-      }
-    }),
-    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch({
-      type: 'PLAY_ANIME',
-      payload: {
-        videoFile: videoFile,
-        animeName: animeName,
-        epNumber: epNumber,
-        posterImg: posterImg,
-        slug: slug
-      }
-    }),
-    launchInfo: (animeName, posterImg, slug, animeID) => dispatch({
-      type: 'LAUNCH_INFO',
-      payload: {
-        animeName: animeName,
-        posterImg: posterImg,
-        slug: slug,
-        animeID: animeID
-      }
-    })
+    queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(
+		queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
+	),
+    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
+		playAnime(videoFile, animeName, epNumber, posterImg, slug)
+	),
+    launchInfo: (animeName, posterImg, slug, animeID) => dispatch(
+		launchInfo(animeName, posterImg, slug, animeID)
+	)
   }
 }
 

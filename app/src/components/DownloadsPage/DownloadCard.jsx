@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
 const fs = require('fs')
 const path = require('path')
+import { createdlObj, clearDL, playAnime } from '../../actions/actions.js'
 
 //status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'STARTING_DOWNLOAD'
 class DownloadCard extends Component {
@@ -155,29 +156,13 @@ class DownloadCard extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    createdlObj: (animeFilename ,newdlObj) => dispatch({
-      type: 'CREATE_DLOBJ',
-      payload: {
-        id: animeFilename,
-        dlObj: newdlObj
-      }
-    }),
-    clearDL: (animeFilename) => dispatch({
-      type: 'CLEAR_DOWNLOAD',
-      payload: {
-        animeFilename: animeFilename
-      }
-    }),
-    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch({
-      type: 'PLAY_ANIME',
-      payload: {
-        videoFile: videoFile,
-        animeName: animeName,
-        epNumber: epNumber,
-        posterImg: posterImg,
-        slug: slug
-      }
-    })
+    createdlObj: (animeFilename ,newdlObj) => dispatch(
+		createdlObj(animeFilename, newdlObj)
+	),
+    clearDL: (animeFilename) => dispatch(clearDL(animeFilename)),
+    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
+		playAnime(videoFile, animeName, epNumber, posterImg, slug)
+	)
   }
 }
 

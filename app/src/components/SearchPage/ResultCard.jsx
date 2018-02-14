@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-
+import { launchInfo } from '../../actions/actions.js'
 import { connect } from 'react-redux'
 
 class ResultCard extends Component {
@@ -34,15 +34,9 @@ class ResultCard extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        launchInfo: (animeName, posterImg, slug, animeID) => dispatch({
-            type: 'LAUNCH_INFO',
-            payload: {
-              animeName: animeName,
-              posterImg: posterImg,
-              slug: slug,
-              animeID: animeID
-            }
-          })
+        launchInfo: (animeName, posterImg, slug, animeID) => dispatch(
+            launchInfo(animeName, posterImg, slug, animeID)
+        )
     }
 }
 

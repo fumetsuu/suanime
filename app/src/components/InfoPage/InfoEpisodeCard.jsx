@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 const path = require('path')
+import { queueDL, playAnime } from '../../actions/actions.js'
 import { connect } from 'react-redux'
 
 class InfoEpisodeCard extends Component {
@@ -76,26 +77,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => { //create actions.js ! this is repeated from AnimeCard.jsx
     return {
-      queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch({
-        type: 'QUEUE_DOWNLOAD',
-        payload: {
-          epLink: epLink,
-          animeFilename: animeFilename,
-          posterImg: posterImg,
-          animeName: animeName,
-          epTitle: epTitle
-        }
-      }),
-      playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch({
-        type: 'PLAY_ANIME',
-        payload: {
-          videoFile: videoFile,
-          animeName: animeName,
-          epNumber: epNumber,
-          posterImg: posterImg,
-          slug: slug
-        }
-      })
+      queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(
+		queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
+	  ),
+      playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
+		playAnime(videoFile, animeName, epNumber, posterImg, slug)
+	  )
     }
 }
 

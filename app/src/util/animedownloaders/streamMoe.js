@@ -6,6 +6,7 @@ const progress = require('request-progress')
 const cheerio = require('cheerio')
 const bytes = require('bytes')
 import { convertSec } from '../util.js'
+import { completeDL } from '../../actions/actions.js'
 import store from '../../store.js'
 
 export function streamMoe() {
@@ -176,15 +177,9 @@ export function streamMoe() {
                         completeDate: completeDate
                     }
                     this.comp.setState(this.heldState)
-                    store.dispatch({
-                        type: "COMPLETED_DOWNLOAD",
-                        payload: {
-                            animeFilename: this.animeFilename,
-                            totalSize: this.comp.state.totalSize,
-                            elapsed: this.comp.state.elapsed,
-                            completeDate: completeDate
-                        }
-                    })
+                    store.dispatch(
+						completeDL(this.animeFilename, this.comp.state.totalSize, this.comp.state.elapsed, completeDate)
+					)
                 } else {
                     console.log("closed")
                 }
