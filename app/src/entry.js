@@ -33,6 +33,9 @@ if(!global.estore.get('initialised')) {
 if(!fs.existsSync(path.join(__dirname, '../downloads/'))) {
     fs.mkdirSync(path.join(__dirname, '../downloads/'))
 }
+if(!fs.existsSync(path.join(__dirname, '../mal-cache/'))) {
+    fs.mkdirSync(path.join(__dirname, '../mal-cache/'))
+}
 
 render(
     <Provider store={store}>

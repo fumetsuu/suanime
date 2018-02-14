@@ -126,6 +126,7 @@
             width: 98%
             margin-left: 1%
             height: auto
+            min-height: 700px
             background-color: $black
             .sort-area
                 width: 100%
@@ -158,6 +159,7 @@
                         color: $light-blue
                 .sort-by-active
                     background-color: $light-blue
+                    pointer-events: none
                 .view-mode
                     margin-top: 5px
                     &:hover
@@ -165,7 +167,6 @@
                 .view-mode-active
                     background-color: $light-blue
             .animelist-display
-                height: auto
                 width: 100%
                 display: flex
                 flex-wrap: wrap
@@ -176,6 +177,7 @@
                     height: 200px
                     margin: 5px
                     background-color: $grey
+                    transition: 0.3s
                     .bg-img
                         width: 100%
                         height: 100%

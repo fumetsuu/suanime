@@ -4,7 +4,7 @@ const { app, BrowserWindow } = electron
 require('electron-debug')({ showDevTools: true })
 
 require('electron-reload')(__dirname, {
-    ignored: /downloads\/|node_modules\/|app\/build\//
+    ignored: /downloads\/|node_modules\/|app\/build\/|mal-cache\//
 });
 
 let mainWindow
