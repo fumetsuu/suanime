@@ -6,7 +6,7 @@ Todo
 - [x] watch anime
 - [x] search anime
 - [x] view anime info
-- [ ] mal integration
+- [ ] mal integration (working on)
 - [ ] queued/automatic downloads
 - [ ] anime airing schedule
 - [ ] seasonal anime
@@ -16,3 +16,4 @@ Todo
 ## development
 - [ ] refactor home page code
 - [ ] improve downloads
+- [ ] optimise list sort and load

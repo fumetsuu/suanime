@@ -11,16 +11,16 @@ export function convertMS(ms) {
         if(h >= 12) {
             d++
         }
-        return d == 1 ? `YESTERDAY` : `${d} DAYS`
+        return d == 1 ? `Yesterday` : `${d} Days`
     }
     if(h!=0) {
-        return h == 1 ? `${h} HOUR` : `${h} HOURS`
+        return h == 1 ? `${h} Hour` : `${h} Hours`
     }
     if(m!=0) {
-        return m == 1 ? `${m} MINUTE ` : `${m} MINUTES `
+        return m == 1 ? `${m} Minute ` : `${m} Minutes `
     }
     if(s!=0) {
-        return s == 1 ? `${s} SECOND` : `${s} SECONDS`
+        return s == 1 ? `${s} Second` : `${s} Seconds`
     }
 }
 

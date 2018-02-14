@@ -90,7 +90,7 @@
             height: 40px
             background-color: $dark-grey
             display: grid
-            grid-template-columns: repeat(5, minmax(auto, 1px)) auto 40px 40px
+            grid-template-columns: repeat(5, minmax(auto, 1px)) auto 40px 40px 40px
             .status-tab
                 border-right: 1px solid lighten($grey, 5%)
                 font-family: 'Lato'
@@ -122,6 +122,9 @@
             .info
                 &:hover
                     background-color: $light-blue
+            .sync
+                &:hover
+                    background-color: $mal
         .animelist-container
             width: 98%
             margin-left: 1%
@@ -173,17 +176,93 @@
                 margin-bottom: 15px
                 padding-bottom: 15px
                 .list-card-container
-                    width: 140px
-                    height: 200px
+                    width: 100%
+                    height: 100px
                     margin: 5px
                     background-color: $grey
                     transition: 0.3s
+                    display: grid
+                    grid-template-columns: 90px 1fr 2fr
                     .bg-img
-                        width: 100%
-                        height: 100%
+                        width: 75px
+                        height: 100px
                         background-position: center
                         background-size: cover
-
+                    .series-information-container
+                        width: 100%
+                        height: 100px
+                        color: $light-grey
+                        display: grid
+                        grid-template-rows: 2fr repeat(3, 1fr)
+                        position: relative
+                        &:after
+                            content: ''
+                            width: 1px
+                            height: 80px
+                            position: absolute
+                            top: 10px
+                            right: 0
+                            background-color: $light-grey
+                        .series-title
+                            font-family: 'Source Sans Pro'
+                            font-weight: 900
+                            letter-spacing: 1px
+                            margin-top: 5px
+                            color: white
+                        .series-info
+                            font-family: 'Lato'
+                            font-size: 12px
+                            font-weight: 400
+                    .my-info
+                        position: relative
+                        width: 100%
+                        height: 100px
+                        display: grid
+                        font-family: 'Lato'
+                        font-weight: 400
+                        margin-left: 20px
+                        grid-template-columns: 100px auto
+                        grid-template-rows: repeat(3, 1fr)
+                        .last-updated
+                            position: absolute
+                            top: 7px
+                            right: 40px
+                            font-style: italic
+                            text-align: right
+                            font-size: 12px
+                        .info-label
+                            text-align: start
+                            line-height: 33px
+                            font-size: 12px
+                            font-style: italic
+                        .info-editable
+                            background-color: $black
+                            width: fit-content
+                            height: 13px
+                            padding: 5px 8px
+                            margin-top: 7px
+                            line-height: 13px
+                            font-size: 12px
+                            &:hover
+                                cursor: pointer
+                                filter: brightness(1.2)
+                        .progress-info-container
+                            width: unquote("calc(100% - 40px)")
+                            height: 100%
+                            display: grid
+                            grid-template-columns: 90% 10%
+                            .progress-bar-container
+                                width: 100%
+                                height: 10px
+                                margin-top: 12px
+                                background-color: $light-grey
+                                .progress-bar-progress
+                                    background-color: $light-blue
+                                    height: 100%
+                            .progress-text
+                                font-size: 12px
+                                line-height: 33px
+                                justify-self: end
 
 .square
     width: 40px

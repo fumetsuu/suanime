@@ -21,12 +21,23 @@ class AnimeListContainer extends Component {
         this.updateDisplay = this.updateDisplay.bind(this)
         this.setListStatus = this.setListStatus.bind(this)
         this.setListSort = this.setListSort.bind(this)
-        
-        this.getList()
+        this.syncList = this.syncList.bind(this)
+    }
+
+    componentDidMount() {
+        if(global.estore.get("listdata") && global.estore.get("listinfo")) {
+            this.setState({ 
+                listData: global.estore.get("listdata"),
+                listInfo: global.estore.get("listinfo"),
+                isLoading: false }, () => {
+                this.updateDisplay()
+                })
+        } else {
+            this.getList()
+        }
     }
     
     render() {
-
         let [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch] = this.state.listInfo
         let { listStatus, listSort, listView, isLoading } = this.state
         return (
@@ -38,6 +49,7 @@ class AnimeListContainer extends Component {
                 <div className={`status-tab${listStatus == 4?' status-tab-active':''}`} statusvalue={4} onClick={this.setListStatus}>Dropped {user_dropped?`(${user_dropped})`:''}</div>
                 <div className={`status-tab${listStatus == 6?' status-tab-active':''}`} statusvalue={6} onClick={this.setListStatus}>Plan to watch {user_plantowatch?`(${user_plantowatch})`:''}</div>
                 <div className="username"> {user_name}</div>
+                <div className="square sync" onClick={this.syncList}><i className="material-icons">sync</i></div>
                 <div className="square info"><i className="material-icons">info</i></div>
                 <div className="square logout" onClick={this.logout}><i className="material-icons">exit_to_app</i></div>
             </div>
@@ -54,7 +66,7 @@ class AnimeListContainer extends Component {
                     <div className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`}><i className="material-icons">view_list</i></div>
                     <div className={`view-mode square${listView == 'CARDS'?' view-mode-active':''}`}><i className="material-icons">view_module</i></div>
                 </div>
-                {isLoading ? <Loader loaderClass="central-loader loader-bg-full"/>  :
+                {isLoading ? <Loader loaderClass="central-loader"/>  :
                 <div className="animelist-display">
                     {this.state.listCards}
                 </div>
@@ -73,8 +85,15 @@ class AnimeListContainer extends Component {
         this.pclient.getAnimeList()
             .then(res => {
                 let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
+                var listInfo = [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch]
+                global.estore.delete('listdata')
+                global.estore.delete('listInfo')
+                global.estore.set({
+                    listdata: res.list,
+                    listinfo: listInfo
+                })
                 this.setState({
-                    listInfo: [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch],
+                    listInfo: listInfo,
                     listData: res.list,
                     isLoading: false
                 }, () => {
@@ -82,6 +101,12 @@ class AnimeListContainer extends Component {
                 })
             })
             .catch(err => console.log(err))
+    }
+
+    syncList() {
+        this.setState({ isLoading: true }, () =>{
+            this.getList()
+        })
     }
 
     setListStatus(e) {
@@ -150,6 +175,7 @@ class AnimeListContainer extends Component {
             sortFilteredData.forEach(animeData => {
                 listCards.push(<ListCard key={animeData.series_animedb_id} animeData={animeData}/>)
             })
+            console.log(sortFilteredData)
             this.setState({ listCards })
         }
     }
