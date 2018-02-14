@@ -57,7 +57,7 @@ export function launchInfo(animeName, posterImg, slug, animeID) {
 
 export function completeDL(animeFilename, totalSize, elapsed, completeDate) {
 	return {
-		type: 'COMPLETE_DOWNLOAD',
+		type: 'COMPLETED_DOWNLOAD',
 		payload: {
 			animeFilename: animeFilename,
 			totalSize: totalSize,
