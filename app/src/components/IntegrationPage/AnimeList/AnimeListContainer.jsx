@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
+
+const CARDS_PER_LOAD = 20
 class AnimeListContainer extends Component {
     constructor(props) {
         super(props)
@@ -12,19 +14,22 @@ class AnimeListContainer extends Component {
             listStatus: 1,
             listSort: 'TITLE',
             listView: 'ROWS',
-            listInfo: []
+            listInfo: [],
+            sortFilteredData: []
         }
 
         this.pclient = this.props.pclient
         this.logout = this.logout.bind(this)  
         this.getList = this.getList.bind(this)
         this.updateDisplay = this.updateDisplay.bind(this)
+        this.loadMore = this.loadMore.bind(this)
         this.setListStatus = this.setListStatus.bind(this)
         this.setListSort = this.setListSort.bind(this)
         this.syncList = this.syncList.bind(this)
     }
 
     componentDidMount() {
+
         if(global.estore.get("listdata") && global.estore.get("listinfo")) {
             this.setState({ 
                 listData: global.estore.get("listdata"),
@@ -35,6 +40,12 @@ class AnimeListContainer extends Component {
         } else {
             this.getList()
         }
+        window.addEventListener('scroll', (e) => {
+            var alcontainer = document.querySelector('.animelist-container')
+            if(alcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 100) {
+                this.loadMore()
+            }
+        }, true)
     }
     
     render() {
@@ -78,6 +89,7 @@ class AnimeListContainer extends Component {
 
     logout() {
         global.estore.delete("mal")
+        //dispatch kill pclient
         window.location.hash = "#/integration/login"
     }
 
@@ -172,12 +184,25 @@ class AnimeListContainer extends Component {
                     break
                 }
             }
-            sortFilteredData.forEach(animeData => {
-                listCards.push(<ListCard key={animeData.series_animedb_id} animeData={animeData}/>)
-            })
-            console.log(sortFilteredData)
-            this.setState({ listCards })
+            var endIndex = CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : CARDS_PER_LOAD
+            for(var i = 0; i < endIndex; i++) {
+                listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]}/>)
+
+            }
+            this.setState({ listCards, sortFilteredData })
         }
+    }
+
+    loadMore() {
+        console.log("loading more.....")
+        let { listCards, sortFilteredData } = this.state
+        var addedCards = []
+        var currentLength = listCards.length
+        var endIndex = currentLength+CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : currentLength+CARDS_PER_LOAD
+        for(var i = currentLength; i < endIndex; i++) {
+            addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]}/>)
+        }
+        this.setState({ listCards: [...this.state.listCards, ...addedCards] })
     }
 
 }

@@ -11,10 +11,12 @@ class IntegrationContainer extends Component {
   constructor(props) {
     super(props)
     if(global.estore.get("mal") && global.estore.get("mal").user) {
-      let { user, pass } = global.estore.get("mal")
-      pclient.setUser(user, pass)
-      props.setClient(pclient)
-      window.location.hash = "#/integration/animelist"
+      if(!props.pclient) {
+        let { user, pass } = global.estore.get("mal")
+        pclient.setUser(user, pass)
+        props.setClient(pclient)
+      }
+        window.location.hash = "#/integration/animelist"
     } else {
       props.setClient(pclient) //new client, no login details
       window.location.hash = "#/integration/login"
@@ -37,6 +39,12 @@ class IntegrationContainer extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    pclient: state.animelistReducer.pclient
+  }
+}
+
 const mapDispatchToProps = dispatch => {
   return {
     setClient: pclient => dispatch({
@@ -48,4 +56,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(IntegrationContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(IntegrationContainer)
