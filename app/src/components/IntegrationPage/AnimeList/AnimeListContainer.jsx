@@ -68,11 +68,11 @@ class AnimeListContainer extends Component {
             <div className="animelist-container"> 
                 <div className="sort-area"> 
                     <div className="sort-by-text">Sort by: </div> 
-                    <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${listSort == 'TITLE'?' sort-by-active':''}`}>Title</div>
-                    <div sortvalue="PROGRESS" onClick={this.setListSort} className={`sort-by${listSort == 'PROGRESS'?' sort-by-active':''}`}>Progress</div> 
-                    <div sortvalue="SCORE" onClick={this.setListSort} className={`sort-by${listSort == 'SCORE'?' sort-by-active':''}`}>Score</div>
-                    <div sortvalue="AIRED" onClick={this.setListSort} className={`sort-by${listSort == 'AIRED'?' sort-by-active':''}`}>Aired</div>
-                    <div sortvalue="LAST_UPDATED" onClick={this.setListSort} className={`sort-by${listSort == 'LAST_UPDATED'?' sort-by-active':''}`}>Last updated</div> 
+                    <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
+                    <div sortvalue="PROGRESS" onClick={this.setListSort} className={`sort-by${/PROGRESS/.test(listSort)?' sort-by-active':''}`}>Progress</div> 
+                    <div sortvalue="SCORE" onClick={this.setListSort} className={`sort-by${/SCORE/.test(listSort)?' sort-by-active':''}`}>Score</div>
+                    <div sortvalue="AIRED" onClick={this.setListSort} className={`sort-by${/AIRED/.test(listSort)?' sort-by-active':''}`}>Aired</div>
+                    <div sortvalue="LAST_UPDATED" onClick={this.setListSort} className={`sort-by${/LAST_UPDATED/.test(listSort)?' sort-by-active':''}`}>Last updated</div> 
                     <div className="spacer-horizontal"/>
                     <div className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`}><i className="material-icons">view_headline</i></div>
                     <div className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`}><i className="material-icons">view_list</i></div>
@@ -126,6 +126,9 @@ class AnimeListContainer extends Component {
 
     setListSort(e) {
         var listSort = e.target.getAttribute("sortvalue")
+        if(this.state.listSort == listSort) {
+            listSort = 'v'+listSort
+        }
         this.setState({ listSort }, () => {
             this.updateDisplay()
         })
@@ -141,44 +144,48 @@ class AnimeListContainer extends Component {
             var listCards = []
             var statusFilteredData = listData.filter(anime => anime.my_status==listStatus)
             let sortFilteredData
+            var orderA = -1, orderB = 1
+            if(listSort[0] == 'v') {
+                orderA = 1, orderB = -1
+            }
             switch(listSort) {
-                case 'TITLE': {
+                case 'TITLE': case 'vTITLE': {
                     sortFilteredData = statusFilteredData.sort((a1, a2) => {
                         var a1title = a1.series_title.toString().toLowerCase(),
                             a2title = a2.series_title.toString().toLowerCase()
-                        return a1title <= a2title ? -1 : 1
+                        return a1title <= a2title ? orderA : orderB
                     })
                     break
                 }
-                case 'PROGRESS': {
+                case 'PROGRESS': case 'vPROGRESS': {
                     sortFilteredData = statusFilteredData.sort((a1, a2) => {
                         var a1eps = a1.my_watched_episodes,
                             a2eps = a2.my_watched_episodes
-                        return a1eps >= a2eps ? -1 : 1
+                        return a1eps >= a2eps ? orderA : orderB
                     })
                     break
                 }
-                case 'SCORE': {
+                case 'SCORE': case 'vSCORE': {
                     sortFilteredData = statusFilteredData.sort((a1, a2) => {
                         var a1score = a1.my_score,
                             a2score = a2.my_score
-                        return a1score >= a2score ? -1 : 1
+                        return a1score >= a2score ? orderA : orderB
                     })
                     break
                 }
-                case 'AIRED': {
+                case 'AIRED': case 'vAIRED': {
                     sortFilteredData = statusFilteredData.sort((a1, a2) => {
                         var a1start = a1.series_start,
                             a2start = a2.series_start
-                        return a1start >= a2start ? -1 : 1
+                        return a1start >= a2start ? orderA : orderB
                     })
                     break
                 }
-                case 'LAST_UPDATED': {
+                case 'LAST_UPDATED': case 'vLAST_UPDATED': {
                     sortFilteredData = statusFilteredData.sort((a1, a2) => {
                         var a1last = a1.my_last_updated,
                             a2last = a2.my_last_updated
-                        return a1last >= a2last ? -1 : 1
+                        return a1last >= a2last ? orderA : orderB
                     })
                     break
                 }

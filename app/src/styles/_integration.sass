@@ -171,7 +171,9 @@
                         color: $light-blue
                 .sort-by-active
                     background-color: $light-blue
-                    pointer-events: none
+                    &:hover
+                        color: white
+                        background-color: darken($light-blue, 5%)
                 .view-mode
                     margin-top: 5px
                     &:hover
