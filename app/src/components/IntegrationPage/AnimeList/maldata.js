@@ -11,3 +11,11 @@ export const scoresData = [
     { value: 9, label: '9' },
     { value: 10, label: '10' },
 ]
+
+export const statusData = [
+    { value: 1, label: 'Currently Watching' },
+    { value: 2, label: 'Completed' },
+    { value: 3, label: 'On Hold' },
+    { value: 4, label: 'Dropped' },
+    { value: 6, label: 'Plan to watch' }
+]

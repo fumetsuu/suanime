@@ -9,7 +9,7 @@ imageCache.setOptions({
 import { connect } from 'react-redux'
 import { updateAnime } from '../../../actions/actions.js'
 import DropRight from './DropRight.jsx'
-import { scoresData } from './maldata.js'
+import { scoresData, statusData } from './maldata.js'
 class ListCard extends Component {
     constructor(props) {
         super(props)
@@ -19,6 +19,7 @@ class ListCard extends Component {
         this.updateEp = this.updateEp.bind(this)
         this.incEp = this.incEp.bind(this)
         this.updateScore = this.updateScore.bind(this)
+        this.updateStatus = this.updateStatus.bind(this)
         this.pclient = props.pclient
     }
     
@@ -42,9 +43,9 @@ class ListCard extends Component {
             <div className="my-info">
                 <div className="last-updated">Last updated: {lastUpdated}</div>
                 <div className="info-label">Status: </div>
-                <div className="info-editable">{statusCodeToText(my_status)}</div>
+                <DropRight value={statusData.find(el => el.value == my_status)} options={statusData} onChange={this.updateStatus} key="statuses" className="status-select"/>
                 <div className="info-label">Score: </div>
-                <DropRight value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore}/>
+                <DropRight value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
                 <div className="info-label">Progress: </div>
                 <div className="progress-info-container">
                     <div className="progress-bar-container">
@@ -91,6 +92,10 @@ class ListCard extends Component {
             my_score: newScore
         }
         this.updateEp(series_animedb_id, updatedObj)
+    }
+
+    updateStatus(selected) {
+        console.log(selected)
     }
 
     incEp(inc) {

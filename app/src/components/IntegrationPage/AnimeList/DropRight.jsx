@@ -43,7 +43,6 @@ export default class DropRight extends Component {
       }
 
       renderOption (option) {
-        console.log(option, this.state.selected)
         var selected = option.value == this.state.selected.value
 
         let className = "DropRight-option"
@@ -90,7 +89,7 @@ export default class DropRight extends Component {
         let menu = this.state.isOpen ? <div className={`DropRight-menu`}>{this.buildMenu()}</div> : null
     
         let droprightClass = classNames({
-          [className]: true,
+          [className]: className,
           [`DropRight-root`]: true,
           'is-open': this.state.isOpen
         })
