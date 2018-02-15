@@ -1,3 +1,12 @@
+=infoEditable
+    background-color: $black
+    width: fit-content
+    height: 13px
+    padding: 5px 8px
+    margin-top: 7px
+    line-height: 13px
+    font-size: 12px
+
 .integration-container
     width: 95%
     margin: auto
@@ -238,13 +247,7 @@
                             font-size: 12px
                             font-style: italic
                         .info-editable
-                            background-color: $black
-                            width: fit-content
-                            height: 13px
-                            padding: 5px 8px
-                            margin-top: 7px
-                            line-height: 13px
-                            font-size: 12px
+                            +infoEditable
                             &:hover
                                 cursor: pointer
                                 filter: brightness(1.2)
@@ -278,6 +281,28 @@
                                 font-size: 12px
                                 line-height: 33px
                                 justify-self: end
+
+.DropRight-root
+    display: flex
+    background-color: $grey !important
+    width: fit-content
+    .DropRight-control
+        +infoEditable
+        margin-right: 5px
+        &:hover
+            cursor: pointer
+            filter: brightness(1.2)
+    .DropRight-menu
+        display: flex
+        .DropRight-option
+            +infoEditable
+            margin: 7px 5px 0 5px
+            &:hover
+                cursor: pointer
+                filter: brightness(1.2)
+        .DropRight-selected
+            background-color: $light-blue
+            pointer-events: none
 
 .square
     width: 40px

@@ -80,10 +80,15 @@ export function search(searchValue, searchSort, searchType, searchStatus, search
 	}
 }
 
+const timeUpdatableFields = ['my_watched_episodes']
+
 export function updateAnime(malID, updatedObj) {
-	var updatedObjWithTime = Object.assign({}, updatedObj, {
-		my_last_updated: Date.now() / 1000
-	})
+	if(timeUpdatableFields.some(el => updatedObj[el])) {
+		var updatedObjWithTime = Object.assign({}, updatedObj, {
+			my_last_updated: Date.now() / 1000
+		})
+	}
+
 	return {
 		type: "UPDATE_ANIME",
 		payload: {

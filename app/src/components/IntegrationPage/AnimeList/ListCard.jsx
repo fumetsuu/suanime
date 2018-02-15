@@ -8,6 +8,8 @@ imageCache.setOptions({
 })
 import { connect } from 'react-redux'
 import { updateAnime } from '../../../actions/actions.js'
+import DropRight from './DropRight.jsx'
+import { scoresData } from './maldata.js'
 class ListCard extends Component {
     constructor(props) {
         super(props)
@@ -15,6 +17,8 @@ class ListCard extends Component {
             lastUpdated: makeLastUpdated(props.animeData.my_last_updated)
         }
         this.updateEp = this.updateEp.bind(this)
+        this.incEp = this.incEp.bind(this)
+        this.updateScore = this.updateScore.bind(this)
         this.pclient = props.pclient
     }
     
@@ -40,14 +44,14 @@ class ListCard extends Component {
                 <div className="info-label">Status: </div>
                 <div className="info-editable">{statusCodeToText(my_status)}</div>
                 <div className="info-label">Score: </div>
-                <div className="info-editable">{my_score}</div>
+                <DropRight value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore}/>
                 <div className="info-label">Progress: </div>
                 <div className="progress-info-container">
                     <div className="progress-bar-container">
                         <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                     </div>
-                    <div className="prog-btn" onClick={() => {this.updateEp(-1)}}><i className="material-icons">remove</i></div>
-                    <div className="prog-btn" onClick={() => {this.updateEp(1)}}><i className="material-icons">add</i></div>
+                    <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div>
+                    <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div>
                     <div className="progress-text">{my_watched_episodes}/{series_episodes}</div>
                 </div>
             </div>
@@ -76,7 +80,20 @@ class ListCard extends Component {
         }
     }
 
-    updateEp(inc) {
+    updateScore(selected) {
+        console.log(selected)
+        var newScore = selected.value
+        let { series_animedb_id } = this.props.animeData
+        this.pclient.updateAnime(series_animedb_id, {
+            score: newScore
+        })
+        var updatedObj = {
+            my_score: newScore
+        }
+        this.updateEp(series_animedb_id, updatedObj)
+    }
+
+    incEp(inc) {
         let { series_animedb_id, my_watched_episodes } = this.props.animeData
         if(my_watched_episodes != 0 && my_watched_episodes != series_animedb_id) {
             this.pclient.updateAnime(series_animedb_id, {
@@ -85,8 +102,12 @@ class ListCard extends Component {
         }
         var updatedObj = {
             my_watched_episodes: my_watched_episodes+inc
-        } 
-        this.props.updateAnime(series_animedb_id, updatedObj)
+        }
+        this.updateEp(series_animedb_id, updatedObj)
+    }
+
+    updateEp(malID, updatedObj) {
+        this.props.updateAnime(malID, updatedObj)
     }
 
 }
