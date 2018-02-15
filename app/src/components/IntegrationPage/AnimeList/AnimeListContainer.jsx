@@ -26,6 +26,7 @@ class AnimeListContainer extends Component {
         this.setListStatus = this.setListStatus.bind(this)
         this.setListSort = this.setListSort.bind(this)
         this.syncList = this.syncList.bind(this)
+        this.onscroll = this.onscroll.bind(this)
     }
 
     componentDidMount() {
@@ -40,12 +41,11 @@ class AnimeListContainer extends Component {
         } else {
             this.getList()
         }
-        window.addEventListener('scroll', (e) => {
-            var alcontainer = document.querySelector('.animelist-container')
-            if(alcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 100) {
-                this.loadMore()
-            }
-        }, true)
+        window.addEventListener('scroll', this.onscroll , true)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onscroll, true)
     }
     
     render() {
@@ -193,8 +193,15 @@ class AnimeListContainer extends Component {
         }
     }
 
+    onscroll(e) {
+        var alcontainer = document.querySelector('.animelist-container')
+        if(alcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 100) {
+            this.loadMore()
+        }
+    }
+
     loadMore() {
-        console.log("loading more.....")
+        window.removeEventListener('scroll', this.onscroll, true)
         let { listCards, sortFilteredData } = this.state
         var addedCards = []
         var currentLength = listCards.length
@@ -202,7 +209,9 @@ class AnimeListContainer extends Component {
         for(var i = currentLength; i < endIndex; i++) {
             addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]}/>)
         }
-        this.setState({ listCards: [...this.state.listCards, ...addedCards] })
+        this.setState({ listCards: [...this.state.listCards, ...addedCards] }, () => {
+            window.addEventListener('scroll', this.onscroll, true)
+        })
     }
 
 }
