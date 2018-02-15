@@ -79,3 +79,26 @@ export function search(searchValue, searchSort, searchType, searchStatus, search
 		}
 	}
 }
+
+export function updateAnime(malID, updatedObj) {
+	var updatedObjWithTime = Object.assign({}, updatedObj, {
+		my_last_updated: Date.now() / 1000
+	})
+	return {
+		type: "UPDATE_ANIME",
+		payload: {
+			malID: malID,
+			updatedObj: updatedObjWithTime
+		}
+	}
+}
+
+export function savelist(listdata, listinfo) {
+	return {
+		type: "SAVE_LIST",
+		payload: {
+			listdata: listdata,
+			listinfo: listinfo
+		}
+	}
+}

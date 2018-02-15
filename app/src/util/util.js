@@ -19,9 +19,8 @@ export function convertMS(ms) {
     if(m!=0) {
         return m == 1 ? `${m} Minute ` : `${m} Minutes `
     }
-    if(s!=0) {
-        return s == 1 ? `${s} Second` : `${s} Seconds`
-    }
+    // return s == 1 ? `${s} Second` : `${s} Seconds`
+    return 'Moments Ago'
 }
 
 export function convertSec(sec) {

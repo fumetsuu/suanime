@@ -30,6 +30,16 @@ if(!global.estore.get('initialised')) {
     })
 }
 
+if(global.estore.get("listdata") && global.estore.get("listinfo")) {
+    store.dispatch({
+        type: 'HYDRATE_LIST',
+        payload: {
+            listdata: global.estore.get("listdata"),
+            listinfo: global.estore.get("listinfo")
+        }
+    })
+}
+
 if(!fs.existsSync(path.join(__dirname, '../downloads/'))) {
     fs.mkdirSync(path.join(__dirname, '../downloads/'))
 }

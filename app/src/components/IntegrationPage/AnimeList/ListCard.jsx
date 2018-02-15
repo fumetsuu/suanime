@@ -6,40 +6,21 @@ imageCache.setOptions({
     dir: path.join(__dirname, '../mal-cache/'),
     compressed: false
 })
-
-export default class ListCard extends Component {
+import { connect } from 'react-redux'
+import { updateAnime } from '../../../actions/actions.js'
+class ListCard extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            cardData: {
-                series_animedb_id: props.animeData.series_animedb_id,
-                series_title: props.animeData.series_title,
-                series_synonyms: props.animeData.series_synonyms,
-                series_type: props.animeData.series_type,
-                series_episodes: props.animeData.series_episodes,
-                series_status: props.animeData.series_status,
-                series_start: props.animeData.series_start,
-                series_end: props.animeData.series_animedb_id,
-                series_image: props.animeData.series_image,
-                my_id: props.animeData.my_id,
-                my_watched_episodes: props.animeData.my_watched_episodes,
-                my_start_date: props.animeData.my_start_date,
-                my_finish_date: props.animeData.my_finish_date,
-                my_score: props.animeData.my_score,
-                my_status: props.animeData.my_status,
-                my_rewatching: props.animeData.my_rewatching,
-                my_rewatching_ep: props.animeData.my_rewatching_ep,
-                my_last_updated: props.animeData.my_last_updated,
-                my_tags: props.animeData.my_tags
-            }
+            lastUpdated: makeLastUpdated(props.animeData.my_last_updated)
         }
         this.updateEp = this.updateEp.bind(this)
         this.pclient = props.pclient
     }
     
     render() {
-        let { series_image, series_title, series_type, series_start, my_last_updated, my_status, my_score, my_watched_episodes, series_episodes } = this.state.cardData
-        console.log(this.state)
+        let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes } = this.props.animeData
+        let { lastUpdated } = this.state
         let imgfile = series_image
         imageCache.fetchImages(series_image).then(images => {
             imgfile = images.hashFile
@@ -55,7 +36,7 @@ export default class ListCard extends Component {
                 <div className="series-season series-info">{series_start}</div>
             </div>
             <div className="my-info">
-                <div className="last-updated">Last updated: {convertMS((Date.now()-1000*my_last_updated))}</div>
+                <div className="last-updated">Last updated: {lastUpdated}</div>
                 <div className="info-label">Status: </div>
                 <div className="info-editable">{statusCodeToText(my_status)}</div>
                 <div className="info-label">Score: </div>
@@ -74,26 +55,45 @@ export default class ListCard extends Component {
         )
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            lastUpdated: makeLastUpdated(nextProps.animeData.my_last_updated)
+        })
+    }
+
+    componentDidMount() {
+        var updateInterval = calcUpdateInterval(this.props.animeData.my_last_updated)
+        this.lastUpdatedTimer = updateInterval ? setInterval(() => {
+            this.setState({
+                lastUpdated: makeLastUpdated(this.props.animeData.my_last_updated)
+            })
+        }, updateInterval) : null
+    }
+
+    componentWillUnmount() {
+        if(this.lastUpdatedTimer) {
+            window.clearInterval(this.lastUpdatedTimer)
+        }
+    }
+
     updateEp(inc) {
-        let { series_animedb_id, my_watched_episodes } = this.state.cardData
+        let { series_animedb_id, my_watched_episodes } = this.props.animeData
         if(my_watched_episodes != 0 && my_watched_episodes != series_animedb_id) {
             this.pclient.updateAnime(series_animedb_id, {
                 episode: my_watched_episodes+inc
             })
         }
-        this.setState({ 
-            cardData: Object.assign({}, this.state.cardData, {
-                my_watched_episodes: my_watched_episodes+inc
-            })
-        })
-        //go through estore take the json replace the json for the particular anime being updated then put it back, while also updating state locally here
+        var updatedObj = {
+            my_watched_episodes: my_watched_episodes+inc
+        } 
+        this.props.updateAnime(series_animedb_id, updatedObj)
     }
 
 }
 
 function progressPercent(watched, total) {
     if(total) {
-        return Math.ceil(100 * (watched / total))
+        return Math.ceil(100 * (watched / total)) >= 100 ? 100 : Math.ceil(100 * (watched / total))
     } else if(watched < 12) {
         return Math.ceil(100 * (watched / 13))
     } else return 50
@@ -119,3 +119,26 @@ function typeCodeToText(typeCode) {
         case 6: return 'Music'; break
     }
 }
+
+function makeLastUpdated(lastUpdated) {
+    return convertMS((Date.now() - (1000 * lastUpdated)))
+}
+
+function calcUpdateInterval(lastUpdated) {
+    var secondsAgo = (Date.now() / 1000) - lastUpdated
+    if(secondsAgo < 3600) { //less than an hour
+        return 50000
+    }
+    if(secondsAgo >= 3600 && secondsAgo < 86400) {
+        return 3000000
+    }
+    return null
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(ListCard)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
-
+import { savelist } from '../../../actions/actions.js'
 const CARDS_PER_LOAD = 20
 class AnimeListContainer extends Component {
     constructor(props) {
@@ -10,11 +10,11 @@ class AnimeListContainer extends Component {
         this.state = {
             isLoading: true,
             listCards: [],
-            listData: null,
+            listData: props.listdata,
             listStatus: 1,
             listSort: 'TITLE',
             listView: 'ROWS',
-            listInfo: [],
+            listInfo: props.listinfo,
             sortFilteredData: []
         }
 
@@ -30,24 +30,25 @@ class AnimeListContainer extends Component {
     }
 
     componentDidMount() {
-
-        if(global.estore.get("listdata") && global.estore.get("listinfo")) {
-            this.setState({ 
-                listData: global.estore.get("listdata"),
-                listInfo: global.estore.get("listinfo"),
-                isLoading: false }, () => {
-                this.updateDisplay()
-                })
+        if(this.props.listdata) {
+            this.updateDisplay()
         } else {
             this.getList()
         }
         window.addEventListener('scroll', this.onscroll , true)
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.listdata && nextProps.listinfo) {
+            this.updateDisplay(nextProps.listdata)
+        }
+    }
+    
+
     componentWillUnmount() {
         window.removeEventListener('scroll', this.onscroll, true)
     }
-    
+
     render() {
         let [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch] = this.state.listInfo
         let { listStatus, listSort, listView, isLoading } = this.state
@@ -88,8 +89,7 @@ class AnimeListContainer extends Component {
     }
 
     logout() {
-        global.estore.delete("mal")
-        //dispatch kill pclient
+        this.props.killMAL()
         window.location.hash = "#/integration/login"
     }
 
@@ -98,15 +98,11 @@ class AnimeListContainer extends Component {
             .then(res => {
                 let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
                 var listInfo = [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch]
-                global.estore.delete('listdata')
-                global.estore.delete('listInfo')
-                global.estore.set({
-                    listdata: res.list,
-                    listinfo: listInfo
-                })
+                var listData = res.list
+                this.props.savelist(listData, listInfo)
                 this.setState({
-                    listInfo: listInfo,
-                    listData: res.list,
+                    listInfo,
+                    listData,
                     isLoading: false
                 }, () => {
                     this.updateDisplay()
@@ -135,12 +131,12 @@ class AnimeListContainer extends Component {
         })
     }
 
-    updateDisplay() {
-        let { listData, listStatus, listSort } = this.state
+    updateDisplay(listdata) {
+        let { listStatus, listSort } = this.state
+        let listData = listdata || this.props.listdata
         if(listData) {
             var listCards = []
             var statusFilteredData = listData.filter(anime => anime.my_status==listStatus)
-            //may have to use switch-case for different sorting types possibly
             let sortFilteredData
             switch(listSort) {
                 case 'TITLE': {
@@ -189,13 +185,13 @@ class AnimeListContainer extends Component {
                 listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient}/>)
 
             }
-            this.setState({ listCards, sortFilteredData })
+            this.setState({ listCards, sortFilteredData, isLoading: false })
         }
     }
 
     onscroll(e) {
         var alcontainer = document.querySelector('.animelist-container')
-        if(alcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 100) {
+        if(alcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 200) {
             this.loadMore()
         }
     }
@@ -218,8 +214,19 @@ class AnimeListContainer extends Component {
 
 const mapStateToProps = state => {
     return {
-        pclient: state.animelistReducer.pclient
+        pclient: state.animelistReducer.pclient,
+        listdata: state.animelistReducer.listdata,
+        listinfo: state.animelistReducer.listinfo
     }
 }
 
-export default connect(mapStateToProps)(AnimeListContainer)
+const mapDispatchToProps = dispatch => {
+    return {
+        savelist: (listdata, listinfo) => dispatch(savelist(listdata, listinfo)),
+        killMAL: () => dispatch({
+            type: 'KILL_MAL'
+        })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AnimeListContainer)
