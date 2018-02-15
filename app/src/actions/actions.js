@@ -80,7 +80,7 @@ export function search(searchValue, searchSort, searchType, searchStatus, search
 	}
 }
 
-const timeUpdatableFields = ['my_watched_episodes']
+const timeUpdatableFields = ['my_watched_episodes', 'my_status']
 
 export function updateAnime(malID, updatedObj) {
 	if(timeUpdatableFields.some(el => updatedObj[el])) {
@@ -89,11 +89,16 @@ export function updateAnime(malID, updatedObj) {
 		})
 	}
 
+	if(updatedObj['my_status']) {
+		var newStatus = updatedObj['my_status']
+	}
+
 	return {
 		type: "UPDATE_ANIME",
 		payload: {
 			malID: malID,
-			updatedObj: updatedObjWithTime
+			updatedObj: updatedObjWithTime,
+			newStatus: newStatus
 		}
 	}
 }

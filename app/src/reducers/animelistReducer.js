@@ -25,20 +25,25 @@ export default function reducer(state = defaultState, action) {
             )
         }
         case 'UPDATE_ANIME': {
-            console.log('start')
-            var start = Date.now()
             var storedlistdata = global.estore.get('listdata')
+            var storedlistinfo = global.estore.get('listinfo')
             var malID = action.payload.malID
             var updatedObj = action.payload.updatedObj
             var targetAnimeObj = storedlistdata.find(listDataNode => animeFinder(listDataNode, malID))
             var animeIndexInList = storedlistdata.indexOf(targetAnimeObj)
             var newAnimeObj = Object.assign({}, targetAnimeObj, updatedObj)
+            var newStatus = action.payload.newStatus
+            if(newStatus) {
+                let newStatusIndex = newStatus
+                if(newStatus==6) { //plan to watch status code is 6 but index in store is 5
+                    newStatusIndex = 5
+                }
+                storedlistinfo[storedlistdata[animeIndexInList].my_status]--
+                storedlistinfo[newStatusIndex]++
+            }
             storedlistdata[animeIndexInList] = newAnimeObj
-            global.estore.set('listdata', storedlistdata)
-
-            console.log(storedlistdata[animeIndexInList])
-            console.log('end ', Date.now() - start)
-            return Object.assign({}, state, { listdata: storedlistdata })
+            global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
+            return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
         }
         case 'KILL_MAL': {
             global.estore.delete("mal")

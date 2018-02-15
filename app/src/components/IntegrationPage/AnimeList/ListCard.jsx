@@ -82,7 +82,6 @@ class ListCard extends Component {
     }
 
     updateScore(selected) {
-        console.log(selected)
         var newScore = selected.value
         let { series_animedb_id } = this.props.animeData
         this.pclient.updateAnime(series_animedb_id, {
@@ -96,6 +95,15 @@ class ListCard extends Component {
 
     updateStatus(selected) {
         console.log(selected)
+        var newStatus = selected.value
+        let { series_animedb_id } = this.props.animeData
+        this.pclient.updateAnime(series_animedb_id, {
+            status: newStatus
+        })
+        var updatedObj = {
+            my_status: newStatus
+        }
+        this.updateEp(series_animedb_id, updatedObj)
     }
 
     incEp(inc) {

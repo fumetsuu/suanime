@@ -40,7 +40,7 @@ class AnimeListContainer extends Component {
 
     componentWillReceiveProps(nextProps) {
         if(nextProps.listdata && nextProps.listinfo) {
-            this.updateDisplay(nextProps.listdata)
+            this.updateDisplay(nextProps.listdata, nextProps.listinfo)
         }
     }
     
@@ -131,7 +131,10 @@ class AnimeListContainer extends Component {
         })
     }
 
-    updateDisplay(listdata) {
+    updateDisplay(listdata, listinfo) {
+        if(listinfo) {
+            this.setState({ listInfo: listinfo })
+        }
         let { listStatus, listSort } = this.state
         let listData = listdata || this.props.listdata
         if(listData) {
