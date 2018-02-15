@@ -8,8 +8,38 @@ imageCache.setOptions({
 })
 
 export default class ListCard extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            cardData: {
+                series_animedb_id: props.animeData.series_animedb_id,
+                series_title: props.animeData.series_title,
+                series_synonyms: props.animeData.series_synonyms,
+                series_type: props.animeData.series_type,
+                series_episodes: props.animeData.series_episodes,
+                series_status: props.animeData.series_status,
+                series_start: props.animeData.series_start,
+                series_end: props.animeData.series_animedb_id,
+                series_image: props.animeData.series_image,
+                my_id: props.animeData.my_id,
+                my_watched_episodes: props.animeData.my_watched_episodes,
+                my_start_date: props.animeData.my_start_date,
+                my_finish_date: props.animeData.my_finish_date,
+                my_score: props.animeData.my_score,
+                my_status: props.animeData.my_status,
+                my_rewatching: props.animeData.my_rewatching,
+                my_rewatching_ep: props.animeData.my_rewatching_ep,
+                my_last_updated: props.animeData.my_last_updated,
+                my_tags: props.animeData.my_tags
+            }
+        }
+        this.updateEp = this.updateEp.bind(this)
+        this.pclient = props.pclient
+    }
+    
     render() {
-        let { series_image, series_title, series_type, series_start, my_last_updated, my_status, my_score, my_watched_episodes, series_episodes } = this.props.animeData
+        let { series_image, series_title, series_type, series_start, my_last_updated, my_status, my_score, my_watched_episodes, series_episodes } = this.state.cardData
+        console.log(this.state)
         let imgfile = series_image
         imageCache.fetchImages(series_image).then(images => {
             imgfile = images.hashFile
@@ -35,12 +65,30 @@ export default class ListCard extends Component {
                     <div className="progress-bar-container">
                         <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                     </div>
+                    <div className="prog-btn" onClick={() => {this.updateEp(-1)}}><i className="material-icons">remove</i></div>
+                    <div className="prog-btn" onClick={() => {this.updateEp(1)}}><i className="material-icons">add</i></div>
                     <div className="progress-text">{my_watched_episodes}/{series_episodes}</div>
                 </div>
             </div>
         </div>
         )
     }
+
+    updateEp(inc) {
+        let { series_animedb_id, my_watched_episodes } = this.state.cardData
+        if(my_watched_episodes != 0 && my_watched_episodes != series_animedb_id) {
+            this.pclient.updateAnime(series_animedb_id, {
+                episode: my_watched_episodes+inc
+            })
+        }
+        this.setState({ 
+            cardData: Object.assign({}, this.state.cardData, {
+                my_watched_episodes: my_watched_episodes+inc
+            })
+        })
+        //go through estore take the json replace the json for the particular anime being updated then put it back, while also updating state locally here
+    }
+
 }
 
 function progressPercent(watched, total) {

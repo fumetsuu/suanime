@@ -186,7 +186,7 @@ class AnimeListContainer extends Component {
             }
             var endIndex = CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : CARDS_PER_LOAD
             for(var i = 0; i < endIndex; i++) {
-                listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]}/>)
+                listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient}/>)
 
             }
             this.setState({ listCards, sortFilteredData })
@@ -207,7 +207,7 @@ class AnimeListContainer extends Component {
         var currentLength = listCards.length
         var endIndex = currentLength+CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : currentLength+CARDS_PER_LOAD
         for(var i = currentLength; i < endIndex; i++) {
-            addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]}/>)
+            addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient}/>)
         }
         this.setState({ listCards: [...this.state.listCards, ...addedCards] }, () => {
             window.addEventListener('scroll', this.onscroll, true)
