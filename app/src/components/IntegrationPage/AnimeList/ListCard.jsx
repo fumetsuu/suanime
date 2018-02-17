@@ -53,7 +53,7 @@ class ListCard extends Component {
                     </div>
                     <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div>
                     <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div>
-                    <div className="progress-text">{my_watched_episodes}/{series_episodes}</div>
+                    <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
                 </div>
             </div>
         </div>
