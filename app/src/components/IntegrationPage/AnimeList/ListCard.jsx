@@ -25,6 +25,8 @@ class ListCard extends Component {
         this.pclient = props.pclient
     }
     
+    // {!completedseries?<div className="progress-bar-aired" style={{width: guessAired(series_start, series_episodes)+'%'}} />:null}   
+
     render() {
         let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes, series_status } = this.props.animeData
         let { viewType } = this.props
@@ -37,7 +39,7 @@ class ListCard extends Component {
                 <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>
                 <div className="progress-info-container">
                     {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
-                    <div className="progress-bar-container">
+                    <div className="progress-bar-container">                 
                         <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                     </div>
                         {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
@@ -221,6 +223,26 @@ function statusColour(statusCode) {
 
 function makeLastUpdated(lastUpdated) {
     return convertMS((Date.now() - (1000 * lastUpdated)))
+}
+
+function guessAired(startDate, seriesEps) {
+    var startDate = Date.parse(startDate)
+
+    var japanDate = new Date().getTime()+9*60*60*1000 //add 9 hours, getTime() is GMT
+
+    var deltaMS = japanDate-startDate
+
+    let daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
+    
+    var guessEps = Math.ceil(daysSinceStart / 7)
+
+    var percentAired = 100*(guessEps / seriesEps)
+
+    percentAired = percentAired == 'Infinity' ? 0 : percentAired
+    percentAired = percentAired > 100 ? 100 : percentAired
+
+    return percentAired
+
 }
 
 function calcUpdateInterval(lastUpdated) {

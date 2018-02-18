@@ -380,9 +380,20 @@
                             height: 10px
                             margin-top: 10px
                             background-color: $light-grey
+                            position: relative
                             .progress-bar-progress
                                 background-color: $light-blue
                                 height: 100%
+                                position: absolute
+                                left: 0
+                                top: 0
+                                z-index: 1
+                            .progress-bar-aired
+                                background-color: darken($light-grey, 20%)
+                                height: 100%
+                                position: absolute
+                                left: 0
+                                top: 0
                         .prog-btn
                             margin-top: 10px
                             width: 10px
@@ -418,7 +429,7 @@
                     &:nth-child(odd)
                         background-color: darken($grey, 5%)
                 .list-card-container-card
-                    width: 220px
+                    width: 225px
                     height: 310px
                     background-color: $grey
                     display: grid
