@@ -1,15 +1,21 @@
 export function convertMS(ms) {
-    var d, h, m, s, y
-    s = Math.floor(ms / 1000);
-    m = Math.floor(s / 60);
-    s = s % 60;
-    h = Math.floor(m / 60);
-    m = m % 60;
-    d = Math.floor(h / 24);
-    h = h % 24;
+    var d, h, m, s, Mo, y
+    s = Math.floor(ms / 1000)
+    m = Math.floor(s / 60)
+    s = s % 60
+    h = Math.floor(m / 60)
+    m = m % 60
+    d = Math.floor(h / 24)
+    h = h % 24
+    Mo = Math.floor(d / 30)
     y = Math.floor(d / 365)
     if(y!=0) {
+        y = Math.round(d / 365)
         return y == 1 ? '1 Year' : `${y} Years`
+    }
+    if(Mo!=0) {
+        Mo = Math.round(d / 30)
+        return Mo == 12 ? '1 year' : Mo == 1 ? '1 Month' : `${Mo} Months`
     }
     if(d!=0) {
         if(h >= 12) {
@@ -21,9 +27,8 @@ export function convertMS(ms) {
         return h == 1 ? `${h} Hour` : `${h} Hours`
     }
     if(m!=0) {
-        return m == 1 ? `${m} Minute ` : `${m} Minutes `
+        return m == 1 ? `${m} Minute` : `${m} Minutes`
     }
-    // return s == 1 ? `${s} Second` : `${s} Seconds`
     return 'Moments Ago'
 }
 
