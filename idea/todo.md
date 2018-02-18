@@ -18,6 +18,6 @@ Todo
 ## development
 - [ ] refactor home page code
 - [ ] improve downloads
-- [ ] optimise list sort and load
+- [x] optimise list sort and load
 - [ ] update utils for date to have year
 - [ ] make util for utc date to jp season
