@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
 import { savelist } from '../../../actions/actions.js'
+const COMPACT_PER_LOAD = 50
+const ROWS_PER_LOAD = 20
 const CARDS_PER_LOAD = 20
 class AnimeListContainer extends Component {
     constructor(props) {
@@ -13,7 +15,7 @@ class AnimeListContainer extends Component {
             listData: props.listdata,
             listStatus: 1,
             listSort: 'TITLE',
-            listView: 'ROWS',
+            listView: 'COMPACT',
             listInfo: props.listinfo,
             sortFilteredData: []
         }
@@ -198,7 +200,13 @@ class AnimeListContainer extends Component {
                     break
                 }
             }
-            var endIndex = CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : CARDS_PER_LOAD
+            let cardload
+            switch(listView) {
+                case 'COMPACT': cardload=COMPACT_PER_LOAD; break
+                case 'ROWS': cardload=ROWS_PER_LOAD; break
+                case 'CARDS': cardload=CARDS_PER_LOAD; break
+            }
+            var endIndex = cardload >= sortFilteredData.length ? sortFilteredData.length : cardload
             for(var i = 0; i < endIndex; i++) {
                 listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient} viewType={listView}/>)
 
@@ -216,10 +224,16 @@ class AnimeListContainer extends Component {
 
     loadMore() {
         window.removeEventListener('scroll', this.onscroll, true)
+        let cardload
         let { listCards, sortFilteredData, listView } = this.state
+        switch(listView) {
+            case 'COMPACT': cardload=COMPACT_PER_LOAD; break
+            case 'ROWS': cardload=ROWS_PER_LOAD; break
+            case 'CARDS': cardload=CARDS_PER_LOAD; break
+        }
         var addedCards = []
         var currentLength = listCards.length
-        var endIndex = currentLength+CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : currentLength+CARDS_PER_LOAD
+        var endIndex = currentLength+cardload >= sortFilteredData.length ? sortFilteredData.length : currentLength+cardload
         for(var i = currentLength; i < endIndex; i++) {
             addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient} viewType={listView}/>)
         }

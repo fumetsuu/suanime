@@ -287,10 +287,137 @@
                                 font-size: 12px
                                 line-height: 33px
                                 justify-self: end
+                .list-card-container-compact    
+                    width: 100%
+                    height: 30px
+                    background-color: $grey
+                    transition: 0.3s
+                    display: grid
+                    grid-template-columns: 30px 35% 25% 50px 130px 40px 100px 80px
+                    grid-template-rows: 100%
+                    transition: 0.3s
+                    .status-button
+                        width: 7px
+                        height: 7px
+                        border-radius: 50%
+                        justify-self: center
+                        margin-top: 10px
+                    .scores-dropdown, .status-dropdown
+                        justify-self: center
+                        border-right: 1px solid #4c4c4c
+                        width: 99%
+                        .Dropdown-control
+                            margin-top: 3.5px !important
+                            margin-right: 0 !important
+                            background-color: $black
+                            height: 13px
+                            line-height: 13px
+                            font-size: 12px
+                            background-color: transparent
+                            font-family: 'Lato'
+                            font-weight: 400
+                            justify-self: center
+                            padding: 5px 0
+                            .Dropdown-placeholder
+                                text-align: center
+                        .Dropdown-menu
+                            background-color: $dark-grey
+                            position: relative
+                            .Dropdown-option
+                                border-bottom: 1px solid $grey
+                                background-color: $black
+                                font-family: 'Lato'
+                                font-weight: 400
+                                font-size: 12px
+                                text-align: center
+                                padding: 5px 0
+                                &:hover
+                                    cursor: pointer
+                                    background-color: lighten($dark-grey, 5%)
+                            .is-selected
+                                background-color: $light-blue
+                                pointer-events: none
+                        &:hover
+                            background-color: $black
+                    .scores-dropdown
+                        width: 95%
+                    .series-title
+                        grid-column: 2
+                        font-family: 'Lato'
+                        font-weight: 400
+                        overflow: hidden
+                        text-overflow: ellipsis
+                        line-height: 30px
+                        margin-right: 10px
+                        color: white
+                        font-size: 12px
+                        border-right: 1px solid #4c4c4c
+                        &:hover
+                            color: $light-blue
+                            cursor: pointer
+                    .series-info
+                        font-family: 'Lato'
+                        font-size: 12px
+                        font-weight: 400
+                        line-height: 30px
+                        justify-self: start
+                        width: 100%
+                        text-align: center
+                        border-right: 1px solid #4c4c4c
+                    .series-season
+                        &:hover
+                            color: $light-blue
+                            cursor: pointer
+                    .progress-info-container
+                        border-right: 1px solid #4c4c4c
+                        width: 100%
+                        height: 100%
+                        display: grid
+                        grid-template-columns: 10px 70% 10px auto
+                        .progress-bar-container
+                            width: 100%
+                            height: 10px
+                            margin-top: 10px
+                            background-color: $light-grey
+                            .progress-bar-progress
+                                background-color: $light-blue
+                                height: 100%
+                        .prog-btn
+                            margin-top: 10px
+                            width: 10px
+                            height: 10px
+                            background-color: $black
+                            text-align: center
+                            color: white
+                            line-height: 8px
+                            visibility: hidden
+                            .material-icons
+                                font-size: 10px
+                            &:hover
+                                background-color: $light-blue
+                                cursor: pointer
+                        .progress-text
+                            font-size: 12px
+                            line-height: 30px
+                            text-align: center
+                            font-family: 'Lato'
+                            font-weight: 400
+                        &:hover
+                            & > .prog-btn
+                                visibility: visible
+                    .last-updated
+                        justify-self: start
+                        width: 100%
+                        text-align: center
+                        font-weight: 400
+                        font-family: 'Lato'
+                        line-height: 30px
+                        font-size: 12px
+                    &:nth-child(odd)
+                        background-color: darken($grey, 5%)
 
 .DropRight-root
     display: flex
-    background-color: $grey !important
     width: fit-content
     .DropRight-control
         +infoEditable

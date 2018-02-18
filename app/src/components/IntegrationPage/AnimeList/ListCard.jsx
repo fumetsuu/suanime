@@ -9,6 +9,7 @@ imageCache.setOptions({
 import { connect } from 'react-redux'
 import { updateAnime } from '../../../actions/actions.js'
 import DropRight from './DropRight.jsx'
+import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from './maldata.js'
 class ListCard extends Component {
     constructor(props) {
@@ -24,42 +25,63 @@ class ListCard extends Component {
     }
     
     render() {
-        let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes } = this.props.animeData
+        let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes, series_status } = this.props.animeData
         let { viewType } = this.props
-        console.log(viewType)
         let { lastUpdated } = this.state
-        let imgfile = series_image
-        imageCache.fetchImages(series_image).then(images => {
-            imgfile = images.hashFile
-        })
-        return (
-        <div className="list-card-container">
-            <div className="bg-img" style={{ backgroundImage: `url('${imgfile}')`}}/>
-            <div className="series-information-container">
+        let completedseries = my_watched_episodes >= series_episodes && series_episodes!=0
+        if(viewType == 'COMPACT') {
+            return (
+            <div className="list-card-container-compact">
+                <div className="status-button" style={{background: statusColour(series_status)}}/>
                 <div className="series-title">{series_title}</div>
-                
-                <div className="series-average series-info"></div>
-                <div className="series-type series-info">Type: {typeCodeToText(series_type)}</div>
-                <div className="series-season series-info">{series_start}</div>
-            </div>
-            <div className="my-info">
-                <div className="last-updated">Last updated: {lastUpdated}</div>
-                <div className="info-label">Status: </div>
-                <DropRight value={statusData.find(el => el.value == my_status)} options={statusData} onChange={this.updateStatus} key="statuses" className="status-select"/>
-                <div className="info-label">Score: </div>
-                <DropRight value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
-                <div className="info-label">Progress: </div>
                 <div className="progress-info-container">
+                    {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
                     <div className="progress-bar-container">
                         <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                     </div>
-                    <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div>
-                    <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div>
-                    <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
+                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                        <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
                 </div>
-            </div>
-        </div>
-        )
+                <Dropdown className="scores-dropdown" value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
+                <Dropdown className="status-dropdown" value={statusData.find(el => el.value == my_status)} options={statusData} onChange={this.updateStatus} key="statuses"/>
+                <div className="series-type series-info">{typeCodeToText(series_type)}</div>
+                <div className="series-season series-info">{series_start}</div>
+                <div className="last-updated">{lastUpdated}</div>
+            </div>)
+        }
+        if(viewType == 'ROWS') {
+            let imgfile = series_image
+            imageCache.fetchImages(series_image).then(images => {
+                imgfile = images.hashFile
+            })
+            return (
+            <div className="list-card-container">
+                <div className="bg-img" style={{ backgroundImage: `url('${imgfile}')`}}/>
+                <div className="series-information-container">
+                    <div className="series-title">{series_title}</div>
+                    
+                    <div className="series-average series-info"></div>
+                    <div className="series-type series-info">Type: {typeCodeToText(series_type)}</div>
+                    <div className="series-season series-info">{series_start}</div>
+                </div>
+                <div className="my-info">
+                    <div className="last-updated">Last updated: {lastUpdated}</div>
+                    <div className="info-label">Status: </div>
+                    <DropRight value={statusData.find(el => el.value == my_status)} options={statusData} onChange={this.updateStatus} key="statuses" className="status-select"/>
+                    <div className="info-label">Score: </div>
+                    <DropRight value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
+                    <div className="info-label">Progress: </div>
+                    <div className="progress-info-container">
+                        <div className="progress-bar-container">
+                            <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
+                        </div>
+                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                        <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
+                    </div>
+                </div>
+            </div>)
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -153,6 +175,14 @@ function typeCodeToText(typeCode) {
         case 4: return 'Special'; break
         case 5: return 'ONA'; break
         case 6: return 'Music'; break
+    }
+}
+
+function statusColour(statusCode) {
+    switch(statusCode) {
+        case 1: return '#51e373'; break
+        case 2: return '#53b4ff'; break
+        case 3: return '#f55353'; break
     }
 }
 
