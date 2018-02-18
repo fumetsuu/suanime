@@ -25,6 +25,8 @@ class ListCard extends Component {
     
     render() {
         let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes } = this.props.animeData
+        let { viewType } = this.props
+        console.log(viewType)
         let { lastUpdated } = this.state
         let imgfile = series_image
         imageCache.fetchImages(series_image).then(images => {

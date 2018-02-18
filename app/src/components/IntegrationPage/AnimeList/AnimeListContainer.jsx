@@ -25,6 +25,7 @@ class AnimeListContainer extends Component {
         this.loadMore = this.loadMore.bind(this)
         this.setListStatus = this.setListStatus.bind(this)
         this.setListSort = this.setListSort.bind(this)
+        this.setListView = this.setListView.bind(this)
         this.syncList = this.syncList.bind(this)
         this.onscroll = this.onscroll.bind(this)
     }
@@ -74,9 +75,9 @@ class AnimeListContainer extends Component {
                     <div sortvalue="AIRED" onClick={this.setListSort} className={`sort-by${/AIRED/.test(listSort)?' sort-by-active':''}`}>Aired</div>
                     <div sortvalue="LAST_UPDATED" onClick={this.setListSort} className={`sort-by${/LAST_UPDATED/.test(listSort)?' sort-by-active':''}`}>Last updated</div> 
                     <div className="spacer-horizontal"/>
-                    <div className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`}><i className="material-icons">view_headline</i></div>
-                    <div className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`}><i className="material-icons">view_list</i></div>
-                    <div className={`view-mode square${listView == 'CARDS'?' view-mode-active':''}`}><i className="material-icons">view_module</i></div>
+                    <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
+                    <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
+                    <div viewvalue="CARDS" className={`view-mode square${listView == 'CARDS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_module</i></div>
                 </div>
                 {isLoading ? <Loader loaderClass="central-loader"/>  :
                 <div className="animelist-display">
@@ -134,11 +135,18 @@ class AnimeListContainer extends Component {
         })
     }
 
+    setListView(e) {
+        var listView = e.target.getAttribute("viewvalue")
+        this.setState({ listView }, () => {
+            this.updateDisplay()
+        })
+    }
+
     updateDisplay(listdata, listinfo) {
         if(listinfo) {
             this.setState({ listInfo: listinfo })
         }
-        let { listStatus, listSort } = this.state
+        let { listStatus, listSort, listView } = this.state
         let listData = listdata || this.props.listdata
         if(listData) {
             var listCards = []
@@ -192,7 +200,7 @@ class AnimeListContainer extends Component {
             }
             var endIndex = CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : CARDS_PER_LOAD
             for(var i = 0; i < endIndex; i++) {
-                listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient}/>)
+                listCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient} viewType={listView}/>)
 
             }
             this.setState({ listCards, sortFilteredData, isLoading: false })
@@ -208,12 +216,12 @@ class AnimeListContainer extends Component {
 
     loadMore() {
         window.removeEventListener('scroll', this.onscroll, true)
-        let { listCards, sortFilteredData } = this.state
+        let { listCards, sortFilteredData, listView } = this.state
         var addedCards = []
         var currentLength = listCards.length
         var endIndex = currentLength+CARDS_PER_LOAD >= sortFilteredData.length ? sortFilteredData.length : currentLength+CARDS_PER_LOAD
         for(var i = currentLength; i < endIndex; i++) {
-            addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient}/>)
+            addedCards.push(<ListCard key={sortFilteredData[i].series_animedb_id} animeData={sortFilteredData[i]} pclient={this.pclient} viewType={listView}/>)
         }
         this.setState({ listCards: [...this.state.listCards, ...addedCards] }, () => {
             window.addEventListener('scroll', this.onscroll, true)
