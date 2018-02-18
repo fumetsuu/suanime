@@ -27,6 +27,7 @@ class InfoContainer extends Component {
             this.stateFromMALID(malID)
         } else {
             const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
+            console.log(searchURL)
             this.stateFromMAL(searchURL)
         }
     }

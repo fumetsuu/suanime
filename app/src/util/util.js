@@ -47,7 +47,7 @@ export function convertSec(sec) {
 }
 
 export function fixURL(url) {
-    return encodeURIComponent(url.replace('/', ""))
+    return encodeURIComponent(url.replace(/\/|\./g, ""))
 }
 
 export function fixURLMA(url) {
