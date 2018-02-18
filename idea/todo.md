@@ -6,7 +6,7 @@ Todo
 - [x] watch anime
 - [x] search anime
 - [x] view anime info
-- [ ] mal integration (working on)
+- [x] mal integration (functional)
 - [ ] queued/automatic downloads
 - [ ] anime airing schedule
 - [ ] seasonal anime

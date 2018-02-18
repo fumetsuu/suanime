@@ -55,7 +55,6 @@ export default class InfoEpisodes extends Component {
         })
         return false
       }
-      console.log("HHHHHHHH")
       let id = searchHit.id
       const reqURL = `https://www.masterani.me/api/anime/${id}/detailed`
       var epCards = []
