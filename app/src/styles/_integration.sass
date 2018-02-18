@@ -293,7 +293,7 @@
                     background-color: $grey
                     transition: 0.3s
                     display: grid
-                    grid-template-columns: 30px 35% 25% 50px 130px 40px 100px 80px
+                    grid-template-columns: 30px 35% 25% 5% 12% 4% 8% 8%
                     grid-template-rows: 100%
                     transition: 0.3s
                     .status-button
@@ -338,6 +338,7 @@
                                 background-color: $light-blue
                                 pointer-events: none
                         &:hover
+                            cursor: pointer
                             background-color: $black
                     .scores-dropdown
                         width: 95%
@@ -413,6 +414,7 @@
                         font-family: 'Lato'
                         line-height: 30px
                         font-size: 12px
+                        border-right: 1px solid #4c4c4c
                     &:nth-child(odd)
                         background-color: darken($grey, 5%)
 

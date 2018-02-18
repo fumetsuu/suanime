@@ -35,7 +35,7 @@ export default class InfoMain extends Component {
             </tr>
             <tr>
               <td className="data-label">Studio:</td>
-              <td>{studio[0].name}</td>
+              <td>{studio[0]?studio[0].name : 'None'}</td>
             </tr>
             <tr>
               <td className="data-label">Source:</td>

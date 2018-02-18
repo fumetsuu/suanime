@@ -22,11 +22,10 @@ class ResultCard extends Component {
     }
 
     launchInfoPage() {
-        let { title, poster, id, slug } = this.props.animeData     
+        let { title, id, slug } = this.props.animeData     
         var animeName = title
-        var posterImg = `https://cdn.masterani.me/poster/${poster.file}`
         var animeID = id
-        this.props.launchInfo(animeName, posterImg, slug, animeID)
+        this.props.launchInfo(animeName, slug, animeID, null)
         window.location.hash = "#/info"
       }
       
@@ -34,8 +33,8 @@ class ResultCard extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        launchInfo: (animeName, posterImg, slug, animeID) => dispatch(
-            launchInfo(animeName, posterImg, slug, animeID)
+        launchInfo: (animeName, slug, animeID, a) => dispatch(
+            launchInfo(animeName, slug, animeID, null)
         )
     }
 }

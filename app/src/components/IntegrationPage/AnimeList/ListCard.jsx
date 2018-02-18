@@ -7,7 +7,7 @@ imageCache.setOptions({
     compressed: false
 })
 import { connect } from 'react-redux'
-import { updateAnime } from '../../../actions/actions.js'
+import { updateAnime, launchInfo } from '../../../actions/actions.js'
 import DropRight from './DropRight.jsx'
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from './maldata.js'
@@ -21,6 +21,7 @@ class ListCard extends Component {
         this.incEp = this.incEp.bind(this)
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
+        this.launchInfoPage = this.launchInfoPage.bind(this)
         this.pclient = props.pclient
     }
     
@@ -33,7 +34,7 @@ class ListCard extends Component {
             return (
             <div className="list-card-container-compact">
                 <div className="status-button" style={{background: statusColour(series_status)}}/>
-                <div className="series-title">{series_title}</div>
+                <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>
                 <div className="progress-info-container">
                     {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
                     <div className="progress-bar-container">
@@ -45,7 +46,7 @@ class ListCard extends Component {
                 <Dropdown className="scores-dropdown" value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
                 <Dropdown className="status-dropdown" value={statusData.find(el => el.value == my_status)} options={statusData} onChange={this.updateStatus} key="statuses"/>
                 <div className="series-type series-info">{typeCodeToText(series_type)}</div>
-                <div className="series-season series-info">{series_start}</div>
+                <div className="series-season series-info">{dateToSeason(series_start)}</div>
                 <div className="last-updated">{lastUpdated}</div>
             </div>)
         }
@@ -58,11 +59,11 @@ class ListCard extends Component {
             <div className="list-card-container">
                 <div className="bg-img" style={{ backgroundImage: `url('${imgfile}')`}}/>
                 <div className="series-information-container">
-                    <div className="series-title">{series_title}</div>
+                    <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>
                     
                     <div className="series-average series-info"></div>
                     <div className="series-type series-info">Type: {typeCodeToText(series_type)}</div>
-                    <div className="series-season series-info">{series_start}</div>
+                    <div className="series-season series-info">{dateToSeason(series_start)}</div>
                 </div>
                 <div className="my-info">
                     <div className="last-updated">Last updated: {lastUpdated}</div>
@@ -118,7 +119,6 @@ class ListCard extends Component {
     }
 
     updateStatus(selected) {
-        console.log(selected)
         var newStatus = selected.value
         let { series_animedb_id } = this.props.animeData
         this.pclient.updateAnime(series_animedb_id, {
@@ -146,6 +146,15 @@ class ListCard extends Component {
     updateEp(malID, updatedObj) {
         this.props.updateAnime(malID, updatedObj)
     }
+
+    launchInfoPage() {
+        let { series_title, series_animedb_id } = this.props.animeData     
+        var animeName = series_title
+        var malID = series_animedb_id
+        console.log(malID)
+        this.props.launchInfo(animeName, null, null, malID)
+        window.location.hash = "#/info"
+      }
 
 }
 
@@ -201,9 +210,38 @@ function calcUpdateInterval(lastUpdated) {
     return null
 }
 
+function dateToSeason(date) {
+    var year = parseInt(date.split('-')[0]),
+        month = parseInt(date.split('-')[1]),
+        day = parseInt(date.split('-')[2])
+    //winter 1,2,3 | spring 4,5,6 | summer 7,8,9 | fall 10, 11, 12
+    var midMonths = [2, 5, 8, 11]
+    var lastMonths = [3, 6, 9, 12]
+    var seasonMonth = month
+    var seasonMonth = midMonths.includes(month) && day > 15 ? month+1 : month
+    seasonMonth = lastMonths.includes(month) ? month+1 : month
+    if(seasonMonth > 12) {
+        seasonMonth = 1
+        year++
+    }
+    if(seasonMonth > 0 && seasonMonth <= 3) {
+        return `Winter ${year}`
+    }
+    if(seasonMonth > 3 && seasonMonth <= 6) {
+        return `Spring ${year}`
+    }
+    if(seasonMonth > 6 && seasonMonth <= 9) {
+        return `Summer ${year}`
+    }
+    if(seasonMonth > 9 && seasonMonth <= 12) {
+        return `Fall ${year}`
+    }
+}
+
 const mapDispatchToProps = dispatch => {
     return {
-        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj))
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj)),
+        launchInfo: (animeName, a, b, malID) => dispatch(launchInfo(animeName, null, null, malID))
     }
 }
 

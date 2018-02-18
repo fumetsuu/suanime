@@ -75,10 +75,9 @@ class AnimeCard extends Component {
 
   launchInfoPage() {
     var animeName = this.props.animeDataRecent.anime.title
-    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
     var slug = this.props.animeDataRecent.anime.slug
     var animeID = this.props.animeDataRecent.anime.id
-    this.props.launchInfo(animeName, posterImg, slug, animeID)
+    this.props.launchInfo(animeName, slug, animeID, null)
     window.location.hash = "#/info"
   }
 }
@@ -98,8 +97,8 @@ const mapDispatchToProps = dispatch => {
     playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
 		playAnime(videoFile, animeName, epNumber, posterImg, slug)
 	),
-    launchInfo: (animeName, posterImg, slug, animeID) => dispatch(
-		launchInfo(animeName, posterImg, slug, animeID)
+    launchInfo: (animeName, slug, animeID, a) => dispatch(
+		launchInfo(animeName, slug, animeID, null)
 	)
   }
 }

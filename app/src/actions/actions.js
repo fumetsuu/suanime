@@ -43,14 +43,14 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	}
 }
 
-export function launchInfo(animeName, posterImg, slug, animeID) {
+export function launchInfo(animeName, slug, animeID, malID) {
 	return {
 	type: 'LAUNCH_INFO',
 		payload: {
 			animeName: animeName,
-			posterImg: posterImg,
 			slug: slug,
-			animeID: animeID
+			animeID: animeID,
+			malID: malID
 		}
 	}
 }

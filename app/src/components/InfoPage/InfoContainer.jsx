@@ -10,28 +10,33 @@ import { fixURL } from '../../util/util.js'
 class InfoContainer extends Component {
     constructor(props) {
         super(props)
-        if(!props.animeID) {
+        console.log(props)
+        if(!props.animeID && !props.malID) {
             window.location.hash = "#/"
         }
         this.state = {
             isLoading: true,
-            MALData: null
+            MALData: null,
         }
         this.stateFromMAL = this.stateFromMAL.bind(this)
     }
 
     componentDidMount() {
-        let { animeName } = this.props
-        const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
-        this.stateFromMAL(searchURL)
+        let { animeName, malID } = this.props
+        if(malID) {
+            this.stateFromMALID(malID)
+        } else {
+            const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
+            this.stateFromMAL(searchURL)
+        }
     }
     
     render() {
         if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
-        let { slug, animeID } = this.props
-        let { MALData } = this.state
+        let { slug, animeID, animeName } = this.props
+        let { MALData} = this.state
         let { title, title_english, title_japanese, link_canonical } = MALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
         //pass maldata to infomain and masterani slug to episodes
@@ -40,7 +45,7 @@ class InfoContainer extends Component {
             <div className="info-container">
                 <InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} masteraniLink={masteraniLink}/>
                 <InfoMain MALData={MALData}/> 
-                <InfoEpisodes slug={slug} animeID={animeID}/>
+                <InfoEpisodes animeName={animeName} slug={slug} animeID={animeID}/>
             </div>
         </div>
         )
@@ -54,14 +59,22 @@ class InfoContainer extends Component {
             })
         })
     }
+
+    stateFromMALID(malID) {
+        const infoURL = `http://api.jikan.me/anime/${malID}`
+        rp({ uri: infoURL, json: true }).then(MALData => {
+            this.setState({ MALData, isLoading: false })
+        })
+    }
+
 }
 
 const mapStateToProps = state => {
     return {
         animeName: state.infoReducer.animeName,
-        posterImg: state.infoReducer.posterImg,
         slug: state.infoReducer.slug,
-        animeID: state.infoReducer.animeID
+        animeID: state.infoReducer.animeID,
+        malID: state.infoReducer.malID
     }
 }
 
