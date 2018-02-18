@@ -50,11 +50,11 @@ class ListCard extends Component {
                 <div className="last-updated">{lastUpdated}</div>
             </div>)
         }
+        let imgfile = series_image
+        imageCache.fetchImages(series_image).then(images => {
+            imgfile = images.hashFile
+        })
         if(viewType == 'ROWS') {
-            let imgfile = series_image
-            imageCache.fetchImages(series_image).then(images => {
-                imgfile = images.hashFile
-            })
             return (
             <div className="list-card-container">
                 <div className="bg-img" style={{ backgroundImage: `url('${imgfile}')`}}/>
@@ -83,6 +83,29 @@ class ListCard extends Component {
                 </div>
             </div>)
         }
+        if(viewType == 'CARDS') {
+            return (
+                <div className="list-card-container-card">
+                    <div className="bg-img" style={{ backgroundImage: `url('${imgfile}')`}}/>
+                    <div className="series-information-container">
+                        <div className="row-1">
+                            <div className="progress-container">
+                                <div className={!completedseries?"progress-text":"progress-text full"}>{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
+                                {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                                {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                            </div>
+                            <div className="last-updated">{lastUpdated}</div>
+                        </div>
+                        <div className="row-2">
+                            <div className="series-type series-info">{typeCodeToText(series_type)}</div>
+                            <div className="series-season series-info">{dateToSeason(series_start)}</div>
+                            <Dropdown value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores" className="scores-dropdown"/>
+                        </div>
+                    </div>
+                    <div className="spacer-vertical"/>
+                    <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>                    
+                </div>)
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -99,6 +122,7 @@ class ListCard extends Component {
             })
         }, updateInterval) : null
     }
+    
 
     componentWillUnmount() {
         if(this.lastUpdatedTimer) {

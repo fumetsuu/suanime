@@ -417,6 +417,118 @@
                         border-right: 1px solid #4c4c4c
                     &:nth-child(odd)
                         background-color: darken($grey, 5%)
+                .list-card-container-card
+                    width: 220px
+                    height: 310px
+                    background-color: $grey
+                    display: grid
+                    grid-template-columns: 100%
+                    grid-template-rows: 50px auto 50px
+                    margin: 10px
+                    position: relative
+                    .bg-img
+                        background-position: center
+                        background-size: cover
+                        width: 100%
+                        height: 100%
+                        position: absolute
+                        z-index: 1
+                    .series-information-container
+                        display: grid
+                        grid-template-columns: 100%
+                        grid-template-rows: 1fr 1fr
+                        width: 100%
+                        height: 100%
+                        position: relative
+                        z-index: 2
+                        text-align: center
+                        font-weight: 400
+                        font-family: 'Lato'
+                        font-size: 12px
+                        .row-1
+                            display: grid
+                            grid-template-columns: 1fr 1fr
+                            width: 100%
+                            height: 20px
+                            .progress-container
+                                background-color: transparentize($black, 0.2)
+                                display: grid
+                                grid-template-columns: 50% 25% 25%
+                                margin: 5px 4px 5px 8px
+                                .progress-text   
+                                    text-align: center
+                                    font-weight: 400
+                                    font-family: 'Lato'
+                                    font-size: 12px
+                                    line-height: 20px
+                                .full
+                                    grid-column: 1/#{4}
+                                .prog-btn
+                                    .material-icons
+                                        font-size: 10px
+                                        padding: 5px
+                                    &:hover
+                                        background-color: $light-blue
+                                        cursor: pointer
+                            .last-updated
+                                background-color: transparentize($black, 0.2)
+                                margin: 5px 8px 5px 4px
+                                text-align: center
+                                font-weight: 400
+                                font-family: 'Lato'
+                                font-size: 12px
+                                line-height: 20px
+                        .row-2
+                            width: 100%
+                            height: 20px
+                            display: grid
+                            grid-template-columns: 30% 50% 20%
+                            .series-info
+                                height: 20px
+                                text-align: center
+                                font-weight: 400
+                                font-family: 'Lato'
+                                font-size: 12px
+                                line-height: 20px
+                                background-color: transparentize($black, 0.2)
+                            .series-type
+                                margin: 5px 4px 5px 8px
+                            .series-season
+                                margin: 5px 4px 5px 4px
+                                &:hover
+                                    cursor: pointer
+                                    background-color: $light-blue
+                            .scores-dropdown 
+                                margin: 5px 8px 5px 4px
+                                background-color: transparentize($black, 0.2)
+                                .Dropdown-control
+                                    line-height: 20px
+                                    &:hover
+                                        background-color: $light-blue
+                                        cursor: pointer
+                                .Dropdown-menu
+                                    position: relative
+                                    z-index: 100
+                                    .Dropdown-option
+                                        padding: 5px 0
+                                        &:hover
+                                            cursor: pointer
+                                            background-color: $black
+                                    .is-selected
+                                        background-color: $light-blue
+                                        pointer-events: none
+                    .series-title
+                        background-color: transparentize($black, 0.2)
+                        font-family: 'Lato'
+                        font-size: 11px
+                        font-weight: 400
+                        text-align: center
+                        padding: 10px
+                        position: relative
+                        z-index: 1
+                        &:hover
+                            cursor: pointer
+                            color: $light-blue
 
 .DropRight-root
     display: flex
