@@ -1,5 +1,5 @@
 export function convertMS(ms) {
-    var d, h, m, s;
+    var d, h, m, s, y
     s = Math.floor(ms / 1000);
     m = Math.floor(s / 60);
     s = s % 60;
@@ -7,6 +7,10 @@ export function convertMS(ms) {
     m = m % 60;
     d = Math.floor(h / 24);
     h = h % 24;
+    y = Math.floor(d / 365)
+    if(y!=0) {
+        return y == 1 ? '1 Year' : `${y} Years`
+    }
     if(d!=0) {
         if(h >= 12) {
             d++
@@ -24,12 +28,12 @@ export function convertMS(ms) {
 }
 
 export function convertSec(sec) {
-    var d, h, m, s;
-    m = Math.floor(sec / 60);
+    var d, h, m, s
+    m = Math.floor(sec / 60)
     s = sec % 60;
-    h = Math.floor(m / 60);
+    h = Math.floor(m / 60)
     m = m % 60;
-    d = Math.floor(h / 24);
+    d = Math.floor(h / 24)
     h = h % 24;
     return  (d == 0 ? '' : `${d} days `) +
             (h == 0 ? '' : `${h} hrs `) +

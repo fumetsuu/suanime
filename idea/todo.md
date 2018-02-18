@@ -19,5 +19,5 @@ Todo
 - [ ] refactor home page code
 - [ ] improve downloads
 - [x] optimise list sort and load
-- [ ] update utils for date to have year
-- [ ] make util for utc date to jp season
+- [x] update utils for date to have year
+- [x] make util for utc date to jp season
