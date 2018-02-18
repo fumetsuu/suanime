@@ -12,6 +12,8 @@ Todo
 - [ ] seasonal anime
 - [ ] search page back button
 - [ ] mal update history
+- [ ] next/previous ep button on watch page
+- [ ] update list on watch page
 
 ## development
 - [ ] refactor home page code
