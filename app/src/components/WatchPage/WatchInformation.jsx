@@ -6,15 +6,21 @@ import { fixURL } from '../../util/util';
 const h2p = require('html2plaintext')
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
+import { connect } from 'react-redux'
+import { updateAnime } from '../../actions/actions.js'
 
-export default class WatchInformation extends Component {
+class WatchInformation extends Component {
     constructor(props) {
         super(props)
         this.state = {
             reqWidth: '100%',
             MALlink: null,
-            animeInfo: ''
+            animeInfo: '',
+            animeListObject: null
         }
+        this.updateScore = this.updateScore.bind(this)
+        this.updateStatus = this.updateStatus.bind(this)
+        this.incEp = this.incEp.bind(this)
     }
 
     componentDidMount() {
@@ -25,6 +31,8 @@ export default class WatchInformation extends Component {
                 MALlink: first.url
             })
             const malid = first.id
+            console.log(this.getAnimeListObject(malid))
+            this.setState({ animeListObject: this.getAnimeListObject(malid) })
             rp(`${jikanBase}/anime/${malid}`).then(data => {
                 data = JSON.parse(data)
                 let seasonLink = `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}`
@@ -136,12 +144,15 @@ export default class WatchInformation extends Component {
                     <br></br> 
                     <div className="watch-episode">{this.props.epNumber}</div>
                 </div>
-                <div className="list-update">
-                    <Dropdown className="scores-dropdown" value={'10'} options={scoresData} key="scores"/>
-                    <Dropdown className="status-dropdown" value={'Currently Watching'} options={statusData}  key="statuses"/>
-                    <div className="prog-btn"><i className="material-icons">remove</i></div>
-                    <div className="prog-btn"><i className="material-icons">add</i></div>
-                </div>
+                {!this.state.animeListObject?null:(
+                    <div className="list-update">
+                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
+                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
+                        <div className="prog-btn" onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
+                        <div className="prog-btn" onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
+                        <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
+                    </div>
+        )}    
                 <div className="anime-out-link masterani-circle" onClick={() => browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
                 <div className={malstyle} onClick={() => browserLink(this.state.MALlink)}></div>
                 {this.state.animeInfo}
@@ -155,4 +166,78 @@ export default class WatchInformation extends Component {
     nameList(data) {
         return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>browserLink(el.url)}>{h2p(el.name)}</span></span>)
     }
+
+    getAnimeListObject(id) {
+        var animelist = this.props.listdata
+        return (animelist.find(anime => {
+            return anime.series_animedb_id == id
+        }))
+    }
+
+    updateScore(selected) {
+        var newScore = selected.value
+        let { series_animedb_id } = this.state.animeListObject
+        this.props.pclient.updateAnime(series_animedb_id, {
+            score: newScore
+        })
+        var updatedObj = {
+            my_score: newScore
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_score: newScore
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
+
+    updateStatus(selected) {
+        var newStatus = selected.value
+        let { series_animedb_id } = this.state.animeListObject
+        this.props.pclient.updateAnime(series_animedb_id, {
+            status: newStatus
+        })
+        var updatedObj = {
+            my_status: newStatus
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_status: newStatus
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
+
+    incEp(inc) {
+        let { series_animedb_id, my_watched_episodes } = this.state.animeListObject
+        if(my_watched_episodes != 0 && my_watched_episodes != series_animedb_id) {
+            this.props.pclient.updateAnime(series_animedb_id, {
+                episode: my_watched_episodes+inc
+            })
+        }
+        var updatedObj = {
+            my_watched_episodes: my_watched_episodes+inc
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_watched_episodes: my_watched_episodes+inc
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
 }
+
+const mapStateToProps = state => {
+    return {
+        pclient: state.animelistReducer.pclient,
+        listdata: state.animelistReducer.listdata
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WatchInformation)
