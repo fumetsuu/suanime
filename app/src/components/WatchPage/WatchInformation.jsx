@@ -4,6 +4,8 @@ import screenfull from 'screenfull'
 import { browserLink } from '../../util/browserlink';
 import { fixURL } from '../../util/util';
 const h2p = require('html2plaintext')
+import Dropdown from 'react-dropdown'
+import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 
 export default class WatchInformation extends Component {
     constructor(props) {
@@ -134,7 +136,12 @@ export default class WatchInformation extends Component {
                     <br></br> 
                     <div className="watch-episode">{this.props.epNumber}</div>
                 </div>
-                <div className="spacer-horizontal"/>
+                <div className="list-update">
+                    <Dropdown className="scores-dropdown" value={'10'} options={scoresData} key="scores"/>
+                    <Dropdown className="status-dropdown" value={'Currently Watching'} options={statusData}  key="statuses"/>
+                    <div className="prog-btn"><i className="material-icons">remove</i></div>
+                    <div className="prog-btn"><i className="material-icons">add</i></div>
+                </div>
                 <div className="anime-out-link masterani-circle" onClick={() => browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
                 <div className={malstyle} onClick={() => browserLink(this.state.MALlink)}></div>
                 {this.state.animeInfo}

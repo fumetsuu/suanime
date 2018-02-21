@@ -93,6 +93,59 @@
                 background-image: url('https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png')
             .masterani-circle
                 background-image: url('https://4.bp.blogspot.com/-YL78r6p1fyg/WdxknlfMQ7I/AAAAAAAAF9c/_s-5rWQiM7Udo0Crgza76dHlE79HFhxSgCPcBGAYYCw/s1600/Masterani.me.png')
+            .list-update
+                justify-self: end
+                margin-top: 10px
+                display: grid
+                grid-template-columns: repeat(4, auto)
+                grid-gap: 20px
+                .scores-dropdown, .status-dropdown
+                    justify-self: center
+                    width: 100%
+                    padding: 0 5px
+                    height: 30px
+                    background-color: $black    
+                    .Dropdown-control
+                        background-color: $black
+                        height: 30px
+                        line-height: 30px
+                        font-size: 12px
+                        font-family: 'Lato'
+                        font-weight: 400
+                        justify-self: center
+                        .Dropdown-placeholder
+                            text-align: center
+                    .Dropdown-menu
+                        background-color: $black
+                        position: relative
+                        .Dropdown-option
+                            border-bottom: 1px solid $grey
+                            background-color: $black
+                            font-family: 'Lato'
+                            font-weight: 400
+                            font-size: 12px
+                            text-align: center
+                            padding: 5px 0
+                            &:hover
+                                cursor: pointer
+                                background-color: lighten($dark-grey, 5%)
+                        .is-selected
+                            background-color: $light-blue
+                            pointer-events: none
+                    &:hover
+                        cursor: pointer
+                        background-color: $black
+                .prog-btn
+                    background-color: $black
+                    width: 30px
+                    height: 30px
+                    text-align: center
+                    .material-icons
+                        font-size: 20px
+                        line-height: 30px
+                    &:hover
+                        background-color: $light-blue
+                        cursor: pointer
             .anime-information
                 grid-column: 1/#{6}
                 margin-top: 20px
@@ -157,3 +210,4 @@
     width: 100vw !important
     height: 100vh !important
     background-color: black !important
+
