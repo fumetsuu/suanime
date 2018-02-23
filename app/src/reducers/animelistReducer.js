@@ -45,6 +45,16 @@ export default function reducer(state = defaultState, action) {
             global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
             return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
         }
+        case 'ADD_ANIME': {
+            var storedlistdata = global.estore.get('listdata')
+            var storedlistinfo = global.estore.get('listinfo')
+            var malID = action.payload.malID
+            var animeObj = action.payload.animeObj
+            storedlistdata.push(animeObj)
+            storedlistinfo[5] = storedlistinfo[5]+1
+            global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
+            return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
+        }
         case 'KILL_MAL': {
             global.estore.delete("mal")
             global.estore.delete("listdata")

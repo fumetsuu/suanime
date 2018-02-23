@@ -1,3 +1,5 @@
+
+
 export function createdlObj(animeFilename, newdlObj) {
 	return {
 		type: 'CREATE_DLOBJ',
@@ -99,6 +101,16 @@ export function updateAnime(malID, updatedObj) {
 			malID: malID,
 			updatedObj: updatedObjWithTime || updatedObj,
 			newStatus: newStatus
+		}
+	}
+}
+
+export function addAnime(malID, animeObj) {
+	return {
+		type: "ADD_ANIME",
+		payload: {
+			malID: malID,
+			animeObj: animeObj
 		}
 	}
 }

@@ -1,18 +1,167 @@
 import React from 'react';
 import { browserLink } from '../../util/browserlink.js'
+import Dropdown from 'react-dropdown'
+import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
+import { connect } from 'react-redux'
+import { updateAnime, addAnime } from '../../actions/actions.js'
+class InfoHeader extends React.Component {
+    constructor(props) {
+        super(props)
+        this.getAnimeListObject = this.getAnimeListObject.bind(this)
+        this.state = {
+            animeListObject: this.getAnimeListObject(this.props.malID)
+        }
+        this.updateScore = this.updateScore.bind(this)
+        this.updateStatus = this.updateStatus.bind(this)
+        this.incEp = this.incEp.bind(this)
+        this.addToList = this.addToList.bind(this)
+    }
+    
 
-const InfoHeader = (title, title_english, title_japanese, link, masteraniLink) => {
-    return (
-        <div className="info-header">
-            <div className="info-header-title">
-                {title.title}
-                {title.title_japanese ? <div className="jp-title"><br/>JP: {title.title_japanese}</div> : null}
+    render() {
+        let { title, title_english, title_japanese, link, masteraniLink } = this.props
+        return (
+            <div className="info-header">
+                <div className="info-header-title">
+                    {title}
+                    {title_japanese ? <div className="jp-title"><br/>JP: {title_japanese}</div> : null}
+                </div>
+                {!this.state.animeListObject?<div className="spacer-vertical" onClick={this.addToList}>Not in List</div>:(
+                    <div className="list-update">
+                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
+                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
+                        <div className={"prog-btn"+this.state.animeListObject.my_watched_episodes==0?' disabled':''} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
+                        <div className={"prog-btn"+this.state.animeListObject.my_watched_episodes==this.state.animeListObject.series_episodes?' disabled':''} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
+                        <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
+                    </div>
+        )}    
+                <div className="anime-out-link masterani-circle" onClick={() => browserLink(masteraniLink)}/>
+                <div className="anime-out-link mal-circle" onClick={() => browserLink(link)}/>
             </div>
-            <div className="vertical-spacer"/>
-            <div className="anime-out-link masterani-circle" onClick={() => browserLink(title.masteraniLink)}/>
-            <div className="anime-out-link mal-circle" onClick={() => browserLink(title.link)}/>
-        </div>
-    )
+        )
+    }
+
+    getAnimeListObject(id) {
+        var animelist = this.props.listdata
+        return (animelist.find(anime => {
+            return anime.series_animedb_id == id
+        }))
+    }
+
+    addToList() {
+        let { malID, title, status, aired, image_url, episodes, type } = this.props
+        var typeAsCode = typeToCode(type)
+        var statusAsCode = statusToCode(status)
+        var newAnimeListObject = {
+            "series_animedb_id": malID,
+            "series_title": title,
+            "series_type": typeAsCode,
+            "series_episodes": episodes,
+            "series_status": statusAsCode,
+            "series_start": aired.from,
+            "series_end": aired.to,
+            "series_image": image_url,
+            "my_watched_episodes": 0,
+            "my_start_date": "0000-00-00",
+            "my_finish_date": "0000-00-00",
+            "my_score": 0,
+            "my_status": 6,
+            "my_rewatching": 0,
+            "my_rewatching_ep": 0,
+            "my_last_updated": Date.now() / 1000,
+            "my_tags": []
+        }
+        this.props.pclient.addAnime(malID, {
+            status: 6
+        })
+        this.setState({
+            animeListObject: newAnimeListObject
+        })
+        this.props.addAnime(malID, newAnimeListObject)
+    }
+
+    updateScore(selected) {
+        var newScore = selected.value
+        let { series_animedb_id } = this.state.animeListObject
+        this.props.pclient.updateAnime(series_animedb_id, {
+            score: newScore
+        })
+        var updatedObj = {
+            my_score: newScore
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_score: newScore
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
+
+    updateStatus(selected) {
+        var newStatus = selected.value
+        let { series_animedb_id } = this.state.animeListObject
+        this.props.pclient.updateAnime(series_animedb_id, {
+            status: newStatus
+        })
+        var updatedObj = {
+            my_status: newStatus
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_status: newStatus
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
+
+    incEp(inc) {
+        let { series_animedb_id, my_watched_episodes, series_episodes } = this.state.animeListObject
+        this.props.pclient.updateAnime(series_animedb_id, {
+            episode: my_watched_episodes+inc
+        })
+        var updatedObj = {
+            my_watched_episodes: my_watched_episodes+inc
+        }
+        this.setState({
+            animeListObject: Object.assign({}, this.state.animeListObject, {
+                my_watched_episodes: my_watched_episodes+inc
+            })
+        })
+        this.props.updateAnime(series_animedb_id, updatedObj)
+    }
 }
 
-export default InfoHeader;
+function statusToCode(airingString) {
+    switch(airingString) {
+        case 'Currently Airing': return 1; break
+        case 'Finished Airing': return 2; break
+        case 'Not yet aired': return 3; break
+    }
+}
+
+function typeToCode(typeString) {
+    switch(typeString) {
+        case 'TV': return 1; break
+        case 'OVA': return 2; break
+        case 'Movie': return 3; break
+        case 'Special': return 4; break
+        case 'ONA': return 5; break
+        case 'Music': return 6; break
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        pclient: state.animelistReducer.pclient,
+        listdata: state.animelistReducer.listdata
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj)),
+        addAnime: (malID, animeObj) => dispatch(addAnime(malID, animeObj))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(InfoHeader)

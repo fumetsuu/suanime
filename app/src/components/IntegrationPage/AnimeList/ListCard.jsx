@@ -93,8 +93,8 @@ class ListCard extends Component {
                         <div className="row-1">
                             <div className="progress-container">
                                 <div className={!completedseries?"progress-text":"progress-text full"}>{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
-                                {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
-                                {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                                {!completedseries ? <div className={"prog-btn"+my_watched_episodes==0?' disabled':''} onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                                {!completedseries ? <div className={"prog-btn"+my_watched_episodes==series_episodes?' disabled':''} onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
                             </div>
                             <div className="last-updated">{lastUpdated}</div>
                         </div>
@@ -157,12 +157,10 @@ class ListCard extends Component {
     }
 
     incEp(inc) {
-        let { series_animedb_id, my_watched_episodes } = this.props.animeData
-        if(my_watched_episodes != 0 && my_watched_episodes != series_animedb_id) {
-            this.pclient.updateAnime(series_animedb_id, {
-                episode: my_watched_episodes+inc
-            })
-        }
+        let { series_animedb_id, my_watched_episodes, series_episodes } = this.props.animeData
+        this.pclient.updateAnime(series_animedb_id, {
+            episode: my_watched_episodes+inc
+        })
         var updatedObj = {
             my_watched_episodes: my_watched_episodes+inc
         }
