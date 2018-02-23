@@ -38,11 +38,11 @@ class ListCard extends Component {
                 <div className="status-button" style={{background: statusColour(series_status)}}/>
                 <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>
                 <div className="progress-info-container">
-                    {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                    {!completedseries ? <div className={my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
                     <div className="progress-bar-container">                 
                         <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                     </div>
-                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                        {!completedseries ? <div className={my_watched_episodes==series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
                         <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
                 </div>
                 <Dropdown className="scores-dropdown" value={scoresData.find(el => el.value == my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
@@ -78,8 +78,8 @@ class ListCard extends Component {
                         <div className="progress-bar-container">
                             <div className="progress-bar-progress" style={{width: progressPercent(my_watched_episodes, series_episodes)+'%'}} />
                         </div>
-                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
-                        {!completedseries ? <div className="prog-btn" onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                        {!completedseries ? <div className={my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                        {!completedseries ? <div className={my_watched_episodes==series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
                         <div className="progress-text">{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
                     </div>
                 </div>
@@ -93,8 +93,8 @@ class ListCard extends Component {
                         <div className="row-1">
                             <div className="progress-container">
                                 <div className={!completedseries?"progress-text":"progress-text full"}>{my_watched_episodes}/{!series_episodes?'?':series_episodes}</div>
-                                {!completedseries ? <div className={"prog-btn"+my_watched_episodes==0?' disabled':''} onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
-                                {!completedseries ? <div className={"prog-btn"+my_watched_episodes==series_episodes?' disabled':''} onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
+                                {!completedseries ? <div className={my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(-1)}}><i className="material-icons">remove</i></div> : <div/>}
+                                {!completedseries ? <div className={my_watched_episodes==series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => {this.incEp(1)}}><i className="material-icons">add</i></div> : <div/>}
                             </div>
                             <div className="last-updated">{lastUpdated}</div>
                         </div>

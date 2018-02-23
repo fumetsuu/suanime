@@ -26,12 +26,12 @@ class InfoHeader extends React.Component {
                     {title}
                     {title_japanese ? <div className="jp-title"><br/>JP: {title_japanese}</div> : null}
                 </div>
-                {!this.state.animeListObject?<div className="spacer-vertical" onClick={this.addToList}>Not in List</div>:(
+                {!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
                     <div className="list-update">
                         <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
                         <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
-                        <div className={"prog-btn"+this.state.animeListObject.my_watched_episodes==0?' disabled':''} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
-                        <div className={"prog-btn"+this.state.animeListObject.my_watched_episodes==this.state.animeListObject.series_episodes?' disabled':''} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
+                        <div className={this.state.animeListObject.my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
+                        <div className={this.state.animeListObject.my_watched_episodes==this.state.animeListObject.series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
                         <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
                     </div>
         )}    
