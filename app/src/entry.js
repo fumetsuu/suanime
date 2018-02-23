@@ -5,6 +5,8 @@ import App from './App.jsx';
 import store from './store.js'
 const fs = require('fs')
 const path = require('path')
+import popura from 'popura'
+const pclient = popura()
 
 var eStore = require('electron-store')
 global.estore = new eStore()
@@ -36,6 +38,17 @@ if(global.estore.get("listdata") && global.estore.get("listinfo")) {
         payload: {
             listdata: global.estore.get("listdata"),
             listinfo: global.estore.get("listinfo")
+        }
+    })
+}
+
+if(global.estore.get("mal")) {
+    let { user, pass } = global.estore.get("mal")
+    pclient.setUser(user, pass)
+    store.dispatch({
+        type: 'SET_CLIENT',
+        payload: {
+            pclient: pclient
         }
     })
 }
