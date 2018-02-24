@@ -1,11 +1,10 @@
 const electron = require('electron')
 const { app, BrowserWindow } = electron
+const path = require('path')
 
-require('electron-debug')({ showDevTools: true })
+require('electron-debug')()
 
-require('electron-reload')(__dirname, {
-    ignored: /downloads\/|node_modules\/|app\/build\/|mal-cache\//
-});
+require('electron-reload')(path.join(__dirname, '/app/build/'))
 
 let mainWindow
 
