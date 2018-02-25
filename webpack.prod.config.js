@@ -14,7 +14,6 @@ const prod = {
                 'NODE_ENV': JSON.stringify('production')
             }
         }),
-        new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
         new UglifyJSPlugin()
     ]
 }

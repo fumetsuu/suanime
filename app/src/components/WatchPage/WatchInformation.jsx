@@ -35,7 +35,7 @@ class WatchInformation extends Component {
             this.setState({ animeListObject: this.getAnimeListObject(malid) })
             rp(`${jikanBase}/anime/${malid}`).then(data => {
                 data = JSON.parse(data)
-                let seasonLink = `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}`
+                let seasonLink = data.premiered ? `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}` : 'https://myanimelist.net/anime/season'
                 this.setState({
                     animeInfo: 
                     <div className="anime-information">

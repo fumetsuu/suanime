@@ -1,6 +1,7 @@
 const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
 	devtool: 'eval', //for chrome devtools
@@ -57,5 +58,6 @@ module.exports = {
 		new HtmlWebpackPlugin({
 			template: 'app/index.html'
 		})
+		//new BundleAnalyzerPlugin()
 	]
 }

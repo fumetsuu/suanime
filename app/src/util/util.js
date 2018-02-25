@@ -52,6 +52,6 @@ export function fixURL(url) {
 
 export function fixURLMA(url) {
     console.log(url)
-    return encodeURIComponent(url.replace(/\//, "").substr(0, 25))
+    return encodeURIComponent(url.replace(/\/|\./, "").substr(0, 25))
 
 }
