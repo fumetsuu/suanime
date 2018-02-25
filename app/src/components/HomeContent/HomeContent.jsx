@@ -3,7 +3,6 @@ import React from 'react';
 import HomeHeader from './HomeHeader.jsx'
 import HeaderActionButton from './HeaderActionButton.jsx'
 import CardsDisplay from './CardsDisplay.jsx'
-
 const HomeContent = () => (
   <div className="home-content-wrapper">
     <div className="home-content">
