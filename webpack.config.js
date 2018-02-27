@@ -1,6 +1,6 @@
 const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+// const HtmlWebpackPlugin = require('html-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
@@ -8,7 +8,9 @@ module.exports = {
 
 	watch: true, //watch project folder
 
-	target: 'electron',
+	target: 'electron-main',
+
+	mode: 'development',
 
 	entry: './app/src/entry.js', //this is what webpack looks for to bundle into bundle.js (this file will call a lot of other components)
 
@@ -16,7 +18,8 @@ module.exports = {
 		//location and filename for bundled js
 		path: __dirname + '/app/build',
 		publicPath: './',
-		filename: 'bundle.js'
+		filename: 'bundle.js',
+		chunkFilename: './[name].[chunkhash].js'
 	},
 	node: {
 		__dirname: false,
@@ -54,10 +57,10 @@ module.exports = {
 	plugins: [
 		new ExtractTextPlugin({
 			filename: 'bundle.css'
-		}),
-		new HtmlWebpackPlugin({
-			template: 'app/index.html'
 		})
+		// new HtmlWebpackPlugin({
+		// 	template: 'app/index.html'
+		// })
 		//new BundleAnalyzerPlugin()
 	]
 }

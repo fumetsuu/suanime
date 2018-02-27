@@ -12,7 +12,7 @@ app.on('ready', () => {
     mainWindow = new BrowserWindow({ frame: false, width: 1280, height: 720, show: false })
     mainWindow.setTitle('suanime')
     mainWindow.setMenu(null)
-    mainWindow.loadURL('file://'+__dirname+'/app/index.html')
+    mainWindow.loadURL('file://'+__dirname+'/app/build/index.html')
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
     })
