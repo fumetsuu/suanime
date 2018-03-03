@@ -21,22 +21,20 @@ class DownloadCard extends Component {
         completeDate: this.props.completeDate
       }
     } else {
-      var thisdlObj
       var dlObjsFROMTREE = this.props.dlObjsFROMTREE
       dlObjsFROMTREE.some(dlObj => {
         if(dlObj.id == this.props.animeFilename) {
-          thisdlObj = dlObj.dlObj
-          thisdlObj.fixComp(this)      
+          this.dlObj = dlObj.dlObj
+          this.dlObj.fixComp(this)      
           return true
         }
       })
-      if(!thisdlObj) {
-        thisdlObj = new streamMoe()
-        thisdlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
-        this.props.createdlObj(this.props.animeFilename, thisdlObj)
+      if(!this.dlObj) {
+        this.dlObj = new streamMoe()
+        this.dlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
+        this.props.createdlObj(this.props.animeFilename, this.dlObj)
       }
       this.state = {}
-      this.dlObj = thisdlObj
     }
   }
 
