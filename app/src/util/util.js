@@ -46,6 +46,21 @@ export function convertSec(sec) {
             (s == 0 ? '' : `${s} sec `)
 }
 
+export function momentDuration(sec) {
+    if(sec==0) return '00:00'
+    var h, m, s
+    m = Math.floor(sec / 60)
+    s = Math.round(sec % 60)
+    h = Math.floor(m / 60)
+    m = Math.round(m % 60)
+    h = Math.round(h % 24)
+    let formattedDuration = ''
+    formattedDuration += h > 0 ? h.toString().padStart(2, '0') : ''
+    formattedDuration += (h>0 && m==0) ? ':00' : ((h>0 && m>0) ? ':'+m.toString().padStart(2, '0') : ((m > 0) ? m.toString().padStart(2, '0') : '00'))
+    formattedDuration += ':'+s.toString().padStart(2, '0')
+    return formattedDuration
+}
+
 export function fixURL(url) {
     return encodeURIComponent(url.replace(/\/|\./g, ""))
 }
@@ -53,5 +68,4 @@ export function fixURL(url) {
 export function fixURLMA(url) {
     console.log(url)
     return encodeURIComponent(url.replace(/\/|\./, "").substr(0, 25))
-
 }

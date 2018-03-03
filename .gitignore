@@ -42,3 +42,5 @@ jspm_packages
 *.psd
 downloads
 mal-cache
+app/downloads
+app/mal-cache

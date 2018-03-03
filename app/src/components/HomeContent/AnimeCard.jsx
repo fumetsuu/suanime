@@ -6,23 +6,24 @@ import { convertMS } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
 const rp = require('request-promise')
 
-let content
-
 class AnimeCard extends Component {
   constructor(props) {
     super(props)
-
+    let { title, slug, poster } = this.props.animeDataRecent.anime
+    let { episode, created_at } = this.props.animeDataRecent
+    this.title = title
+    this.link = `https://www.masterani.me/anime/info/${slug}`
+    this.poster = `https://cdn.masterani.me/poster/${poster}`
+    this.epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
+    this.lastEp = episode
+    var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
+    this.timeago = convertMS(Date.now()-Date.parse(created_at)-tzOffset)
+    this.animeFilename = `${title} - ${episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')    
+    this.epTitle = 'Episode '+episode
   }
 
   render() {
-    var animeDataRecent = this.props.animeDataRecent
-    var title = animeDataRecent.anime.title
-    var link = `https://www.masterani.me/anime/info/${animeDataRecent.anime.slug}`
-    var poster = `https://cdn.masterani.me/poster/${animeDataRecent.anime.poster}`
-    var lastEp = animeDataRecent.episode
-    var createTime = animeDataRecent['created_at'] //GMT 0
-    var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
-    var timeago = convertMS(Date.now()-Date.parse(createTime)-tzOffset)
+    let { title, link, poster, lastEp, timeago } = this
     var downloadClass = "dp-btn"
     var playClass = "none"
     var fn = `${title} - ${lastEp}`.replace(/[\\/:"*?<>|]+/, '')+'.mp4'
@@ -36,7 +37,7 @@ class AnimeCard extends Component {
       downloadClass = "dp-btn"
       playClass = "none"
     }
-    content = 
+    this.content = 
       <div className="card-container" onClick={this.launchInfoPage.bind(this)}>
         <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
         <div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
@@ -48,36 +49,29 @@ class AnimeCard extends Component {
         <div className="spacer-vertical"/>
         <div className="card-title">{title}</div>
     </div>
-    return content
+    return this.content
   }
 
   queueDLComp(e) {
-    e.stopPropagation()    
-    var epLink = `https://www.masterani.me/anime/watch/${this.props.animeDataRecent.anime.slug}/${this.props.animeDataRecent.episode}`
-    var animeName = this.props.animeDataRecent.anime.title
-    var epTitle = 'Episode '+this.props.animeDataRecent.episode
-    var animeFilename = `${animeName} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
-    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
-    this.props.queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
+    e.stopPropagation()
+    let { title, epLink, poster, lastEp, animeFilename, epTitle } = this
+    let { episode } = this.props.animeDataRecent
+    this.props.queueDL(epLink, animeFilename, poster, title, epTitle)
   }
 
   playEpComp(e) {
     e.stopPropagation()
-    var animeName = this.props.animeDataRecent.anime.title
-    var animeFilename = `${animeName} - ${this.props.animeDataRecent.episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
+    let { slug, title } = this.props.animeDataRecent.anime
+    let { episode } = this.props.animeDataRecent
+    let { animeFilename, epTitle, poster } = this
     var videoFile = path.join(__dirname, ('../downloads/'+animeFilename))
-    var epNumber = 'Episode '+this.props.animeDataRecent.episode
-    var posterImg = `https://cdn.masterani.me/poster/${this.props.animeDataRecent.anime.poster}`
-    var slug = this.props.animeDataRecent.anime.slug
-    this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
+    this.props.playAnime(videoFile, title, epTitle, poster, slug)
     window.location.hash="#/watch"
   }
 
   launchInfoPage() {
-    var animeName = this.props.animeDataRecent.anime.title
-    var slug = this.props.animeDataRecent.anime.slug
-    var animeID = this.props.animeDataRecent.anime.id
-    this.props.launchInfo(animeName, slug, animeID, null)
+    let { title, slug, id } = this.props.animeDataRecent.anime
+    this.props.launchInfo(title, slug, id, null)
     window.location.hash = "#/info"
   }
 }

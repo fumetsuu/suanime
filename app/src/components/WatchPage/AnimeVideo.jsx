@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
-const moment = require('moment')
-const momentDurationFormatSetup = require("moment-duration-format")
-momentDurationFormatSetup(moment)
+import { momentDuration } from '../../util/util'
 let playbackRate = 1
 let volume = 1
 let resumeFrom = false
@@ -95,7 +93,7 @@ class AnimeVideo extends Component {
 					onChange={this.setVolume.bind(this)}
 					onMouseLeave={this.hideVolSlider.bind(this)}
 					/>
-					<div className="progress-text">{moment.duration(duration*played, "seconds").format(this.durationTemplate(duration*played), { trim: false })} / {moment.duration(duration, "seconds").format(this.durationTemplate(duration), { trim: false })}</div>
+					<div className="progress-text">{momentDuration(duration*played)} / {momentDuration(duration)}</div>
 					<input className="progress-slider"
 					type='range' min={0} max={1} step='any'
 					value={played}
@@ -200,10 +198,6 @@ class AnimeVideo extends Component {
 		this.setState({
 			volSliderClass: "volume-slider none"
 		})
-	}
-
-	durationTemplate(secs) {
-		return secs >= 3600 ? " hh:mm:ss" : " mm:ss"
 	}
 
 }

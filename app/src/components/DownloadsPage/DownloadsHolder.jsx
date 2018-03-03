@@ -5,6 +5,7 @@ import DownloadCard from './DownloadCard.jsx'
 
 class DownloadsHolder extends Component {
     render() {
+        console.log(this.props.downloadsArray, this.props.completedArray)
         var dlArray = []
         if(this.props.downloadsArray.length) {
             this.props.downloadsArray.forEach(el => {

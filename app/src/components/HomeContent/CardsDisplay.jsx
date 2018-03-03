@@ -2,11 +2,8 @@ import React, { Component } from 'react'
 const rp = require('request-promise')
 import AnimeCard from './AnimeCard.jsx'
 import Loader from '../Loader/Loader.jsx'
-const masteraniReleases = 'https://www.masterani.me/api/releases'
-const NUM_OF_CARDS = 10
-var maxPage = 5
-let releasesData
 
+const masteraniReleases = 'https://www.masterani.me/api/releases'
 
 export default class CardsDisplay extends Component {
     constructor(props) {
@@ -15,6 +12,8 @@ export default class CardsDisplay extends Component {
             cardsArray: [],
             currentPage: 0
         }
+        this.NUM_OF_CARDS = 10
+        this.addSpacerCards = this.addSpacerCards.bind(this)
     }
 
     componentWillMount() {
@@ -22,23 +21,23 @@ export default class CardsDisplay extends Component {
             uri: masteraniReleases,
             json: true
         }).then(releases => {
-            releasesData = releases
-            for(var i = 0 ; i < NUM_OF_CARDS; i++) {
+            this.releasesData = releases
+            for(var i = 0 ; i < this.NUM_OF_CARDS; i++) {
                 this.setState({
                     cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releases[i]} key={releases[i].anime.id}/>]
                 })
             }
-            maxPage = Math.ceil(releases.length / NUM_OF_CARDS)-1
-            addSpacerCards(this)
+            this.maxPage = Math.floor(releases.length / this.NUM_OF_CARDS)
+            this.addSpacerCards()
         })
     }
 
     componentDidMount() {
-        window.addEventListener('resize', () => {
-            if(window.location.hash == "#/") {
-                addSpacerCards(this)
-            }
-        })
+        window.addEventListener('resize', this.addSpacerCards, true)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.addSpacerCards, true)
     }
 
     render() {
@@ -46,7 +45,7 @@ export default class CardsDisplay extends Component {
             return <Loader loaderClass="central-loader"></Loader>
         } else {
             var pageBackClass = `pag-btn ${this.state.currentPage==0?'disabled':''}`
-            var pageNextClass = `pag-btn ${this.state.currentPage==maxPage?'disabled':''}`
+            var pageNextClass = `pag-btn ${this.state.currentPage==this.maxPage?'disabled':''}`
         return (
             <div className="cards-display-wrapper">
                 <div className="cards-display">
@@ -69,12 +68,12 @@ export default class CardsDisplay extends Component {
             currentPage: this.state.currentPage-1
         }, () => {
             setTimeout(() => {
-                for(var i = this.state.currentPage*NUM_OF_CARDS ; i < (this.state.currentPage+1)*NUM_OF_CARDS; i++) {
+                for(var i = this.state.currentPage*this.NUM_OF_CARDS ; i < (this.state.currentPage+1)*this.NUM_OF_CARDS; i++) {
                     this.setState({
-                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]} key={i}/>]
+                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={this.releasesData[i]} key={i}/>]
                     })
                 }
-                addSpacerCards(this)
+                this.addSpacerCards()
             }, 1)
         })
     }
@@ -85,36 +84,32 @@ export default class CardsDisplay extends Component {
             currentPage: this.state.currentPage+1
         }, () => {
             setTimeout(() => {
-                for(var i = this.state.currentPage*NUM_OF_CARDS ; i < ((this.state.currentPage+1)*NUM_OF_CARDS>releasesData.length?releasesData.length:(this.state.currentPage+1)*NUM_OF_CARDS); i++) {
+                for(var i = this.state.currentPage*this.NUM_OF_CARDS ; i < ((this.state.currentPage+1)*this.NUM_OF_CARDS>this.releasesData.length?this.releasesData.length:(this.state.currentPage+1)*this.NUM_OF_CARDS); i++) {
                     this.setState({
-                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={releasesData[i]} key={i}/>]
+                        cardsArray: [...this.state.cardsArray,<AnimeCard animeDataRecent={this.releasesData[i]} key={i}/>]
                     })
                 }
-                addSpacerCards(this)
+                this.addSpacerCards()
             }, 1)
         })
     }
 
     addSpacerCards() {
-
-    }
-
-}
-
-function addSpacerCards(comp) {
-    comp.setState({
-        cardsArray: comp.state.cardsArray.filter(el => el.props.className!="invisible card-container"
-        )
-    })
-    var cardWidth = document.querySelector('.card-container').clientWidth+20
-    var containerWidth = document.querySelector('.cards-display').clientWidth
-    var cardsInRow = Math.floor(containerWidth / cardWidth)
-    var cardsInLastRow = comp.state.cardsArray.length % cardsInRow
-    if(cardsInLastRow!=0) {
-        for(var i = 0; i < cardsInRow-cardsInLastRow; i++) {
-            comp.setState({
-                cardsArray: [...comp.state.cardsArray, <div key={`invis_spacer_${i}`} className="invisible card-container"/>]
-            })
+        this.setState({
+            cardsArray: this.state.cardsArray.filter(el => el.props.className!="invisible card-container"
+            )
+        })
+        var cardWidth = document.querySelector('.card-container').clientWidth+20
+        var containerWidth = document.querySelector('.cards-display').clientWidth
+        var cardsInRow = Math.floor(containerWidth / cardWidth)
+        var cardsInLastRow = this.state.cardsArray.length % cardsInRow
+        if(cardsInLastRow!=0) {
+            for(var i = 0; i < cardsInRow-cardsInLastRow; i++) {
+                this.setState({
+                    cardsArray: [...this.state.cardsArray, <div key={`invis_spacer_${i}`} className="invisible card-container"/>]
+                })
+            }
         }
     }
+
 }
