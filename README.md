@@ -1,2 +1,2 @@
 # suanime
-made by joseph~chan :)
+anime
