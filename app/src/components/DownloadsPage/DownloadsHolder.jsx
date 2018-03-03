@@ -5,16 +5,15 @@ import DownloadCard from './DownloadCard.jsx'
 
 class DownloadsHolder extends Component {
     render() {
-        console.log(this.props.downloadsArray, this.props.completedArray)
         var dlArray = []
-        if(this.props.downloadsArray.length) {
-            this.props.downloadsArray.forEach(el => {
-                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename}/>)
-            })
-        }
-        if(this.props.completedArray.length) {
-            this.props.completedArray.forEach(el => {
-                dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} />)
+        var alldlPropsArray = [...this.props.downloadsArray, ...this.props.completedArray]
+        if(alldlPropsArray.length) {
+            alldlPropsArray.forEach(el => {
+                if(this.props.completedArray.includes(el)) {
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} />)
+                } else {
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename}/>)
+                }
             })
         }
         return (
