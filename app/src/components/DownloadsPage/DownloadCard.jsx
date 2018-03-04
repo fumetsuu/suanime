@@ -9,33 +9,36 @@ import { createdlObj, clearDL, playAnime } from '../../actions/actions.js'
 class DownloadCard extends Component {
   constructor(props) {
     super(props)
+    this.updateProgress = this.updateProgress.bind(this)
     if(this.props.completed) {
+      let { totalSize, elapsed, completeDate } = this.props
       this.state = {
         status: 'COMPLETED',
         speed: '',
-        progressSize: this.props.totalSize,
-        totalSize: this.props.totalSize,
+        progressSize: totalSize,
+        totalSize: totalSize,
         percentage: '100',
-        elapsed: this.props.elapsed,
+        elapsed: elapsed,
         remaining: '0 sec',
-        completeDate: this.props.completeDate
+        completeDate: completeDate
       }
     } else {
       var dlObjsFROMTREE = this.props.dlObjsFROMTREE
       dlObjsFROMTREE.some(dlObj => {
         if(dlObj.id == this.props.animeFilename) {
           this.dlObj = dlObj.dlObj
-          this.dlObj.fixComp(this)      
+          this.dlObj.fixComp(this.updateProgress)      
           return true
         }
       })
       if(!this.dlObj) {
         this.dlObj = new streamMoe()
-        this.dlObj.setArgs(this.props.epLink, this.props.animeFilename, this) 
+        this.dlObj.setArgs(this.props.epLink, this.props.animeFilename, this.updateProgress) 
         this.props.createdlObj(this.props.animeFilename, this.dlObj)
       }
       this.state = {}
     }
+  
   }
 
   componentDidMount() {
@@ -80,7 +83,7 @@ class DownloadCard extends Component {
         controlClass = "download-control-btn disabled"
         statusText = "Starting Download"
         controlAction = null
-        clearClass = "download-control-btn disabled"
+        clearClass = "download-control-btn"
         break
       }
       case 'COMPLETED': {
@@ -118,20 +121,18 @@ class DownloadCard extends Component {
   }
 
   startDownload() {
+    this.setState({ status: 'STARTING_DOWNLOAD' })
     this.dlObj.start()
   }
+
   pauseDownload() {
-    this.setState({
-      status: 'PAUSED'
-    })
     this.dlObj.pause()
   }
+
   continueDownload() {
-    this.setState({
-      status: 'DOWNLOADING'
-    })
     this.dlObj.continue()
   }
+
   playDownload() {
     var animeName = this.props.animeName
     var videoFile = path.join(__dirname, ('../downloads/'+this.props.animeFilename))
@@ -141,6 +142,11 @@ class DownloadCard extends Component {
     this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
     window.location.hash="#/watch"
   }
+
+  updateProgress(newState) {
+    this.setState(newState)
+  }
+
   clearDownload() {
     if(confirm("Are you sure you want to delete "+this.props.animeFilename+"?")) {
       if(this.dlObj) {

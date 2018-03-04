@@ -3,20 +3,21 @@ const path = require('path')
 const rp = require('request-promise')
 const request = require('request')
 const progress = require('request-progress')
-const cheerio = require('cheerio')
 const bytes = require('bytes')
 import { convertSec } from '../util.js'
 import { completeDL } from '../../actions/actions.js'
 import store from '../../store.js'
 
 export function streamMoe() {
-    this.setArgs = (passedmasteraniWatchURL, passedanimeFilename, passedcomp) => {
+    //bind variables to this object to be used for re renders
+    this.setArgs = (passedmasteraniWatchURL, passedanimeFilename, updateFunc) => {
         this.masteraniWatchURL = passedmasteraniWatchURL
         this.animeFilename = passedanimeFilename
         this.slug = passedmasteraniWatchURL.split("watch/")[1].split("/")[0]
         this.epNumber = passedmasteraniWatchURL.split("watch/")[1].split("/")[1]
-        this.comp = passedcomp
+        this.updateFunc = updateFunc
     }
+    //initial state for download card
     this.heldState = {
         status: "NOT_STARTED",
         speed: "0 B/s",
@@ -25,18 +26,18 @@ export function streamMoe() {
         percentage: 0,
         elapsed: 0,
         remaining: 0
-      }
-    this.fixComp = comp => {
-        this.comp = comp
     }
+    //fix re render to update the component's UI
+    this.fixComp = updateFunc => {
+        this.updateFunc = updateFunc
+    }
+    //call the update function from DownloadCard
     this.updateState = () => {
-        this.comp.setState(Object.assign({}, this.comp.state, this.heldState))
+        this.updateFunc(this.heldState)
     }
-    this.dlReq = null
+    //start downloading, searches stream.moe first, then mp4upload
     this.start = () => {
         this.closed = false
-        this.heldState.status = "STARTING_DOWNLOAD"
-        this.comp.setState(this.heldState)
         rp(this.masteraniWatchURL)
             .then(body => {
                 var streamdataformat = /var args = (.*)/g
@@ -51,150 +52,126 @@ export function streamMoe() {
 
                 this.getStreamMoeURL(streamdata, (err, url) => {
                     if(err == 'NOT_FOUND') {
-                        console.log(err)
                         this.getmp4UploadURL(this.slug, this.epNumber, (err, url) => {
-                            if(err == 'NOT_FOUND') {
+                            if(err) {
                                 this.heldState.status = "ERROR"
-                                console.log("no mirror ", this.animeFilename)
-                                console.log(err)
-                            } else if(err && err != 'NOT_FOUND') {
-                                this.heldState.status = "ERROR"
-                                this.comp.setState(this.heldState)
-                                console.log("probably an error on the video server's side mp4upload", err)
+                                this.updateState()
                             } else {
-                                console.log(url)
                                 this.download(url)                                
                             }
                         })
                     } else if(err && err != 'NOT_FOUND') {
                         this.heldState.status = "ERROR"
-                        this.comp.setState(this.heldState)
-                        console.log("probably an error on the video server's side streammoe", err)
+                        this.updateState()
                     } else {
                         this.download(url)
                     }
                 })
 
-
             })
             .catch(err => console.log(err))
 
         this.getStreamMoeURL = (streamdata, cb) => {
-            var workingMirror
-            streamdata.mirrors.forEach(mirror => {
-                if (mirror.host_id == 19 && mirror.quality == 480) {
-                    workingMirror = mirror
-                }
-            })
+            var workingMirror = streamdata.mirrors.find(mirror => mirror.host_id == 19 && mirror.quality == 480)
             if(!workingMirror) {
                 cb('NOT_FOUND', null)
-                return false                 
+                return                 
             }
-            workingMirror.host['link_url'] = 'https://stream.moe/'
-            var embedURL = workingMirror.host.link_url + workingMirror.embed_id
-            var downloadURL
+            var embedURL = 'https://stream.moe/' + workingMirror.embed_id
             rp(embedURL).then(body => {
-                var moeHTML = cheerio.load(body)
-                downloadURL = moeHTML('.first ~ td > a').attr('href')
+                var moeParser = new DOMParser()
+                var downloadURL = moeParser.parseFromString(body, "text/html").querySelector('.first ~ td > a').getAttribute('href')
                 cb(null, downloadURL)
-                return true
+                return
             }, err => {
                 if(err) {
                     cb(err, null)
-                    return false
+                    return
                 }
             })
         }
 
         this.getmp4UploadURL = (slug, epNumber, cb) => {
             var corsageURL = `https://corsage-sayonara.herokuapp.com/masterani/api/video/?slug=${slug}&ep=${epNumber}`
-            console.log(corsageURL)
-            var downloadURL
-            rp(corsageURL).then(mirrorsArray => {
-                console.log(mirrorsArray)
-                mirrorsArray = JSON.parse(mirrorsArray)
-                mirrorsArray.forEach(mirror => {
-                    console.log(mirror)
-                    if(mirror.id == 1) {
-                        downloadURL = mirror.link
-                    }
-                })
+            rp({uri: corsageURL, json: true }).then(mirrorsArray => {
+                var downloadURL = mirrorsArray.find(mirror => mirror.id == 1).link
                 cb(null, downloadURL)
-                return true
+                return
             }, err => {
                 if(err) {
                     cb(err, null)
-                    return false
+                    return
                 }
             })
         }
 
         this.download = downloadURL => {
-            var dlp = fs.createWriteStream(path.join(__dirname, '../downloads/'+this.animeFilename))
+            var dlpath = global.estore.get('downloadPath') || path.join(__dirname, '../downloads/')
+            var dlp = fs.createWriteStream(path.join(dlpath+this.animeFilename))
             this.dlReq = request(downloadURL)
-            progress(this.dlReq, { throttle: 500 }).on('progress', (dlState => {                    
-                if(!dlState.time.remaining) {} else {
+            progress(this.dlReq, { throttle: 500 })
+                .on('progress', (dlState => {                    
+                    if(dlState.time.remaining) {
+                        this.heldState = {
+                            status: 'DOWNLOADING',
+                            speed: bytes(dlState.speed)+'/s',
+                            progressSize: bytes(dlState.size.transferred),
+                            totalSize: bytes(dlState.size.total),
+                            percentage: (100*(dlState.percent)).toFixed(2),
+                            elapsed: convertSec(Math.ceil((dlState.time.elapsed))),
+                            remaining: convertSec(Math.ceil((dlState.time.remaining)))
+                        }
+                        this.updateState()
+                    }
+                })).on('error', err => {
                     this.heldState = {
-                        status: 'DOWNLOADING',
-                        speed: bytes(dlState.speed)+'/s',
-                        progressSize: bytes(dlState.size.transferred),
-                        totalSize: bytes(dlState.size.total),
-                        percentage: (100*(dlState.percent)).toFixed(2),
-                        elapsed: convertSec(Math.ceil((dlState.time.elapsed))),
-                        remaining: convertSec(Math.ceil((dlState.time.remaining)))
+                        status: "NETWORK_ERROR",
+                        speed: "0 B/s",
+                        progressSize: "0MB",
+                        totalSize: "0MB",
+                        percentage: 0,
+                        elapsed: 0,
+                        remaining: 0
                     }
-                    if(this.comp.state.status == 'PAUSED') {
-                        this.heldState.status = 'PAUSED'
+                    this.updateState()
+                    this.closed = true
+                    this.dlReq.abort()
+                }).on('end', () => {
+                    if(!this.closed) {
+                        this.heldState = {
+                            status: 'COMPLETED',
+                            speed: '',
+                            progressSize: this.heldState.totalSize,
+                            percentage: '100',
+                            remaining: '0 sec',
+                            elapsed: this.heldState.elapsed,
+                            completeDate: new Date().toLocaleString()
+                        }
+                        this.updateState()
+                        store.dispatch(
+                            completeDL(this.animeFilename, this.heldState.progressSize, this.heldState.elapsed, this.heldState.completeDate)
+                        )
                     }
-                    this.comp.setState(this.heldState)
-                }
-            })).on('error', err => {
-                this.heldState = {
-                    status: "NETWORK_ERROR",
-                    speed: "0 B/s",
-                    progressSize: "0MB",
-                    totalSize: "0MB",
-                    percentage: 0,
-                    elapsed: 0,
-                    remaining: 0
-                  }
-                this.comp.setState(this.heldState)
-                this.closed = true
-                this.dlReq.abort()
-                console.log(err)
-            }).on('end', () => {
-                if(!this.closed) {
-                    new Notification('Download Complete', {
-                        body: this.animeFilename+' has finished downloading'
-                    })
-                    var completeDate = new Date().toLocaleString()
-                    this.heldState = {
-                        status: 'COMPLETED',
-                        speed: '',
-                        progressSize: this.comp.state.totalSize,
-                        percentage: '100',
-                        remaining: '0 sec',
-                        completeDate: completeDate
-                    }
-                    this.comp.setState(this.heldState)
-                    store.dispatch(
-						completeDL(this.animeFilename, this.comp.state.totalSize, this.comp.state.elapsed, completeDate)
-					)
-                } else {
-                    console.log("closed")
-                }
-            }).pipe(dlp)
+                }).pipe(dlp)
         }
     }
+    //close connection
     this.delete = () => {
         if(this.dlReq) {
             this.closed = true
             this.dlReq.abort()
         }
     }
+    //pause download
     this.pause = () => {
         this.dlReq.pause()
+        setTimeout(() => {
+            this.heldState.status = 'PAUSED'
+            this.updateState()
+        }, 1000)
+
     }
+    //resume download
     this.continue = () => {
         this.dlReq.resume()
     }
