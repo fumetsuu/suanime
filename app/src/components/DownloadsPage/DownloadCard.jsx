@@ -4,6 +4,7 @@ import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
 const fs = require('fs')
 const path = require('path')
 import { createdlObj, clearDL, playAnime } from '../../actions/actions.js'
+import { toWordDate } from '../../util/util'
 
 //status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'STARTING_DOWNLOAD'
 class DownloadCard extends Component {
@@ -115,7 +116,7 @@ class DownloadCard extends Component {
             <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
           </div>
           <div className="download-progress-container">
-            <div className="download-status">{statusText}{this.state.completeDate?' - '+this.state.completeDate:''}</div>
+            <div className="download-status">{statusText}{this.state.completeDate?' - '+toWordDate(this.state.completeDate):''}</div>
             <div className="download-network-data">{this.state.speed}  |  {downloadSize}  {percentage ? '| '+percentage:''}  |  Elapsed: {this.state.elapsed}  {remaining}</div>
             <div className="download-progress-bar-container">
               <div className="download-progress-bar" style={{width: this.state.percentage+'%'}}/>
@@ -130,7 +131,7 @@ class DownloadCard extends Component {
         <div className="download-card-container download-card-container-compact">
           <div className="status-circle" style={{backgroundColor: statusColour}}/>
           <div className="download-title">{animeName} - {epTitle}</div>
-          <div className="download-complete-date">{this.state.completeDate?this.state.completeDate:statusText}</div>
+          <div className="download-complete-date">{this.state.completeDate?toWordDate(this.state.completeDate):statusText}</div>
           <div className="download-progress-bar-container">
             <div className="download-progress-bar" style={{width: this.state.percentage==100?0:this.state.percentage+'%'}}/>
           </div>
@@ -138,7 +139,7 @@ class DownloadCard extends Component {
           <div className="download-network-data download-size">{downloadSize}</div>
           <div className="download-network-data download-percentage">{percentage}</div>
           <div className="download-network-data download-elapsed">{this.state.elapsed}</div>
-          <div className="download-network-data download-remaining">{this.state.remaining}</div>
+          <div className="download-network-data download-remaining">{this.state.status == 'COMPLETED' ? '' : this.state.remaining}</div>
           <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
           <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
         </div>

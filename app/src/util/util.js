@@ -69,3 +69,9 @@ export function fixURLMA(url) {
     console.log(url)
     return encodeURIComponent(url.replace(/\/|\./, "").substr(0, 25))
 }
+
+export function toWordDate(date) {
+    let unixdate = new Date(Date.parse(date))
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    return `${months[unixdate.getMonth()]} ${unixdate.getDate()}, ${unixdate.toLocaleTimeString('en-US')} ${unixdate.getFullYear()}`
+}
