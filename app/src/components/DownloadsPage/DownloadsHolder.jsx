@@ -4,23 +4,42 @@ import DownloadCard from './DownloadCard.jsx'
 
 
 class DownloadsHolder extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            listView: 'COMPACT'
+        }
+        this.setListView = this.setListView.bind(this)
+    }
+    
     render() {
         var dlArray = []
         var alldlPropsArray = [...this.props.downloadsArray, ...this.props.completedArray]
+        let { listView } = this.state
         if(alldlPropsArray.length) {
             alldlPropsArray.forEach(el => {
                 if(this.props.completedArray.includes(el)) {
-                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} />)
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} viewType={listView}/>)
                 } else {
-                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename}/>)
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename} viewType={listView}/>)
                 }
             })
         }
         return (
         <div className="downloads-holder">
+            <div className="sort-area"> 
+                <div className="spacer-horizontal"/>
+                <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
+                <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
+            </div>
             {dlArray}
         </div>
         )
+    }
+
+    setListView(e) {
+        var listView = e.target.getAttribute("viewvalue")
+        this.setState({ listView })
     }
 }
 

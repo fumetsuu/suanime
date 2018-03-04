@@ -9,7 +9,9 @@ require('electron-reload')(path.join(__dirname, '/app/build/'))
 let mainWindow
 
 app.on('ready', () => {
-    mainWindow = new BrowserWindow({ frame: false, width: 1280, height: 720, show: false })
+    mainWindow = new BrowserWindow({ frame: false, width: 1280, height: 720, show: false, webPreferences: {
+        webSecurity: false
+    } })
     mainWindow.setTitle('suanime')
     mainWindow.setMenu(null)
     mainWindow.loadURL('file://'+__dirname+'/app/build/index.html')

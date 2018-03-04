@@ -52,7 +52,7 @@ class DownloadCard extends Component {
     var controlAction
     var controlClass = "download-control-btn"
     var statusText
-    var clearClass = "download-control-btn"
+    var clearClass = "download-control-btn redbghover"
     switch(this.state.status) {
       case 'NOT_STARTED': {
         controlIcon = "play_arrow"
@@ -83,12 +83,12 @@ class DownloadCard extends Component {
         controlClass = "download-control-btn disabled"
         statusText = "Starting Download"
         controlAction = null
-        clearClass = "download-control-btn"
+        clearClass = "download-control-btn redbghover"
         break
       }
       case 'COMPLETED': {
         controlIcon = "live_tv"
-        statusText = `Completed${this.state.completeDate?' - '+this.state.completeDate:''}`
+        statusText = `Completed`
         controlAction = this.playDownload.bind(this)
         break
       }
@@ -99,25 +99,51 @@ class DownloadCard extends Component {
         break
       }
     }
-    return (
-      <div className="download-card-container">
-        <div className="download-card-img" style={{backgroundImage: `url('${this.props.posterImg}')`}}/>
-        <div className="download-card-header">
-          <div className="download-title">{this.props.animeName} <br></br> 
-            <div className="download-ep-title">{this.props.epTitle}</div>          
+    let { viewType, animeName, epTitle, posterImg } = this.props
+    let downloadSize = this.state.status == 'COMPLETED' ? this.state.totalSize : this.state.progressSize+'/'+this.state.totalSize
+    let percentage = this.state.status == 'COMPLETED' ? '' : `${this.state.percentage}%`
+    let remaining = this.state.status == 'COMPLETED' ? '' : `|  Remaining: ${this.state.remaining}`
+    if(viewType == 'ROWS') {
+      return (
+        <div className="download-card-container">
+          <div className="download-card-img" style={{backgroundImage: `url('${posterImg}')`}}/>
+          <div className="download-card-header">
+            <div className="download-title">{animeName} <br></br> 
+              <div className="download-ep-title">{epTitle}</div>          
+            </div>
+            <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
+            <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
           </div>
+          <div className="download-progress-container">
+            <div className="download-status">{statusText}{this.state.completeDate?' - '+this.state.completeDate:''}</div>
+            <div className="download-network-data">{this.state.speed}  |  {downloadSize}  {percentage ? '| '+percentage:''}  |  Elapsed: {this.state.elapsed}  {remaining}</div>
+            <div className="download-progress-bar-container">
+              <div className="download-progress-bar" style={{width: this.state.percentage+'%'}}/>
+            </div>
+          </div>
+        </div>
+      )
+    } else if(viewType == 'COMPACT') {
+      let statusColour = this.state.status == 'COMPLETED' ? '#51e373' : (this.state.status == 'NOT_STARTED' || this.state.status == 'STARTING_DOWNLOAD' ? '#dadada' : '#f55353')
+      statusColour = this.state.status == 'DOWNLOADING' ? 'transparent' : statusColour
+      return (
+        <div className="download-card-container download-card-container-compact">
+          <div className="status-circle" style={{backgroundColor: statusColour}}/>
+          <div className="download-title">{animeName} - {epTitle}</div>
+          <div className="download-complete-date">{this.state.completeDate?this.state.completeDate:statusText}</div>
+          <div className="download-progress-bar-container">
+            <div className="download-progress-bar" style={{width: this.state.percentage==100?0:this.state.percentage+'%'}}/>
+          </div>
+          <div className="download-network-data download-speed">{this.state.speed}</div>
+          <div className="download-network-data download-size">{downloadSize}</div>
+          <div className="download-network-data download-percentage">{percentage}</div>
+          <div className="download-network-data download-elapsed">{this.state.elapsed}</div>
+          <div className="download-network-data download-remaining">{this.state.remaining}</div>
           <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
           <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
         </div>
-        <div className="download-progress-container">
-          <div className="download-status">{statusText}</div>
-          <div className="download-network-data">{this.state.speed}  |  {this.state.progressSize}/{this.state.totalSize}  |  {this.state.percentage}%  |  Elapsed: {this.state.elapsed}  |  Remaining: {this.state.remaining}</div>
-          <div className="download-progress-bar-container">
-            <div className="download-progress-bar" style={{width: this.state.percentage+'%'}}></div>
-          </div>
-        </div>
-      </div>
-    )
+      )
+    }
   }
 
   startDownload() {
