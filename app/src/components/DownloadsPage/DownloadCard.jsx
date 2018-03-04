@@ -11,6 +11,12 @@ class DownloadCard extends Component {
   constructor(props) {
     super(props)
     this.updateProgress = this.updateProgress.bind(this)
+    this.startDownload = this.startDownload.bind(this)
+    this.continueDownload = this.continueDownload.bind(this)
+    this.clearDownload = this.clearDownload.bind(this)
+    this.pauseDownload = this.pauseDownload.bind(this)
+    this.playDownload = this.playDownload.bind(this)
+
     if(this.props.completed) {
       let { totalSize, elapsed, completeDate } = this.props
       this.state = {
@@ -58,25 +64,25 @@ class DownloadCard extends Component {
       case 'NOT_STARTED': {
         controlIcon = "play_arrow"
         statusText = "Not Yet Started"
-        controlAction = this.startDownload.bind(this)
+        controlAction = this.startDownload
         break
       }
       case 'DOWNLOADING': {
         controlIcon = "pause"
         statusText = "Downloading"
-        controlAction = this.pauseDownload.bind(this)
+        controlAction = this.pauseDownload
         break
       }
       case 'PAUSED': {
         controlIcon = "play_arrow"
         statusText = "Paused"
-        controlAction = this.continueDownload.bind(this)
+        controlAction = this.continueDownload
         break
       }
       case 'ERROR': {
         controlIcon = "play_arrow"
         statusText = "Error - please try again later"
-        controlAction = this.startDownload.bind(this)
+        controlAction = this.startDownload
         break
       }
       case 'STARTING_DOWNLOAD': {
@@ -90,13 +96,13 @@ class DownloadCard extends Component {
       case 'COMPLETED': {
         controlIcon = "live_tv"
         statusText = `Completed`
-        controlAction = this.playDownload.bind(this)
+        controlAction = this.playDownload
         break
       }
       case 'NETWORK_ERROR': {
         controlIcon = "settings_backup_restore"
         statusText = "Network Error - please restart download"
-        controlAction = this.startDownload.bind(this)
+        controlAction = this.startDownload
         break
       }
     }
@@ -113,7 +119,7 @@ class DownloadCard extends Component {
               <div className="download-ep-title">{epTitle}</div>          
             </div>
             <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
-            <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
+            <div className={clearClass} onClick={this.clearDownload}><i className="material-icons">clear</i></div>
           </div>
           <div className="download-progress-container">
             <div className="download-status">{statusText}{this.state.completeDate?' - '+toWordDate(this.state.completeDate):''}</div>
@@ -141,7 +147,7 @@ class DownloadCard extends Component {
           <div className="download-network-data download-elapsed">{this.state.elapsed}</div>
           <div className="download-network-data download-remaining">{this.state.status == 'COMPLETED' ? '' : this.state.remaining}</div>
           <div className={controlClass} onClick={controlAction}><i className="material-icons">{controlIcon}</i></div>
-          <div className={clearClass} onClick={this.clearDownload.bind(this)}><i className="material-icons">clear</i></div>
+          <div className={clearClass} onClick={this.clearDownload}><i className="material-icons">clear</i></div>
         </div>
       )
     }
