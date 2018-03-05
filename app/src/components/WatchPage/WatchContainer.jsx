@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 
 const WatchContainer = (props) => {
     if(!props.videoFile) {
-        console.log("redirecting to home...")
         window.location.hash = "#/"
     }
     return (

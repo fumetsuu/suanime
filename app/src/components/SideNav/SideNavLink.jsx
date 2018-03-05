@@ -7,7 +7,7 @@ const SideNavLink = (props) => {
   linkClassName+=disabledClass
   return (
     <NavLink to={props.linkTarget} className={linkClassName} activeClassName="side-nav-link-active">
-    <i className="material-icons">{props.icon}</i>{props.label}
+      <i className="material-icons">{props.icon}</i>{props.label}
     </NavLink>
   )
 }

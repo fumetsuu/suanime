@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-
-import Title from './Title.jsx'
+import { withRouter, NavLink } from 'react-router-dom'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
 import { sidenavhide, sidenavtoggle } from '../../util/sidenavtoggle.js'
@@ -15,7 +13,7 @@ class SideNav extends Component {
       showToggle: toggableHashes.includes(window.location.hash)
     }
     window.addEventListener('hashchange', () => {
-      var toggable = toggableHashes.includes(window.location.hash)
+      let toggable = toggableHashes.includes(window.location.hash)
       this.setState({
         showToggle: toggable
       })
@@ -26,14 +24,16 @@ class SideNav extends Component {
   }
 
   render() {
-    var props = this.props
-    var sideWidth = props.show ? '250px' : '0'
-    var toggleLeft = props.show ? '222px' : '-20px'
-    var toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
-    var watchDisabled = props.watching ? false : true
+    let props = this.props
+    let sideWidth = props.show ? '250px' : '0'
+    let toggleLeft = props.show ? '222px' : '-20px'
+    let toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
+    let watchDisabled = props.watching ? false : true
     return (
       <div className="side-nav" style={{ width: sideWidth }}>
-        <Title/>
+        <NavLink exact to="/" className="title">
+          <span className="su-blue">SU</span> ANIME
+        </NavLink>
         <SideNavLink icon="search" label="Search" linkTarget="/search"/>
         <SideNavLink icon="event" label="Seasonal" linkTarget="/seasonal"/>
         <SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>

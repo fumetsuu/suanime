@@ -22,3 +22,4 @@ Todo
 - [x] optimise list sort and load
 - [x] update utils for date to have year
 - [x] make util for utc date to jp season
+- [ ] use url for watch and info params instead of redux
