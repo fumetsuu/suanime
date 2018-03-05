@@ -14,6 +14,7 @@ Todo
 - [ ] mal update history
 - [ ] next/previous ep button on watch page
 - [x] update list on watch page
+- [ ] sort downloads by title, date, size, etc
 
 ## development
 - [x] refactor home page code
