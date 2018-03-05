@@ -3,16 +3,16 @@ import { connect } from 'react-redux'
 import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
 import { momentDuration } from '../../util/util'
+import { setTimeout, clearTimeout } from 'timers';
 let playbackRate = 1
 let volume = 1
 let resumeFrom = false
 let playedSeconds = 0
 let vidIdentifier = null
-let _this = null
+
 class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
-		_this = this
 		this.state = {
 			controlsWidth: '95%',
 			url: this.props.videoSrc,
@@ -30,10 +30,8 @@ class AnimeVideo extends Component {
 			controlsClass: "anime-video-controls",
 			volSliderClass: "volume-slider none"
 		}
-		window.removeEventListener('keypress', hotkeyEvents, true) //fixes multiple triggers
-		window.addEventListener('keypress', hotkeyEvents, true)
-		screenfull.off('change', fullscreenEvent)
-		screenfull.on('change', fullscreenEvent)
+		this.hotkeyEvents = this.hotkeyEvents.bind(this)
+		this.fullscreenEvent = this.fullscreenEvent.bind(this)
 	}
 
 	componentDidMount() {
@@ -41,7 +39,13 @@ class AnimeVideo extends Component {
         window.addEventListener('resize', () => {
 			this.fixWidths()
 		})
+		window.addEventListener('keypress', this.hotkeyEvents, true)
+		screenfull.on('change', this.fullscreenEvent)
+	}
 
+	componentWillUnmount() {
+		window.removeEventListener('keypress', this.hotkeyEvents, true)
+		screenfull.off('change', this.fullscreenEvent)
 	}
 
 	fixWidths() {
@@ -51,16 +55,12 @@ class AnimeVideo extends Component {
 		})
 	}
 
-	ref(player) {
-		this.player = player
-	}
-
 	readyVideo() {
 		if(resumeFrom && vidIdentifier == this.props.videoSrc) {
 			this.player.seekTo(playedSeconds)
 			resumeFrom = false		
 		}
-		vidIdentifier=this.props.videoSrc
+		vidIdentifier = this.props.videoSrc
 	}
 
 	render() {
@@ -68,9 +68,11 @@ class AnimeVideo extends Component {
 		return (
 			<div className={fullscreen?'player-wrapper video-fullscreen':'player-wrapper'}
 			onMouseEnter={this.showControls.bind(this)}
-			onMouseLeave={this.hideControls.bind(this)}>
+			onMouseMove={this.showControls.bind(this)}
+			onMouseLeave={this.hideControls.bind(this)}
+			>
 				<ReactPlayer
-				ref={this.ref.bind(this)} 
+				ref={player => { this.player = player }} 
 				url={url} 
 				className="anime-player"
 				width='100%'
@@ -179,6 +181,10 @@ class AnimeVideo extends Component {
 		this.setState({
 			controlsClass: "anime-video-controls"
 		})
+		if(this.hideControlsTimeout) {
+			window.clearTimeout(this.hideControlsTimeout)
+		}
+		this.hideControlsTimeout = window.setTimeout(() => { this.hideControls() }, 2000 )
 	}
 
 	hideControls() {
@@ -200,29 +206,25 @@ class AnimeVideo extends Component {
 		})
 	}
 
-}
-
-const hotkeyEvents = e => {
-	if(window.location.hash == "#/watch") {
+	hotkeyEvents(e) {
 		switch(e.keyCode) {
-			case 68: case 100: _this.incPlaybackRate(); break
-			case 83: case 115: _this.decPlaybackRate(); break
-			case 77: case 109: _this.toggleMuted(); break
-			case 70: case 102: _this.goFullscreen(); break
-			case 75: case 107: _this.playPause(); break
-			case 32: _this.playPause(); break
-			case 113: _this.seekAmount(-10); break
-			case 81: _this.seekAmount(-60); break
-			case 101: _this.seekAmount(10); break
-			case 69: _this.seekAmount(60); break
+			case 68: case 100: this.incPlaybackRate(); break
+			case 83: case 115: this.decPlaybackRate(); break
+			case 77: case 109: this.toggleMuted(); break
+			case 70: case 102: this.goFullscreen(); break
+			case 75: case 107: this.playPause(); break
+			case 32: this.playPause(); break
+			case 113: this.seekAmount(-10); break
+			case 81: this.seekAmount(-60); break
+			case 101: this.seekAmount(10); break
+			case 69: this.seekAmount(60); break
 		}
 	}
-}
 
-const fullscreenEvent = () => {
-	_this.setState({ fullscreen: !_this.state.fullscreen }, () => {
-		_this.fixWidths()			
-	})
+	fullscreenEvent() {
+		this.setState({ fullscreen: !this.state.fullscreen }, () => { this.fixWidths() })
+	}
+
 }
 
 export default AnimeVideo

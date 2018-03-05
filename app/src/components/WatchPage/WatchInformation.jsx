@@ -116,7 +116,9 @@ class WatchInformation extends Component {
                 })
             })
         })
+
         this.fixWidths()
+        
         window.addEventListener('resize', () => {
             this.fixWidths()
         })
