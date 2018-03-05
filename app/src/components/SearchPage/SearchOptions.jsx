@@ -6,15 +6,17 @@ import { search } from '../../actions/actions.js'
 
 import { connect } from 'react-redux'
 
+//search only works either for string search or select search (no api support for both together)
 class SearchOptions extends Component {
     constructor(props) {
         super(props)
+        let { searchValue, searchSort, searchType, searchStatus, searchGenre } = this.props
         this.state = {
-            searchValue: '',
-            searchSort: sortOptions[0],
-            searchType: typeOptions[0],
-            searchStatus: statusOptions[0],
-            searchGenre: genreOptions[0]
+            searchValue,
+            searchSort,
+            searchType,
+            searchStatus,
+            searchGenre
         }
     }
 
@@ -27,7 +29,7 @@ class SearchOptions extends Component {
         return (
         <div className="search-options" onSubmit={this.fireSearch.bind(this)}>
             <form className="search-bar-container">
-                <input type="text" className={searchBarClass} placeholder="Search Anime..." onChange={this.handleSearchChange.bind(this)}/>
+                <input type="text" className={searchBarClass} placeholder="Search Anime..." onChange={this.handleSearchChange.bind(this)} value={this.state.searchValue}/>
                 <button type="submit" value="submit" className={searchButtonClass}><i className="material-icons">search</i></button>
             </form>
             <div className="dropdown-container">
@@ -86,6 +88,16 @@ class SearchOptions extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        searchValue: state.searchReducer.searchValue,
+        searchSort: state.searchReducer.searchSort,
+        searchType: state.searchReducer.searchType,
+        searchStatus: state.searchReducer.searchStatus,
+        searchGenre: state.searchReducer.searchGenre
+    }
+}
+
 const mapDispatchToProps = dispatch => {
     return {
         search: (searchValue, searchSort, searchType, searchStatus, searchGenre) => dispatch(
@@ -94,4 +106,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(SearchOptions)
+export default connect(mapStateToProps, mapDispatchToProps)(SearchOptions)

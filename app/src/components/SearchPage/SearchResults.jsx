@@ -53,8 +53,14 @@ class SearchResults extends Component {
     }
 
     componentWillMount() {
-        const defaultURL = "https://www.masterani.me/api/anime/filter?order=score_desc"
-        this.stateFromURL(defaultURL)
+        if(this.props) {
+            let { searchValue, searchSort, searchType, searchStatus, searchGenre } = this.props
+            const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
+            this.stateFromURL(searchURL)
+        } else {
+            const defaultURL = "https://www.masterani.me/api/anime/filter?order=score_desc"
+            this.stateFromURL(defaultURL)
+        }
     }
     
 

@@ -25,16 +25,14 @@ class WatchInformation extends Component {
 
     componentDidMount() {
         var jikanBase = 'http://api.jikan.me'
-        rp(`${jikanBase}/search/anime/`+fixURL(this.props.animeName)).then(data => {
-            var first = JSON.parse(data).result[0]
+        rp({uri: `${jikanBase}/search/anime/`+fixURL(this.props.animeName), json: true }).then(data => {
+            var first = data.result.find(el => el.title == this.props.animeName) || data.result[1]  //this relies on the name being consistent between MAL and Masterani databases, if they aren't consistent, takes the SECOND result to try and compensate
             this.setState({
                 MALlink: first.url
             })
             const malid = first.id
-            console.log(this.getAnimeListObject(malid))
             this.setState({ animeListObject: this.getAnimeListObject(malid) })
-            rp(`${jikanBase}/anime/${malid}`).then(data => {
-                data = JSON.parse(data)
+            rp({uri: `${jikanBase}/anime/${malid}`, json: true }).then(data => {
                 let seasonLink = data.premiered ? `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}` : 'https://myanimelist.net/anime/season'
                 this.setState({
                     animeInfo: 

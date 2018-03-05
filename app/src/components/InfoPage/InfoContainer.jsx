@@ -52,7 +52,8 @@ class InfoContainer extends Component {
     stateFromMAL(animeName) {
         const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
         rp({ uri: searchURL, json: true }).then(results => {
-            const infoURL = `http://api.jikan.me/anime/${results.result[0].id}`
+            var first = results.result.find(el => el.title == animeName) || results.result[1]
+            const infoURL = `http://api.jikan.me/anime/${first.id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
             })
