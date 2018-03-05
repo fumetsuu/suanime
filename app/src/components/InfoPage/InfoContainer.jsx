@@ -10,7 +10,6 @@ import { fixURL } from '../../util/util.js'
 class InfoContainer extends Component {
     constructor(props) {
         super(props)
-        console.log(props)
         if(!props.animeID && !props.malID) {
             window.location.hash = "#/"
         }
@@ -26,9 +25,7 @@ class InfoContainer extends Component {
         if(malID) {
             this.stateFromMALID(malID)
         } else {
-            const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
-            console.log(searchURL)
-            this.stateFromMAL(searchURL)
+            this.stateFromMAL(animeName)
         }
     }
     
@@ -52,8 +49,9 @@ class InfoContainer extends Component {
         )
     }
 
-    stateFromMAL(url) {
-        rp({ uri: url, json: true }).then(results => {
+    stateFromMAL(animeName) {
+        const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
+        rp({ uri: searchURL, json: true }).then(results => {
             const infoURL = `http://api.jikan.me/anime/${results.result[0].id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })

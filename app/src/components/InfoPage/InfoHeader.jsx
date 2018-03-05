@@ -4,6 +4,7 @@ import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
 import { updateAnime, addAnime } from '../../actions/actions.js'
+import { statusToCode, typeToCode, updateScore } from '../../util/animelist.js'
 class InfoHeader extends React.Component {
     constructor(props) {
         super(props)
@@ -128,25 +129,6 @@ class InfoHeader extends React.Component {
             })
         })
         this.props.updateAnime(series_animedb_id, updatedObj)
-    }
-}
-
-function statusToCode(airingString) {
-    switch(airingString) {
-        case 'Currently Airing': return 1; break
-        case 'Finished Airing': return 2; break
-        case 'Not yet aired': return 3; break
-    }
-}
-
-function typeToCode(typeString) {
-    switch(typeString) {
-        case 'TV': return 1; break
-        case 'OVA': return 2; break
-        case 'Movie': return 3; break
-        case 'Special': return 4; break
-        case 'ONA': return 5; break
-        case 'Music': return 6; break
     }
 }
 

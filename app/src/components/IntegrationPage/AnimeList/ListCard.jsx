@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 const path = require('path')
-import { convertMS } from '../../../util/util.js'
 const imageCache = require('image-cache')
 imageCache.setOptions({
     dir: path.join(__dirname, '../mal-cache/'),
@@ -11,21 +10,20 @@ import { updateAnime, launchInfo } from '../../../actions/actions.js'
 import DropRight from './DropRight.jsx'
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from './maldata.js'
+import { typeCodeToText, progressPercent, statusColour, makeLastUpdated, guessAired, calcUpdateInterval, dateToSeason } from '../../../util/animelist.js'
+
 class ListCard extends Component {
     constructor(props) {
         super(props)
         this.state = {
             lastUpdated: makeLastUpdated(props.animeData.my_last_updated)
         }
-        this.updateEp = this.updateEp.bind(this)
         this.incEp = this.incEp.bind(this)
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
         this.launchInfoPage = this.launchInfoPage.bind(this)
         this.pclient = props.pclient
     }
-    
-    // {!completedseries?<div className="progress-bar-aired" style={{width: guessAired(series_start, series_episodes)+'%'}} />:null}   
 
     render() {
         let { series_image, series_title, series_type, series_start, my_status, my_score, my_watched_episodes, series_episodes, series_status } = this.props.animeData
@@ -105,7 +103,7 @@ class ListCard extends Component {
                         </div>
                     </div>
                     <div className="spacer-vertical"/>
-                    <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>                    
+                    <div className="series-title" onClick={this.launchInfoPage}>{series_title}</div>  
                 </div>)
         }
     }
@@ -141,7 +139,7 @@ class ListCard extends Component {
         var updatedObj = {
             my_score: newScore
         }
-        this.updateEp(series_animedb_id, updatedObj)
+        this.props.updateAnime(series_animedb_id, updatedObj)
     }
 
     updateStatus(selected) {
@@ -153,7 +151,7 @@ class ListCard extends Component {
         var updatedObj = {
             my_status: newStatus
         }
-        this.updateEp(series_animedb_id, updatedObj)
+        this.props.updateAnime(series_animedb_id, updatedObj)
     }
 
     incEp(inc) {
@@ -164,123 +162,19 @@ class ListCard extends Component {
         var updatedObj = {
             my_watched_episodes: my_watched_episodes+inc
         }
-        this.updateEp(series_animedb_id, updatedObj)
-    }
-
-    updateEp(malID, updatedObj) {
-        this.props.updateAnime(malID, updatedObj)
+        this.props.updateAnime(series_animedb_id, updatedObj)
     }
 
     launchInfoPage() {
         let { series_title, series_animedb_id } = this.props.animeData     
         var animeName = series_title
         var malID = series_animedb_id
-        console.log(malID)
         this.props.launchInfo(animeName, null, null, malID)
         window.location.hash = "#/info"
       }
 
 }
 
-function progressPercent(watched, total) {
-    if(total) {
-        return Math.ceil(100 * (watched / total)) >= 100 ? 100 : Math.ceil(100 * (watched / total))
-    } else if(watched < 12) {
-        return Math.ceil(100 * (watched / 13))
-    } else return 50
-}
-
-function statusCodeToText(statusCode) {
-    switch(statusCode) {
-        case 1: return 'Currently Watching'; break
-        case 2: return 'Completed'; break
-        case 3: return 'On Hold'; break
-        case 4: return 'Dropped'; break
-        case 6: return 'Plan to watch'; break
-    }
-}
-
-function typeCodeToText(typeCode) {
-    switch(typeCode) {
-        case 1: return 'TV'; break
-        case 2: return 'OVA'; break
-        case 3: return 'Movie'; break
-        case 4: return 'Special'; break
-        case 5: return 'ONA'; break
-        case 6: return 'Music'; break
-    }
-}
-
-function statusColour(statusCode) {
-    switch(statusCode) {
-        case 1: return '#51e373'; break
-        case 2: return '#53b4ff'; break
-        case 3: return '#f55353'; break
-    }
-}
-
-function makeLastUpdated(lastUpdated) {
-    return convertMS((Date.now() - (1000 * lastUpdated)))
-}
-
-function guessAired(startDate, seriesEps) {
-    var startDate = Date.parse(startDate)
-
-    var japanDate = new Date().getTime()+9*60*60*1000 //add 9 hours, getTime() is GMT
-
-    var deltaMS = japanDate-startDate
-
-    let daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
-    
-    var guessEps = Math.ceil(daysSinceStart / 7)
-
-    var percentAired = 100*(guessEps / seriesEps)
-
-    percentAired = percentAired == 'Infinity' ? 0 : percentAired
-    percentAired = percentAired > 100 ? 100 : percentAired
-
-    return percentAired
-
-}
-
-function calcUpdateInterval(lastUpdated) {
-    var secondsAgo = (Date.now() / 1000) - lastUpdated
-    if(secondsAgo < 3600) { //less than an hour
-        return 50000
-    }
-    if(secondsAgo >= 3600 && secondsAgo < 86400) {
-        return 3000000
-    }
-    return null
-}
-
-function dateToSeason(date) {
-    var year = parseInt(date.split('-')[0]),
-        month = parseInt(date.split('-')[1]),
-        day = parseInt(date.split('-')[2])
-    //winter 1,2,3 | spring 4,5,6 | summer 7,8,9 | fall 10, 11, 12
-    var midMonths = [2, 5, 8, 11]
-    var lastMonths = [3, 6, 9, 12]
-    var seasonMonth = month
-    var seasonMonth = midMonths.includes(month) && day > 15 ? month+1 : month
-    seasonMonth = lastMonths.includes(month) ? month+1 : month
-    if(seasonMonth > 12) {
-        seasonMonth = 1
-        year++
-    }
-    if(seasonMonth > 0 && seasonMonth <= 3) {
-        return `Winter ${year}`
-    }
-    if(seasonMonth > 3 && seasonMonth <= 6) {
-        return `Spring ${year}`
-    }
-    if(seasonMonth > 6 && seasonMonth <= 9) {
-        return `Summer ${year}`
-    }
-    if(seasonMonth > 9 && seasonMonth <= 12) {
-        return `Fall ${year}`
-    }
-}
 
 const mapDispatchToProps = dispatch => {
     return {
