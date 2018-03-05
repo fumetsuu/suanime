@@ -154,7 +154,6 @@ class DownloadCard extends Component {
   }
 
   startDownload() {
-    this.setState({ status: 'STARTING_DOWNLOAD' })
     this.dlObj.start()
   }
 

@@ -37,6 +37,8 @@ export function streamMoe() {
     }
     //start downloading, searches stream.moe first, then mp4upload
     this.start = () => {
+        this.heldState.status = 'STARTING_DOWNLOAD'
+        this.updateState()
         this.closed = false
         rp(this.masteraniWatchURL)
             .then(body => {
@@ -110,7 +112,7 @@ export function streamMoe() {
             var dlp = fs.createWriteStream(path.join(dlpath+this.animeFilename))
             this.dlReq = request(downloadURL)
             progress(this.dlReq, { throttle: 500 })
-                .on('progress', (dlState => {                    
+                .on('progress', (dlState => {              
                     if(dlState.time.remaining) {
                         this.heldState = {
                             status: 'DOWNLOADING',
