@@ -3,13 +3,11 @@ import { connect } from 'react-redux'
 import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
 import { momentDuration } from '../../util/util'
-import { setTimeout, clearTimeout } from 'timers';
 let playbackRate = 1
 let volume = 1
 let resumeFrom = false
 let playedSeconds = 0
 let vidIdentifier = null
-
 class AnimeVideo extends Component {
 	constructor(props) {
 		super(props)
@@ -64,13 +62,12 @@ class AnimeVideo extends Component {
 	}
 
 	render() {
-		const { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass, volSliderClass } = this.state
+		let { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass, volSliderClass } = this.state
 		return (
 			<div className={fullscreen?'player-wrapper video-fullscreen':'player-wrapper'}
 			onMouseEnter={this.showControls.bind(this)}
 			onMouseMove={this.showControls.bind(this)}
-			onMouseLeave={this.hideControls.bind(this)}
-			>
+			onMouseLeave={this.hideControls.bind(this)}>
 				<ReactPlayer
 				ref={player => { this.player = player }} 
 				url={url} 
