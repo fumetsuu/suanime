@@ -68,7 +68,7 @@ export function guessAired(startDate, seriesEps) {
 
     var deltaMS = japanDate-startDate
 
-    let daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
+    var daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
     
     var guessEps = Math.ceil(daysSinceStart / 7)
 

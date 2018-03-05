@@ -46,7 +46,6 @@ class AnimeListContainer extends Component {
             this.updateDisplay(nextProps.listdata, nextProps.listinfo)
         }
     }
-    
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.onscroll, true)

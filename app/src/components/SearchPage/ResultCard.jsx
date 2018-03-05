@@ -4,8 +4,7 @@ import { connect } from 'react-redux'
 
 class ResultCard extends Component {
     constructor(props) {
-        super(props);        
-
+        super(props)   
         this.launchInfoPage = this.launchInfoPage.bind(this)
     }
     

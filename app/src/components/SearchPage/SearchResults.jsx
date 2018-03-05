@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import Loader from '../Loader/Loader.jsx'
 import ResultCard from './ResultCard.jsx'
 
+const usepagination = true
 class SearchResults extends Component {
     constructor(props) {
         super(props)
@@ -15,6 +16,7 @@ class SearchResults extends Component {
         }
         this.stateFromURL = this.stateFromURL.bind(this)
         this.addSpacerCards = this.addSpacerCards.bind(this)
+        this.onscroll = this.onscroll.bind(this)
     }
     
     generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre) {
@@ -32,10 +34,22 @@ class SearchResults extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.addSpacerCards, false)
+        if(!usepagination) window.addEventListener('scroll', this.onscroll, true)
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.addSpacerCards, false)
+        if(!usepagination) window.removeEventListener('scroll', this.onscroll, true)
+    }
+
+    onscroll(e) {
+        var srcontainer = document.querySelector('.search-results-wrapper')
+        if(srcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 800) {
+            if(this.state.pageNext) {
+                window.removeEventListener('scroll', this.onscroll, true)
+                this.stateFromURL(this.state.pageNext)
+            }
+        }
     }
 
     componentWillMount() {
@@ -48,15 +62,24 @@ class SearchResults extends Component {
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
         const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
         this.stateFromURL(searchURL)
+        if(!usepagination) window.addEventListener('scroll', this.onscroll, true)        
     }
 
     stateFromURL(url) {
-        this.setState({ resultCards: [], nullSearch: false })        
-        var resultCards = []        
+        this.setState({ nullSearch: false })
+        if(usepagination) { 
+            this.setState({ resultCards: [] })
+        }
         rp({uri: url, json: true}).then(response => {
             if(response.data && !response.data.length && !Array.isArray(response) || (Array.isArray(response) && !response.length)) {
                 this.setState({ nullSearch: true })
             } else {
+                let resultCards
+                if(usepagination) {
+                    resultCards = []
+                } else {
+                    resultCards = this.state.resultCards.filter(el => el.props.className!="invisible result-card-container")
+                }
                 var resData = Array.isArray(response) ? response : response.data
                 resData.forEach(animeInfo => {
                     resultCards.push(<ResultCard animeData={animeInfo} key={animeInfo.id}/>)
@@ -66,7 +89,10 @@ class SearchResults extends Component {
                     pagePrev = response.prev_page_url ? url+'&page='+(response.current_page-1) : null
                     pageNext = response.next_page_url ? url+'&page='+(response.current_page+1) : null
                 }
-                this.setState({ resultCards, pagePrev, pageNext }, () => { this.addSpacerCards() })
+                this.setState({ resultCards, pagePrev, pageNext }, () => { 
+                    this.addSpacerCards()
+                    if(!usepagination) window.addEventListener('scroll', this.onscroll, true)
+                 })
             }
         }).catch(err => {
             console.log(err)
@@ -89,12 +115,12 @@ class SearchResults extends Component {
                 <div className="search-results-display">
                     {this.state.resultCards}
                 </div>
-                <div className="pagination">
-                    <div className="spacer-horizontal"/>
-                    <div className={pagePrevClass} onClick={() => {this.stateFromURL(pagePrev)}}><i className="material-icons">chevron_left</i></div>
-                    <div className={pageNextClass} onClick={() => {this.stateFromURL(pageNext)}}><i className="material-icons" >chevron_right</i></div>
-                    <div className="spacer-horizontal"></div>
-                </div>
+                {usepagination ? <div className="pagination">
+                <div className="spacer-horizontal"/>
+                <div className={pagePrevClass} onClick={() => {this.stateFromURL(pagePrev)}}><i className="material-icons">chevron_left</i></div>
+                <div className={pageNextClass} onClick={() => {this.stateFromURL(pageNext)}}><i className="material-icons" >chevron_right</i></div>
+                <div className="spacer-horizontal"></div>
+            </div> : null}
             </div>
         )
     }

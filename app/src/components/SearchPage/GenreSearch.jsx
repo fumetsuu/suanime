@@ -32,7 +32,7 @@ export default class GenreSearch extends Component {
         })
     }
 
-    setValue (value, label) {
+    setValue(value, label) {
         let newState = { isOpen: true }
         if(value==="default") {
             newState = {
@@ -63,11 +63,11 @@ export default class GenreSearch extends Component {
         this.setState(newState)
       }
     
-      fireChangeEvent (newState) {
+      fireChangeEvent(newState) {
           this.props.onChange(newState.selected)
       }
 
-      renderOption (option) {
+      renderOption(option) {
 
         var selected = false
         
@@ -80,8 +80,6 @@ export default class GenreSearch extends Component {
                 selected = true
             }
         }
-        
-
 
         let className = "Dropdown-option-genre"
 
@@ -102,7 +100,7 @@ export default class GenreSearch extends Component {
         )
       }
     
-      buildMenu () {
+      buildMenu() {
         let { options } = this.props
         let ops = options.map((option) => {
             return this.renderOption(option)
@@ -110,7 +108,7 @@ export default class GenreSearch extends Component {
         return ops
       }
 
-      handleDocumentClick (event) {
+      handleDocumentClick(event) {
         if (this.mounted) {
           if (!ReactDOM.findDOMNode(this).contains(event.target)) {
             if (this.state.isOpen) {
@@ -120,7 +118,7 @@ export default class GenreSearch extends Component {
         }
       }
     
-      render () {
+      render() {
         const { className, placeholder } = this.props
 
         let titletext = (<div className={`Dropdown-placeholder`}>{(this.state.selected.value && this.state.selected.value == "default") ? placeholder : 'FILTERED'}</div>)
