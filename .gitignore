@@ -43,5 +43,6 @@ jspm_packages
 downloads
 mal-cache
 app/downloads
+build
 app/mal-cache
 dist

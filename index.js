@@ -2,9 +2,10 @@ const electron = require('electron')
 const { app, BrowserWindow } = electron
 const path = require('path')
 
-require('electron-debug')()
-
-require('electron-reload')(path.join(__dirname, '/app/build/'))
+if(process.mainModule.filename.indexOf('app.asar') === -1) {
+    require('electron-debug')()
+    require('electron-reload')(path.join(__dirname, '/app/build/'))
+}
 
 let mainWindow
 
@@ -14,7 +15,7 @@ app.on('ready', () => {
     } })
     mainWindow.setTitle('suanime')
     mainWindow.setMenu(null)
-    mainWindow.loadURL('file://'+__dirname+'/app/build/index.html')
+    mainWindow.loadURL('file://'+__dirname+'/build/index.html')
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
     })
@@ -22,3 +23,5 @@ app.on('ready', () => {
         mainWindow = null
     })
 })
+
+app.on('window-all-closed', app.quit)

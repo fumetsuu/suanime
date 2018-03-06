@@ -16,7 +16,7 @@ module.exports = {
 
 	output: {
 		//location and filename for bundled js
-		path: __dirname + '/app/build',
+		path: __dirname + '/build',
 		publicPath: './',
 		filename: 'bundle.js',
 		chunkFilename: './[name].[chunkhash].js'
@@ -44,7 +44,7 @@ module.exports = {
 				})
 			},
 			{
-				test: /\.(png|jpg|gif|svg)$/,
+				test: /\.(png|jpg|gif|svg|eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 				options: {
 					name: 'img/[name].[ext]'

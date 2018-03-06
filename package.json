@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
-    "build-prod": "webpack --config webpack.prod.config.js",
+    "build-prod": "rimraf build && webpack --config webpack.prod.config.js",
     "start": "electron .",
     "dist": "electron-builder",
     "pack": "electron-builder --dir"
@@ -14,8 +14,7 @@
   "build": {
     "appId": "suanime",
     "productName": "suanime",
-    "asar": "false",
-    "files": ["index.js", "app/build/*"]
+    "files": ["index.js", "build/*", "build/**/*"]
   },
   "author": "",
   "license": "ISC",
@@ -43,9 +42,7 @@
     "webpack": "^4.1.0",
     "webpack-bundle-analyzer": "^2.10.1",
     "webpack-cli": "^2.0.10",
-    "webpack-merge": "^4.1.2"
-  },
-  "dependencies": {
+    "webpack-merge": "^4.1.2",
     "bytes": "^3.0.0",
     "classnames": "^2.2.5",
     "electron-debug": "^1.5.0",
@@ -68,5 +65,7 @@
     "request-progress": "^3.0.0",
     "request-promise": "^4.2.2",
     "screenfull": "^3.3.2"
+  },
+  "dependencies": {
   }
 }
