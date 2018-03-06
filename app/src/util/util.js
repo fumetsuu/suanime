@@ -75,3 +75,7 @@ export function toWordDate(date) {
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return `${months[unixdate.getMonth()]} ${unixdate.getDate()}, ${unixdate.toLocaleTimeString('en-US')} ${unixdate.getFullYear()}`
 }
+
+export function fixDirPath(folderpath) {
+    return folderpath.replace(/\\\\/g, '/')
+}

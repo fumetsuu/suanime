@@ -1,0 +1,33 @@
+.settings-header
+    width: fit-content
+    letter-spacing: 2px
+    text-transform: uppercase
+    font-size: 2rem
+    line-height: 70px
+    height: 75%
+    border-bottom: 5px solid $light-blue
+.settings
+    width: 100%
+    height: 100%
+    margin-top: 25px
+    .settings-item
+        width: auto
+        height: 70px
+        display: grid
+        grid-template-columns: 75% 25%
+        grid-template-rows: 15px 55px
+        font-weight: 400
+        font-family: 'Lato'
+        .settings-item-label
+            font-size: 12px
+            line-height: 15px
+            grid-column: 1/#{3}
+        .settings-item-content1
+            border-bottom: 1px solid $light-blue
+            width: fit-content
+            height: 100%
+            padding: 0 8px
+            font-size: 16px
+            line-height: 55px
+            &:hover
+                cursor: pointer

@@ -62,7 +62,7 @@ class InfoEpisodeCard extends Component {
         var epNumber = 'Episode '+episode
         var animeFilename = `${title} - ${episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
         var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
-        var videoFile = path.join(__dirname, ('../downloads/'+animeFilename))
+        var videoFile = path.join(global.estore.get('downloadsPath'), animeFilename)
         this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
         window.location.hash="#/watch"
       }

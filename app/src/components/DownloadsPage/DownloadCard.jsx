@@ -167,7 +167,7 @@ class DownloadCard extends Component {
 
   playDownload() {
     var animeName = this.props.animeName
-    var videoFile = path.join(__dirname, ('../downloads/'+this.props.animeFilename))
+    var videoFile = path.join(global.estore.get('downloadsPath'), this.props.animeFilename)
     var epNumber = this.props.epTitle
     var posterImg = this.props.posterImg
     var slug = this.props.epLink.split("watch/")[1].split("/")[0]
@@ -185,7 +185,7 @@ class DownloadCard extends Component {
         this.dlObj.delete()
       }
       this.props.clearDL(this.props.animeFilename)    
-      fs.unlinkSync(path.join(__dirname, '../downloads/'+this.props.animeFilename))
+      fs.unlinkSync(path.join(global.estore.get('downloadsPath'), this.props.animeFilename))
     }
   }
 }

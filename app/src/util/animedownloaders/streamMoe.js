@@ -108,8 +108,7 @@ export function streamMoe() {
         }
 
         this.download = downloadURL => {
-            var dlpath = global.estore.get('downloadPath') || path.join(__dirname, '../downloads/')
-            var dlp = fs.createWriteStream(path.join(dlpath+this.animeFilename))
+            var dlp = fs.createWriteStream(path.join(global.estore.get('downloadsPath'), this.animeFilename))
             this.dlReq = request(downloadURL)
             progress(this.dlReq, { throttle: 500 })
                 .on('progress', (dlState => {              

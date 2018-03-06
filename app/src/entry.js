@@ -7,6 +7,7 @@ const fs = require('fs')
 const path = require('path')
 import popura from 'popura'
 const pclient = popura()
+const tempcwd = require('electron').remote.app.getPath('userData')
 
 var eStore = require('electron-store')
 global.estore = new eStore()
@@ -19,6 +20,7 @@ if(!global.estore.get('initialised')) {
     global.estore.set('storedDownloading', [])
     global.estore.set('storedCompleted', [])
     //storedDownloading and storedCompleted are arrays of only the filenames used to check the status of a download, ALWAYS updates with its corresponding props arrays
+    global.estore.set('downloadsPath', path.join(tempcwd, '/downloads/'))
 } else {
     store.dispatch({
         type: 'HYDRATE_DOWNLOADS',
@@ -53,11 +55,11 @@ if(global.estore.get("mal")) {
     })
 }
 
-if(!fs.existsSync(path.join(__dirname, '../downloads/'))) {
-    fs.mkdirSync(path.join(__dirname, '../downloads/'))
+if(!fs.existsSync(global.estore.get('downloadsPath'))) {
+    fs.mkdirSync(global.estore.get('downloadsPath'))
 }
-if(!fs.existsSync(path.join(__dirname, '../mal-cache/'))) {
-    fs.mkdirSync(path.join(__dirname, '../mal-cache/'))
+if(!fs.existsSync(path.join(tempcwd, '/mal-cache/'))) {
+    fs.mkdirSync(path.join(tempcwd, '/mal-cache/'))
 }
 
 render(

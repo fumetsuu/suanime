@@ -64,7 +64,7 @@ class AnimeCard extends Component {
     let { slug, title } = this.props.animeDataRecent.anime
     let { episode } = this.props.animeDataRecent
     let { animeFilename, epTitle, poster } = this
-    var videoFile = path.join(__dirname, ('../downloads/'+animeFilename))
+    var videoFile = path.join(global.estore.get('downloadsPath'), animeFilename)
     this.props.playAnime(videoFile, title, epTitle, poster, slug)
     window.location.hash="#/watch"
   }

@@ -12,3 +12,4 @@ export const WatchPage = loadable(() => import('./components/WatchPage/WatchCont
 export const SearchPage = loadable(() => import('./components/SearchPage/SearchContainer.jsx'), { LoadingComponent: loader })
 export const InfoPage = loadable(() => import('./components/InfoPage/InfoContainer.jsx'), { LoadingComponent: loader })
 export const IntegrationPage = loadable(() => import('./components/IntegrationPage/IntegrationContainer.jsx'), { LoadingComponent: loader })
+export const SettingsPage = loadable(() => import('./components/SettingsPage/SettingsContainer.jsx'), { LoadingComponent: loader })
