@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 const path = require('path')
 const imageCache = require('image-cache')
+const tempcwd = require('electron').remote.app.getPath('userData')
 imageCache.setOptions({
-    dir: path.join(__dirname, '../mal-cache/'),
+    dir: path.join(tempcwd, '/mal-cache/'),
     compressed: false
 })
 import { connect } from 'react-redux'
