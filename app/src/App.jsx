@@ -14,7 +14,7 @@ import SideNav from './components/SideNav/SideNav.jsx'
 // import InfoPage from './components/InfoPage/InfoContainer.jsx'
 // import IntegrationPage from './components/IntegrationPage/IntegrationContainer.jsx'
 
-import { HomeContent, DownloadsPage, WatchPage, SearchPage, InfoPage, IntegrationPage, SettingsPage } from './routes.js'
+import { HomeContent, DownloadsPage, WatchPage, SearchPage, InfoPage, IntegrationPage, SettingsPage, AboutPage } from './routes.js'
 export default class App extends Component {
 	render() {
 		return (
@@ -30,6 +30,7 @@ export default class App extends Component {
 						<Route path="/info" component={InfoPage}/>
 						<Route path="/integration" component={IntegrationPage}/>
 						<Route path="/settings" component={SettingsPage}/>
+						<Route path="/about" component={AboutPage}/>
 					</Switch>
 				</div>
 			</Router>
