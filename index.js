@@ -57,8 +57,8 @@ autoUpdater.on('download-progress', (progressObj) => {
 })
 function sendStatusToWindow(text) {
     mainWindow.webContents.send('message', text)
-  }
+}
 
-  app.on('ready', function() {
-      autoUpdater.checkForUpdatesAndNotify()
-  })
+app.on('ready', function() {
+    autoUpdater.checkForUpdatesAndNotify()
+})
