@@ -20,6 +20,7 @@ export default class App extends Component {
 		return (
 			<Router>
 				<div className="wrapper">
+					<div className="resizable-line"/>
 					<TitleBar remote={remote} theme="dark" actionsPos="right" className="title-bar"/>		
 					<SideNav/>
 					<Switch>
