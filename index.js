@@ -1,7 +1,8 @@
 const electron = require('electron')
-const { app, BrowserWindow } = electron
+const { app, BrowserWindow, ipcMain } = electron
 const path = require('path')
 const { autoUpdater } = require('electron-updater')
+autoUpdater.autoDownload = false
 
 var eStore = require('electron-store')
 global.estore = new eStore()
@@ -23,7 +24,9 @@ app.on('ready', () => {
     mainWindow.loadURL('file://'+__dirname+'/build/index.html')
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
-        console.log((Date.now()-start), 'ms')
+        if(global.estore.get('auto-update')) {
+            autoUpdater.checkForUpdatesAndNotify()
+        }
     })
     mainWindow.on('close', () => {
         global.estore.set('initWidth', mainWindow.getSize()[0])
@@ -35,7 +38,7 @@ app.on('ready', () => {
 app.on('window-all-closed', app.quit)
 
 function sendStatusToWindow(text) {
-    mainWindow.webContents.send('download-status', text)
+    mainWindow.webContents.send('update-status', text)
 }
 
 autoUpdater.on('checking-for-update', () => {
@@ -59,10 +62,10 @@ autoUpdater.on('download-progress', (progressObj) => {
 })
 
 autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow({ status: 5, message: 'Update downloaded! Changes will take effect on restart.'})
+    sendStatusToWindow({ status: 5, message: 'Update downloaded! Click to restart and install.'})
     autoUpdater.quitAndInstall()
 })
 
-app.on('ready', function() {
-    autoUpdater.checkForUpdatesAndNotify()
+ipcMain.on('update-check-request', e => {
+    autoUpdater.checkForUpdates()
 })

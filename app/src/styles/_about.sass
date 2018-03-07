@@ -10,3 +10,29 @@
     font-family: 'Lato'
     font-weight: 400
     font-size: 14px
+    background-color: $dark-grey
+
+.about-updates
+    width: 96%
+    margin-left: 2%
+    margin-top: 10px
+    margin-bottom: 10px
+    height: auto
+    display: grid
+    grid-template-columns: auto auto
+    grid-template-rows: 50px auto
+    .version
+        line-height: 50px
+    .check-for-updates
+        justify-self: end
+        width: fit-content
+        padding: 0 12px
+        height: 40px
+        margin-top: 5px
+        background-color: $black
+        line-height: 40px
+        font-size: 12px
+        border-radius: 5px
+        &:hover
+            cursor: pointer
+            background-color: $light-blue

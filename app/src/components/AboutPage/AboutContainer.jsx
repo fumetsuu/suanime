@@ -1,5 +1,7 @@
 import React from 'react'
 
+import AboutUpdates from './AboutUpdates.jsx'
+
 export default class AboutContainer extends React.Component {
     constructor(props) {
         super(props)
@@ -14,7 +16,7 @@ export default class AboutContainer extends React.Component {
             <div className="about-container">
                 <div className="about-header">About</div>
                 <div className="about">
-                    Version: {require('electron').remote.app.getVersion()}
+                    <AboutUpdates/>
                 </div>
             </div>
         </div>
