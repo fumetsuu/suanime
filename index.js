@@ -69,6 +69,10 @@ ipcMain.on('update-check-request', e => {
     autoUpdater.checkForUpdates()
 })
 
+ipcMain.on('download-update', e => {
+    autoUpdater.downloadUpdate()
+})
+
 ipcMain.on('restart-and-install', e => {
     autoUpdater.quitAndInstall(true, true)
 })

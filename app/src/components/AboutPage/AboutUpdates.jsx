@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 const { ipcRenderer } = require('electron')
+const bytes = require('bytes')
 
 export default class AboutUpdates extends Component {
     constructor(props) {
@@ -10,20 +11,15 @@ export default class AboutUpdates extends Component {
             isUpdating: false,
             extraInfo: ''
         }
+        this.handleStatusUpdate = this.handleStatusUpdate.bind(this)
     }
     
     componentDidMount() {
-        ipcRenderer.on('update-status', (e, data) => {
-            let updateStatus = data.status
-            let buttonText = data.message
-            let isUpdating = false
-            let extraInfo = JSON.stringify(data.err) || JSON.stringify(data.progressObj) || ''
-            if(updateStatus==0 || updateStatus==4) {
-                console.log(data)
-                isUpdating = true
-            }
-            this.setState({ updateStatus, buttonText, isUpdating, extraInfo })
-        })
+        ipcRenderer.on('update-status', this.handleStatusUpdate)
+    }
+
+    componentWillUnmount() {
+        ipcRenderer.removeListener('update-status', this.handleStatusUpdate)
     }
 
     render() {
@@ -31,10 +27,17 @@ export default class AboutUpdates extends Component {
         return (
         <div className="about-updates">
             <div className="version">Version: <b>{require('electron').remote.app.getVersion()}</b></div>
-            <div className="check-for-updates" onClick={this.checkForUpdates.bind(this)}>{buttonText}</div>
-            <div className="update-progress-container">
-                {extraInfo}
-            </div>
+            <div className={`check-for-updates${isUpdating? ' disabled':''}`} onClick={this.checkForUpdates.bind(this)}>{buttonText}</div>
+            {updateStatus == 4 ? 
+                <div className="update-progress-container">
+                    {`Speed: ${bytes(extraInfo.bytesPerSecond)} | ${extraInfo.percent} | ${bytes(extraInfo.transferred)}/${bytes(extraInfo.total)}`}
+                </div>
+                : null
+            }
+            {updateStatus == 4 ? 
+                <div className="update-progress-bar" style={{ width: extraInfo.percent+'%'}}/>
+                : null
+            }
         </div>
         )
     }
@@ -45,10 +48,25 @@ export default class AboutUpdates extends Component {
                 ipcRenderer.send('update-check-request')
                 break
             }
+            case 1: {
+                ipcRenderer.send('download-update')
+                break
+            }
             case 5: {
                 ipcRenderer.send('restart-and-install')
                 break;
             }
         }
+    }
+
+    handleStatusUpdate(e, data) {
+        let updateStatus = data.status
+        let buttonText = data.message
+        let isUpdating = false
+        let extraInfo = data.err || data.progressObj || ''
+        if(updateStatus==0 || updateStatus==4) {
+            isUpdating = true
+        }
+        this.setState({ updateStatus, buttonText, isUpdating, extraInfo })
     }
 }
