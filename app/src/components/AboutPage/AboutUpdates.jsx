@@ -40,6 +40,15 @@ export default class AboutUpdates extends Component {
     }
 
     checkForUpdates() {
-        ipcRenderer.send('update-check-request')
+        switch(this.state.updateStatus) {
+            case -1: {
+                ipcRenderer.send('update-check-request')
+                break
+            }
+            case 5: {
+                ipcRenderer.send('restart-and-install')
+                break;
+            }
+        }
     }
 }

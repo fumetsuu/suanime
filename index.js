@@ -6,9 +6,9 @@ autoUpdater.autoDownload = false
 
 var eStore = require('electron-store')
 global.estore = new eStore()
+require('electron-debug')()
 
 if(process.mainModule.filename.indexOf('app.asar') === -1) {
-    require('electron-debug')()
     require('electron-reload')(path.join(__dirname, '/build/'))
 }
 
@@ -21,7 +21,6 @@ app.on('ready', () => {
     } })
     mainWindow.setTitle('suanime')
     mainWindow.setMenu(null)
-    mainWindow.webContents.openDevTools()
     mainWindow.loadURL('file://'+__dirname+'/build/index.html')
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
@@ -64,9 +63,12 @@ autoUpdater.on('download-progress', (progressObj) => {
 
 autoUpdater.on('update-downloaded', (info) => {
     sendStatusToWindow({ status: 5, message: 'Update downloaded! Click to restart and install.'})
-    autoUpdater.quitAndInstall()
 })
 
 ipcMain.on('update-check-request', e => {
     autoUpdater.checkForUpdates()
+})
+
+ipcMain.on('restart-and-install', e => {
+    autoUpdater.quitAndInstall(true, true)
 })
