@@ -21,6 +21,7 @@ app.on('ready', () => {
     } })
     mainWindow.setTitle('suanime')
     mainWindow.setMenu(null)
+    mainWindow.webContents.openDevTools()
     mainWindow.loadURL('file://'+__dirname+'/build/index.html')
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
