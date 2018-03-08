@@ -42,15 +42,15 @@ function sendStatusToWindow(text) {
 }
 
 autoUpdater.on('checking-for-update', () => {
-    sendStatusToWindow({ status: 0, message: 'Checking for update...' })
+    sendStatusToWindow({ status: 0, message: 'Checking for updates...' })
 })
 
 autoUpdater.on('update-available', (info) => {
-    sendStatusToWindow({ status: 1, message: 'Update available.' })
+    sendStatusToWindow({ status: 1, message: 'Update available. Click to download.' })
 })
 
 autoUpdater.on('update-not-available', (info) => {
-    sendStatusToWindow({ status: 2, message: 'Update not available.' })
+    sendStatusToWindow({ status: 2, message: 'suanime is up to date!' })
 })
 
 autoUpdater.on('error', (err) => {
