@@ -24,3 +24,4 @@ Todo
 - [x] make util for utc date to jp season
 - [ ] use url for watch and info params instead of redux
 - [ ] handle network errors/infinite starting for downloads
+- [ ] mal list persistent tab, sort and view type

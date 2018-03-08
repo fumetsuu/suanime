@@ -30,7 +30,7 @@ export default class AboutUpdates extends Component {
             <div className={`check-for-updates${isUpdating? ' disabled':''}`} onClick={this.checkForUpdates.bind(this)}>{buttonText}</div>
             {updateStatus == 4 ? 
                 <div className="update-progress-container">
-                    {`Speed: ${bytes(extraInfo.bytesPerSecond)}/s  |  ${(extraInfo.percent).toFixed(2)}  |  ${bytes(extraInfo.transferred)}/${bytes(extraInfo.total)}`}
+                    {`Speed: ${bytes(extraInfo.bytesPerSecond)}/s  |  ${(extraInfo.percent).toFixed(2)}%  |  ${bytes(extraInfo.transferred)}/${bytes(extraInfo.total)}`}
                 </div>
                 : null
             }
