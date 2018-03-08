@@ -4,7 +4,9 @@ import { connect } from 'react-redux'
 import Loader from '../Loader/Loader.jsx'
 import ResultCard from './ResultCard.jsx'
 
-const usepagination = true
+var eStore = require('electron-store')
+global.estore = new eStore()
+
 class SearchResults extends Component {
     constructor(props) {
         super(props)
@@ -34,12 +36,12 @@ class SearchResults extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.addSpacerCards, false)
-        if(!usepagination) window.addEventListener('scroll', this.onscroll, true)
+        if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.addSpacerCards, false)
-        if(!usepagination) window.removeEventListener('scroll', this.onscroll, true)
+        if(!global.estore.get('usepaginationsearch')) window.removeEventListener('scroll', this.onscroll, true)
     }
 
     onscroll(e) {
@@ -68,12 +70,12 @@ class SearchResults extends Component {
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
         const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
         this.stateFromURL(searchURL)
-        if(!usepagination) window.addEventListener('scroll', this.onscroll, true)        
+        if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)        
     }
 
     stateFromURL(url) {
         this.setState({ nullSearch: false })
-        if(usepagination) { 
+        if(global.estore.get('usepaginationsearch')) { 
             this.setState({ resultCards: [] })
         }
         rp({uri: url, json: true}).then(response => {
@@ -81,7 +83,7 @@ class SearchResults extends Component {
                 this.setState({ nullSearch: true })
             } else {
                 let resultCards
-                if(usepagination) {
+                if(global.estore.get('usepaginationsearch')) {
                     resultCards = []
                 } else {
                     resultCards = this.state.resultCards.filter(el => el.props.className!="invisible result-card-container")
@@ -97,7 +99,7 @@ class SearchResults extends Component {
                 }
                 this.setState({ resultCards, pagePrev, pageNext }, () => { 
                     this.addSpacerCards()
-                    if(!usepagination) window.addEventListener('scroll', this.onscroll, true)
+                    if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)
                  })
             }
         }).catch(err => {
@@ -121,7 +123,7 @@ class SearchResults extends Component {
                 <div className="search-results-display">
                     {this.state.resultCards}
                 </div>
-                {usepagination ? <div className="pagination">
+                {global.estore.get('usepaginationsearch') ? <div className="pagination">
                 <div className="spacer-horizontal"/>
                 <div className={pagePrevClass} onClick={() => {this.stateFromURL(pagePrev)}}><i className="material-icons">chevron_left</i></div>
                 <div className={pageNextClass} onClick={() => {this.stateFromURL(pageNext)}}><i className="material-icons" >chevron_right</i></div>

@@ -14,6 +14,7 @@
         width: auto
         height: 70px
         display: grid
+        margin: 0 20px 40px 0
         grid-template-columns: 75% 25%
         grid-template-rows: 15px 55px
         font-weight: 400
@@ -22,12 +23,32 @@
             font-size: 12px
             line-height: 15px
             grid-column: 1/#{3}
-        .settings-item-content1
-            border-bottom: 1px solid $light-blue
+        .settings-item-content
             width: fit-content
             height: 100%
             padding: 0 8px
-            font-size: 16px
+            font-size: 14px
             line-height: 55px
             &:hover
                 cursor: pointer
+        .settings-underline
+            border-bottom: 1px solid $light-blue
+    
+.toggle
+    width: 80px
+    height: 30px
+    border-radius: 50px
+    background-color: $black
+    font-family: 'Lato'
+    font-weight: 400
+    font-size: 12px
+    line-height: 30px
+    text-align: center
+    display: inline-block
+    &:hover
+        cursor: pointer
+        filter: brightness(1.2)
+.toggle-active
+    background-color: $light-blue
+.toggle-margin
+    margin-left: 20px
