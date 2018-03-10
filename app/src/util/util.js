@@ -99,3 +99,21 @@ export function seasonFromDate() {
     }
     return  { year, season }
 }
+
+export function isLeftover(Cyear, Cseason, startdate) {
+    let [ year, month, date ] = startdate.split('-')
+    if(parseInt(year) < Cyear) {
+        return true
+    }
+    let Cseasonstartmonth 
+    switch(Cseason) {
+        case 'Winter': Cseasonstartmonth = 1; break
+        case 'Spring': Cseasonstartmonth = 3; break
+        case 'Summer': Cseasonstartmonth = 6; break
+        case 'Fall': Cseasonstartmonth = 9; break
+    }
+    if(parseInt(month)<Cseasonstartmonth) {
+        return true
+    }
+    return false
+}
