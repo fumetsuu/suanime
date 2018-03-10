@@ -26,7 +26,7 @@ export default class App extends Component {
 					<Switch>
 						<Route exact path="/" component={HomeContent}/>
 						<Route path="/search" component={SearchPage}/>
-						<Route path="/seasonal/:year/:season" component={SeasonalPage}/>
+						<Route path="/seasonal/:year?/:season?/:type?" component={SeasonalPage}/>
 						<Route path="/downloads" component={DownloadsPage}/>
 						<Route path="/info" component={InfoPage}/>
 						<Route path="/integration" component={IntegrationPage}/>

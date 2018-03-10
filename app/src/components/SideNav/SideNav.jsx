@@ -4,7 +4,6 @@ import { withRouter, NavLink } from 'react-router-dom'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
 import { sidenavhide, sidenavtoggle } from '../../util/sidenavtoggle.js'
-import { seasonFromDate } from '../../util/util.js'
 const toggableHashes = ["#/watch", "#/info"]
 
 class SideNav extends Component {
@@ -30,15 +29,13 @@ class SideNav extends Component {
     let toggleLeft = props.show ? '222px' : '-20px'
     let toggleIcon = props.show ? 'chevron_left' : 'chevron_right'
     let watchDisabled = props.watching ? false : true
-    let currentSeason = seasonFromDate()
-    let seasonalPath = `/seasonal/${currentSeason.year}/${currentSeason.season}`
     return (
       <div className="side-nav" style={{ width: sideWidth }}>
         <NavLink exact to="/" className="title">
           <span className="su-blue">SU</span> ANIME
         </NavLink>
         <SideNavLink icon="search" label="Search" linkTarget="/search"/>
-        <SideNavLink icon="event" label="Seasonal" linkTarget={seasonalPath}/>
+        <SideNavLink icon="event" label="Seasonal" linkTarget="/seasonal"/>
         <SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>
         <SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
         <SideNavLink icon="live_tv" label="Watch" linkTarget="/watch" disabled={watchDisabled}/>

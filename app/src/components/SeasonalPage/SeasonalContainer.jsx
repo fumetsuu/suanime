@@ -1,11 +1,20 @@
 import React, { Component } from 'react'
+import SeasonalOptions from './SeasonalOptions.jsx'
+import { seasonFromDate } from '../../util/util.js'
 
 export default class SeasonalContainer extends Component {
-  render() {
+    render() {
+    let { year, season, type } = this.props.match.params
+    year = year || seasonFromDate().year
+    season = season || seasonFromDate().season
+    type = type || 'all'
     return (
-      <div className="seasonal-wrapper">
-        {JSON.stringify(this.props)}
-      </div>
-    )
-  }
+        <div className="seasonal-wrapper">
+            <div className="seasonal-container">
+                <SeasonalOptions year={year} season={season} type={type}/>
+                {year} - {season} - {type}
+            </div>
+        </div>
+        )
+    }
 }
