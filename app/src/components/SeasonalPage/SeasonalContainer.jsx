@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import SeasonalOptions from './SeasonalOptions.jsx'
+import SeasonalResults from './SeasonalResults.jsx'
 import { seasonFromDate } from '../../util/util.js'
 
 export default class SeasonalContainer extends Component {
@@ -12,7 +13,7 @@ export default class SeasonalContainer extends Component {
         <div className="seasonal-wrapper">
             <div className="seasonal-container">
                 <SeasonalOptions year={year} season={season} type={type}/>
-                {year} - {season} - {type}
+                <SeasonalResults year={year} season={season} type={type}/>
             </div>
         </div>
         )

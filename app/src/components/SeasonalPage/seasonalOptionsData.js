@@ -16,11 +16,10 @@ export const seasonOptions = [
 ]
 
 export const typeOptions = [
-    {value: 'default', label: 'ALL'},
-    {value: '0', label: 'TV'},
-    {value: '1', label: 'OVA'},
-    {value: '2', label: 'MOVIE'},
-    {value: '3', label: 'SPECIAL'},
-    {value: '4', label: 'ONA'},
-    {value: '5', label: 'SHORT'}
+    { value: 'default', label: 'ALL' },
+    { value: '0', label: 'TV' },
+    { value: '1', label: 'OVA' },
+    { value: '2', label: 'MOVIE' },
+    { value: '3', label: 'SPECIAL' },
+    { value: '4', label: 'ONA' }
 ]
