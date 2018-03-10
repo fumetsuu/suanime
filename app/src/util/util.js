@@ -79,3 +79,23 @@ export function toWordDate(date) {
 export function fixDirPath(folderpath) {
     return folderpath.replace(/\\\\/g, '/')
 }
+
+export function seasonFromDate() {
+    let today = new Date()
+    let year = today.getUTCFullYear()
+    let month = today.getUTCMonth()
+    let season
+    if(0 <= month && month < 3) {
+        season = 'Winter'
+    }
+    if(3 <= month && month < 6) {
+        season = 'Spring'
+    }
+    if(6 <= month && month < 9) {
+        season = 'Summer'
+    }
+    if(9 <= month && month < 12) {
+        season = 'Fall'
+    }
+    return  { year, season }
+}

@@ -14,3 +14,4 @@ export const InfoPage = loadable(() => import('./components/InfoPage/InfoContain
 export const IntegrationPage = loadable(() => import('./components/IntegrationPage/IntegrationContainer.jsx'), { LoadingComponent: loader })
 export const SettingsPage = loadable(() => import('./components/SettingsPage/SettingsContainer.jsx'), { LoadingComponent: loader })
 export const AboutPage = loadable(() => import('./components/AboutPage/AboutContainer.jsx'), { LoadingComponent: loader })
+export const SeasonalPage = loadable(() => import('./components/SeasonalPage/SeasonalContainer.jsx'), { LoadingComponent: loader })
