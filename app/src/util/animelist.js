@@ -119,3 +119,13 @@ export function dateToSeason(date) {
         return `Fall ${year}`
     }
 }
+
+export function myStatusToColour(myStatus) {
+    switch(myStatus) {
+        case 1: case 'Currently Watching': return 'blue-bg'; break
+        case 2: case 'Completed': return 'green-bg'; break
+        case 3: case 'On Hold': return 'yellow-bg'; break
+        case 4: case 'Dropped': return 'red-bg'; break
+        case 6: case 'Plan to watch': return 'grey-bg'; break
+    }
+}

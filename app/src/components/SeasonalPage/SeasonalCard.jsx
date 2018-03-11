@@ -4,7 +4,7 @@ import { convertSec } from '../../util/util.js'
 import { connect } from 'react-redux'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { updateAnime, launchInfo, addAnime } from '../../actions/actions.js'
-import { statusToCode, typeToCode } from '../../util/animelist.js'
+import { statusToCode, typeToCode, myStatusToColour } from '../../util/animelist.js'
 
 class SeasonalCard extends Component {
     constructor(props) {
@@ -26,13 +26,13 @@ class SeasonalCard extends Component {
             <div className="right-data">
                 <div className="stats-data anime-meta">
                     <div className="stat-data">{mean?mean:'-'}</div>
-                    <div className="stat-data middle">{average_episode_duration < 900 ? 'Short' : (media_type.length < 4 ? media_type.toUpperCase() : media_type[0].toUpperCase()+media_type.substr(1))}</div>
+                    <div className="stat-data middle">{average_episode_duration && average_episode_duration < 900 ? 'Short' : (media_type.length < 4 ? media_type.toUpperCase() : media_type[0].toUpperCase()+media_type.substr(1))}</div>
                     <div className="stat-data">{num_episodes==0?'?':num_episodes} eps</div>
                 </div>
                 {animelistObj ?
                     <div className="list-edit">
                         <Dropdown className="scores-dropdown" value={scoresData.find(el => el.value == animelistObj.my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
-                        <Dropdown className="status-dropdown" value={statusData.find(el => el.value == animelistObj.my_status)} options={statusData} onChange={this.updateStatus} key="statuses"/>
+                        <Dropdown className={"status-dropdown "+myStatusToColour(animelistObj.my_status)} value={statusData.find(el => el.value == animelistObj.my_status)} options={statusData} onChange={this.updateStatus} key="statuses"/>
                     </div>
                     : <div className="list-edit"><div className="add-to-list" onClick={this.addToList}>Add To List</div></div>
                 }

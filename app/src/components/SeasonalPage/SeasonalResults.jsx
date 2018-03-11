@@ -121,7 +121,7 @@ export default class SeasonalResults extends Component {
                     case "tv": {
                         if(isLeftover(year, season, el.node.start_date)) {
                             tvlo.push(el.node)
-                        } else if(el.node.average_episode_duration < 900) { //if is short
+                        } else if(el.node.average_episode_duration && el.node.average_episode_duration < 900) { //if is short
                             tvshort.push(el.node)
                         } else {
                             tv.push(el.node)
