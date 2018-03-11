@@ -50,11 +50,12 @@ export default class AboutUpdates extends Component {
             }
             case 1: {
                 ipcRenderer.send('download-update')
+                this.setState({ isUpdating: true })
                 break
             }
             case 5: {
                 ipcRenderer.send('restart-and-install')
-                break;
+                break
             }
         }
     }
