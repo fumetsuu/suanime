@@ -24,3 +24,8 @@ export const typeOptions = [
     { value: '4', label: 'ONA' }
 ]
 
+export const sortOptions = [
+    { value: 'default', label: 'Title' },
+    { value: '0', label: 'Score' },
+    { value: '1', label: 'Popularity' }
+]

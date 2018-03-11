@@ -11,25 +11,35 @@ export default class SeasonalResults extends Component {
             rawdata: {},
             typesorteddata: {},
             typesortedcards: [],
-            isLoading: true
+            isLoading: true,
+            type: 'all'
         }
         this.dataToState = this.dataToState.bind(this)
         this.cardsToState = this.cardsToState.bind(this)
     }
 
     componentDidMount() {
-        let { year, season } = this.props
-        this.dataToState(year, season)
+        console.log("hi", this.props)
+        let { year, season, sort } = this.props
+        this.dataToState(year, season, sort)
     }
 
     componentWillReceiveProps(nextProps) {
-        let { year, season } = nextProps
-        this.dataToState(year, season)
+        let { year, season, type, sort } = nextProps
+        let thisyear = this.props.year, thisseason = this.props.season
+        console.log(this.props, nextProps)
+        if(thisyear != year || thisseason != season) {
+            this.dataToState(year, season, sort)
+        }
+        this.setState({ type })
+        if(sort != this.props.sort) {
+            this.cardsToState(sort)
+        }
     }
     
 
     render() {
-        let { type } = this.props
+        let type = this.state.type.toLowerCase()
         if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
@@ -45,7 +55,7 @@ export default class SeasonalResults extends Component {
                     </div>
             </div>:null}
 
-            {typesortedcards.tvlo && typesortedcards.tvlo.length && (type=='all' || type=='tvlo') ?
+            {typesortedcards.tvlo && typesortedcards.tvlo.length && (type=='all' || type=='tv') ?
                 <div className="results-sector-container">
                     <div className="results-sector-title">LEFTOVERS</div>
                     <div className="results-sector">
@@ -89,9 +99,9 @@ export default class SeasonalResults extends Component {
         )
     }
 
-    dataToState(year, season) {
+    dataToState(year, season, sort) {
         this.setState({ isLoading: true })
-        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date`
+        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity`
         rp({ uri: url, json: true }).then(rawdata => {
             let tv = [], tvlo = [], ova = [], movie = [], special = [], ona = []
             rawdata.data.forEach(el => {
@@ -111,20 +121,46 @@ export default class SeasonalResults extends Component {
                 }
             })
             let typesorteddata = { tv, tvlo, ova, movie, special, ona }
-            this.setState({ rawdata, typesorteddata }, () => { this.cardsToState() })
+            this.setState({ rawdata, typesorteddata }, () => { this.cardsToState(sort) })
         })
     }
 
-    cardsToState() {
-        let { typesorteddata } = this.state
+    cardsToState(sort) {
+        let imtypesorteddata = this.state.typesorteddata
+        sort = sort.toLowerCase()
+        console.log(sort)
+        let orderA = 1, orderB = -1
+        for(var category in imtypesorteddata) {
+            if(imtypesorteddata[category].length) {
+                switch(sort) {
+                    case 'title': imtypesorteddata[category].sort((a, b) => {
+                        var atitle = a.title.toLowerCase(),
+                            btitle = b.title.toLowerCase()
+                        return atitle > btitle ? orderA : orderB
+                    })
+                    break
+                    case 'score': imtypesorteddata[category].sort((a, b) => {
+                        var ascore = a.mean,
+                            bscore = b.mean
+                        return ascore <= bscore ? orderA : orderB
+                    })
+                    break
+                    case 'popularity': imtypesorteddata[category].sort((a, b) => {
+                        var apopularity = a.popularity,
+                            bpopularity = b.popularity
+                        return apopularity > bpopularity ? orderA : orderB
+                    })
+                }
+            }
+        }
         let tv = [], tvlo = [], ova = [], movie = [], special = [], ona = []
-        tv = typesorteddata.tv.length ? typesorteddata.tv.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        tvlo = typesorteddata.tvlo.length ? typesorteddata.tvlo.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        ova = typesorteddata.ova.length ? typesorteddata.ova.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        movie = typesorteddata.movie.length ? typesorteddata.movie.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        special = typesorteddata.special.length ? typesorteddata.special.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        ona = typesorteddata.ona.length ? typesorteddata.ona.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        tv = imtypesorteddata.tv.length ? imtypesorteddata.tv.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        tvlo = imtypesorteddata.tvlo.length ? imtypesorteddata.tvlo.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        ova = imtypesorteddata.ova.length ? imtypesorteddata.ova.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        movie = imtypesorteddata.movie.length ? imtypesorteddata.movie.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        special = imtypesorteddata.special.length ? imtypesorteddata.special.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        ona = imtypesorteddata.ona.length ? imtypesorteddata.ona.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         let typesortedcards = { tv, tvlo, ova, movie, special, ona }
-        this.setState({ typesortedcards, isLoading: false })
+        this.setState({ typesortedcards, typesorteddata: imtypesorteddata, isLoading: false })
     }
 }
