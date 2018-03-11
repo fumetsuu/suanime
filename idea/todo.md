@@ -9,7 +9,7 @@ Todo
 - [x] mal integration
 - [ ] queued/automatic downloads
 - [ ] anime airing schedule
-- [ ] seasonal anime
+- [x] seasonal anime
 - [ ] search page back button
 - [ ] mal update history
 - [ ] next/previous ep button on watch page
