@@ -107,7 +107,7 @@
                         width: 100%
                         height: 100%
                         display: grid
-                        grid-template-rows: 20px 230px 20px
+                        grid-template-rows: 20px 20px 210px 20px
                         .stats-data
                             background-color: $black
                             width: 100%
@@ -127,7 +127,7 @@
                                 border-right: 1px solid $grey
                         .anime-synopsis
                             width: 186px
-                            height: 210px
+                            height: 190px
                             overflow-y: hidden
                             padding: 12px
                             font-family: 'Lato'
@@ -153,3 +153,57 @@
                                 text-transform: capitalize
                             .first-bottom
                                 border-right: 1px solid $grey
+                        .list-edit
+                            width: 100%
+                            height: 20px
+                            background-color: $black
+                            display: grid
+                            grid-template-columns: 25% 75%
+                            border-top: 1px solid $grey
+                            .add-to-list
+                                text-align: center
+                                line-height: 18px
+                                font-family: 'Lato'
+                                font-weight: 400
+                                font-size: 10px
+                                grid-column: 1/#{3}
+                                &:hover
+                                    cursor: pointer
+                                    background-color: $light-blue
+                            .scores-dropdown
+                                border-right: 1px solid $grey
+                            .scores-dropdown, .status-dropdown
+                                justify-self: center
+                                width: 100%
+                                justify-self: center
+                                .Dropdown-control
+                                    background-color: $black
+                                    height: 20px
+                                    line-height: 18px
+                                    font-size: 10px
+                                    background-color: transparent
+                                    font-family: 'Lato'
+                                    font-weight: 400
+                                    justify-self: center
+                                    .Dropdown-placeholder
+                                        text-align: center
+                                .Dropdown-menu
+                                    background-color: $dark-grey
+                                    position: relative
+                                    .Dropdown-option
+                                        border-bottom: 1px solid $grey
+                                        background-color: $black
+                                        font-family: 'Lato'
+                                        font-weight: 400
+                                        font-size: 10px
+                                        text-align: center
+                                        padding: 5px 0
+                                        &:hover
+                                            cursor: pointer
+                                            background-color: lighten($dark-grey, 5%)
+                                    .is-selected
+                                        background-color: $light-blue
+                                        pointer-events: none
+                                &:hover
+                                    cursor: pointer
+                                    background-color: lighten($black, 5%)

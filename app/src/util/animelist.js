@@ -2,20 +2,21 @@ import { convertMS } from './util.js'
 
 export function statusToCode(airingString) {
     switch(airingString) {
-        case 'Currently Airing': return 1; break
-        case 'Finished Airing': return 2; break
-        case 'Not yet aired': return 3; break
+        case 'Currently Airing': case 'currently_airing': return 1; break
+        case 'Finished Airing': case 'finished_airing': return 2; break
+        case 'Not yet aired': case 'not_yet_aired': return 3; break
     }
 }
 
 export function typeToCode(typeString) {
-    switch(typeString) {
+    switch(typeString.toUpperCase()) {
         case 'TV': return 1; break
         case 'OVA': return 2; break
         case 'Movie': return 3; break
         case 'Special': return 4; break
         case 'ONA': return 5; break
         case 'Music': return 6; break
+        default: return 1; break
     }
 }
 

@@ -113,7 +113,7 @@ export default class SeasonalResults extends Component {
 
     dataToState(year, season, sort) {
         this.setState({ isLoading: true, APIerror: false })
-        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity,average_episode_duration`
+        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity,average_episode_duration,start_date,end_date`
         rp({ uri: url, json: true }).then(rawdata => {
             let tv = [], tvlo = [], tvshort =[], ova = [], movie = [], special = [], ona = []
             rawdata.data.forEach(el => {
