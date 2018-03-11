@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { HashRouter as Router, NavLink, Route, Switch, hashHistory } from 'react-router-dom'
-import TitleBar from 'react-window-titlebar'
+import SuTitlebar from 'su-titlebar'
 import { remote } from 'electron'
 require('./styles/main.sass')
 
@@ -21,19 +21,21 @@ export default class App extends Component {
 			<Router>
 				<div className="wrapper">
 					<div className="resizable-line"/>
-					<TitleBar remote={remote} theme="dark" actionsPos="right" className="title-bar"/>		
+					<SuTitlebar remote={remote}/>		
 					<SideNav/>
-					<Switch>
-						<Route exact path="/" component={HomeContent}/>
-						<Route path="/search" component={SearchPage}/>
-						<Route path="/seasonal/:year?/:season?/:type?/:sort?" component={SeasonalPage}/>
-						<Route path="/downloads" component={DownloadsPage}/>
-						<Route path="/info" component={InfoPage}/>
-						<Route path="/integration" component={IntegrationPage}/>
-						<Route path="/watch" component={WatchPage}/>
-						<Route path="/settings" component={SettingsPage}/>
-						<Route path="/about" component={AboutPage}/>
-					</Switch>
+					<div className="content">
+						<Switch>
+							<Route exact path="/" component={HomeContent}/>
+							<Route path="/search" component={SearchPage}/>
+							<Route path="/seasonal/:year?/:season?/:type?/:sort?" component={SeasonalPage}/>
+							<Route path="/downloads" component={DownloadsPage}/>
+							<Route path="/info" component={InfoPage}/>
+							<Route path="/integration" component={IntegrationPage}/>
+							<Route path="/watch" component={WatchPage}/>
+							<Route path="/settings" component={SettingsPage}/>
+							<Route path="/about" component={AboutPage}/>
+						</Switch>
+					</div>
 				</div>
 			</Router>
 		)
