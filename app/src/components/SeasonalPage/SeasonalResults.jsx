@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 const rp = require('request-promise')
 import SeasonalCard from './SeasonalCard.jsx'
 import { isLeftover } from '../../util/util.js'
+import Loader from '../Loader/Loader.jsx'
 
 export default class SeasonalResults extends Component {
     constructor(props) {
@@ -9,7 +10,8 @@ export default class SeasonalResults extends Component {
         this.state = {
             rawdata: {},
             typesorteddata: {},
-            typesortedcards: []
+            typesortedcards: [],
+            isLoading: true
         }
         this.dataToState = this.dataToState.bind(this)
         this.cardsToState = this.cardsToState.bind(this)
@@ -27,21 +29,68 @@ export default class SeasonalResults extends Component {
     
 
     render() {
+        let { type } = this.props
+        if(this.state.isLoading) {
+            return <Loader loaderClass="central-loader"/>
+        }
         let { typesortedcards } = this.state
         return (
         <div className="seasonal-results">
-        {typesortedcards.tv && typesortedcards.tv.length ?
+
+            {typesortedcards.tv && typesortedcards.tv.length && (type=='all' || type=='tv') ?
+                <div className="results-sector-container">
+                    <div className="results-sector-title">TV</div>
+                    <div className="results-sector">
+                        {typesortedcards.tv}
+                    </div>
+            </div>:null}
+
+            {typesortedcards.tvlo && typesortedcards.tvlo.length && (type=='all' || type=='tvlo') ?
+                <div className="results-sector-container">
+                    <div className="results-sector-title">LEFTOVERS</div>
+                    <div className="results-sector">
+                        {typesortedcards.tvlo}
+                    </div>
+            </div>:null}
+
+            {typesortedcards.movie && typesortedcards.movie.length && (type=='all' || type=='movie') ?
             <div className="results-sector-container">
-                <div className="results-sector-title">TV</div>
+                <div className="results-sector-title">MOVIE</div>
                 <div className="results-sector">
-                    {typesortedcards.tv}
+                    {typesortedcards.movie}
                 </div>
             </div>:null}
+
+            {typesortedcards.ova && typesortedcards.ova.length && (type=='all' || type=='ova') ?
+            <div className="results-sector-container">
+                <div className="results-sector-title">OVA</div>
+                <div className="results-sector">
+                    {typesortedcards.ova}
+                </div>
+            </div>:null}
+
+            {typesortedcards.ona && typesortedcards.ona.length && (type=='all' || type=='ona') ?
+                <div className="results-sector-container">
+                    <div className="results-sector-title">ONA</div>
+                    <div className="results-sector">
+                        {typesortedcards.ona}
+                    </div>
+            </div>:null}
+
+            {typesortedcards.special && typesortedcards.special.length && (type=='all' || type=='special') ?
+                <div className="results-sector-container">
+                    <div className="results-sector-title">SPECIAL</div>
+                    <div className="results-sector">
+                        {typesortedcards.special}
+                    </div>
+            </div>:null}
+        
         </div>
         )
     }
 
     dataToState(year, season) {
+        this.setState({ isLoading: true })
         const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date`
         rp({ uri: url, json: true }).then(rawdata => {
             let tv = [], tvlo = [], ova = [], movie = [], special = [], ona = []
@@ -76,6 +125,6 @@ export default class SeasonalResults extends Component {
         special = typesorteddata.special.length ? typesorteddata.special.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         ona = typesorteddata.ona.length ? typesorteddata.ona.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         let typesortedcards = { tv, tvlo, ova, movie, special, ona }
-        this.setState({ typesortedcards })
+        this.setState({ typesortedcards, isLoading: false })
     }
 }

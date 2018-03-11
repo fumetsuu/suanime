@@ -5,7 +5,7 @@ export default class SeasonalCard extends Component {
         let { title, main_picture, media_type, num_episodes, source, mean, synopsis } = this.props.animeData
         return (
         <div className="seasonal-card">
-            <div className="bg-img" style={{ backgroundImage: `url('${main_picture.medium}')` }}/>
+            <div className="bg-img" style={{ backgroundImage: `url('${(main_picture ? main_picture.medium : 'http://sweettutos.com/wp-content/uploads/2015/12/placeholder.png')}')` }}/>
             <div className="left-data">
                 <div className="anime-title">{title}</div>
             </div>
