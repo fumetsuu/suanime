@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { HashRouter as Router, NavLink, Route, Switch} from 'react-router-dom'
+import { HashRouter as Router, NavLink, Route, Switch, hashHistory } from 'react-router-dom'
 import TitleBar from 'react-window-titlebar'
 import { remote } from 'electron'
 require('./styles/main.sass')

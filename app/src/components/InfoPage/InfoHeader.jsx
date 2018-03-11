@@ -23,6 +23,7 @@ class InfoHeader extends React.Component {
         let { title, title_english, title_japanese, link, masteraniLink } = this.props
         return (
             <div className="info-header">
+            <div className="back-button" onClick={() => {this.props.history.goBack()}}><i className="material-icons">chevron_left</i></div>
                 <div className="info-header-title">
                     {title}
                     {title_japanese ? <div className="jp-title"><br/>JP: {title_japanese}</div> : null}

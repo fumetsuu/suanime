@@ -11,3 +11,9 @@ export function sidenavtoggle() {
         type: 'TOGGLE_SIDENAV'
     })
 }
+
+export function sidenavshow() {
+    store.dispatch({
+        type: 'SHOW_SIDENAV'
+    })
+}

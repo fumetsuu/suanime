@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter, NavLink } from 'react-router-dom'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
-import { sidenavhide, sidenavtoggle } from '../../util/sidenavtoggle.js'
+import { sidenavhide, sidenavtoggle, sidenavshow } from '../../util/sidenavtoggle.js'
 const toggableHashes = ["#/watch", "#/info"]
 
 class SideNav extends Component {
@@ -13,12 +13,15 @@ class SideNav extends Component {
       showToggle: toggableHashes.includes(window.location.hash)
     }
     window.addEventListener('hashchange', () => {
+      console.log(window.location.hash)
       let toggable = toggableHashes.includes(window.location.hash)
       this.setState({
         showToggle: toggable
       })
       if(toggable) {
         sidenavhide()
+      } else {
+        sidenavshow()
       }
     })
   }

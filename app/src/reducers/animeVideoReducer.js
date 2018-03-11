@@ -30,6 +30,11 @@ export default function reducer(state = {
                 showSideNav: false
             })
         }
+        case "SHOW_SIDENAV": {
+            return Object.assign({}, state, {
+                showSideNav: true
+            })
+        }
         default: return state
     }
 }

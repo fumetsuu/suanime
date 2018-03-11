@@ -41,7 +41,7 @@ class InfoContainer extends Component {
         return (
         <div className="info-wrapper">
             <div className="info-container">
-                <InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} masteraniLink={masteraniLink} malID={mal_id} aired={aired} image_url={image_url} episodes={episodes} type={type} status={status}/>
+                <InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} masteraniLink={masteraniLink} malID={mal_id} aired={aired} image_url={image_url} episodes={episodes} type={type} status={status} history={this.props.history}/>
                 <InfoMain MALData={MALData}/> 
                 <InfoEpisodes animeName={animeName} slug={slug} animeID={animeID}/>
             </div>
