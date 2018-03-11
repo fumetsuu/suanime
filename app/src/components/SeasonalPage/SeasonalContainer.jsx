@@ -9,7 +9,7 @@ export default class SeasonalContainer extends Component {
     year = year || seasonFromDate().year
     season = season || seasonFromDate().season
     type = type || 'all'
-    sort = sort || 'Title'
+    sort = sort || 'Score'
     return (
         <div className="seasonal-wrapper">
             <div className="seasonal-container">

@@ -12,7 +12,8 @@ export default class SeasonalResults extends Component {
             typesorteddata: {},
             typesortedcards: [],
             isLoading: true,
-            type: 'all'
+            type: 'all',
+            APIerror: false
         }
         this.dataToState = this.dataToState.bind(this)
         this.cardsToState = this.cardsToState.bind(this)
@@ -40,6 +41,9 @@ export default class SeasonalResults extends Component {
 
     render() {
         let type = this.state.type.toLowerCase()
+        if(this.state.APIerror) {
+            return <div className="seasonal-error">Nothing here yet!</div>
+        }
         if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
@@ -61,6 +65,14 @@ export default class SeasonalResults extends Component {
                     <div className="results-sector">
                         {typesortedcards.tvlo}
                     </div>
+            </div>:null}
+
+            {typesortedcards.tvshort && typesortedcards.tvshort.length && (type=='all' || type=='tv') ?
+            <div className="results-sector-container">
+                <div className="results-sector-title">TV SHORTS</div>
+                <div className="results-sector">
+                    {typesortedcards.tvshort}
+                </div>
             </div>:null}
 
             {typesortedcards.movie && typesortedcards.movie.length && (type=='all' || type=='movie') ?
@@ -100,15 +112,17 @@ export default class SeasonalResults extends Component {
     }
 
     dataToState(year, season, sort) {
-        this.setState({ isLoading: true })
-        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity`
+        this.setState({ isLoading: true, APIerror: false })
+        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity,average_episode_duration`
         rp({ uri: url, json: true }).then(rawdata => {
-            let tv = [], tvlo = [], ova = [], movie = [], special = [], ona = []
+            let tv = [], tvlo = [], tvshort =[], ova = [], movie = [], special = [], ona = []
             rawdata.data.forEach(el => {
                 switch(el.node.media_type) {
                     case "tv": {
                         if(isLeftover(year, season, el.node.start_date)) {
                             tvlo.push(el.node)
+                        } else if(el.node.average_episode_duration < 900) { //if is short
+                            tvshort.push(el.node)
                         } else {
                             tv.push(el.node)
                         }
@@ -120,47 +134,60 @@ export default class SeasonalResults extends Component {
                     case "ona": ona.push(el.node); break
                 }
             })
-            let typesorteddata = { tv, tvlo, ova, movie, special, ona }
+            let typesorteddata = { tv, tvlo, tvshort, ova, movie, special, ona }
             this.setState({ rawdata, typesorteddata }, () => { this.cardsToState(sort) })
+        }).catch(err => {
+            if(err) {
+                this.setState({
+                    APIerror: true
+                })
+            }
         })
     }
 
     cardsToState(sort) {
         let imtypesorteddata = this.state.typesorteddata
         sort = sort.toLowerCase()
-        console.log(sort)
-        let orderA = 1, orderB = -1
+        let orderA, orderB
+        if(sort[0] == 'v') {
+            orderA = -1
+            orderB = 1
+        } else {
+            orderA = 1
+            orderB = -1
+        }
         for(var category in imtypesorteddata) {
             if(imtypesorteddata[category].length) {
                 switch(sort) {
-                    case 'title': imtypesorteddata[category].sort((a, b) => {
+                    case 'title': case 'vtitle': imtypesorteddata[category].sort((a, b) => {
                         var atitle = a.title.toLowerCase(),
                             btitle = b.title.toLowerCase()
                         return atitle > btitle ? orderA : orderB
                     })
                     break
-                    case 'score': imtypesorteddata[category].sort((a, b) => {
-                        var ascore = a.mean,
-                            bscore = b.mean
+                    case 'score': case 'vscore': imtypesorteddata[category].sort((a, b) => {
+                        var ascore = a.mean || 0,
+                            bscore = b.mean || 0
                         return ascore <= bscore ? orderA : orderB
                     })
                     break
-                    case 'popularity': imtypesorteddata[category].sort((a, b) => {
-                        var apopularity = a.popularity,
-                            bpopularity = b.popularity
+                    case 'popularity': case'vpopularity': imtypesorteddata[category].sort((a, b) => {
+                        var apopularity = a.popularity || 0,
+                            bpopularity = b.popularity || 0
                         return apopularity > bpopularity ? orderA : orderB
                     })
                 }
             }
         }
-        let tv = [], tvlo = [], ova = [], movie = [], special = [], ona = []
+        let tv = [], tvlo = [], tvshort = [], ova = [], movie = [], special = [], ona = []
         tv = imtypesorteddata.tv.length ? imtypesorteddata.tv.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         tvlo = imtypesorteddata.tvlo.length ? imtypesorteddata.tvlo.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
+        tvshort = imtypesorteddata.tvshort.length ? imtypesorteddata.tvshort.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         ova = imtypesorteddata.ova.length ? imtypesorteddata.ova.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         movie = imtypesorteddata.movie.length ? imtypesorteddata.movie.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         special = imtypesorteddata.special.length ? imtypesorteddata.special.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
         ona = imtypesorteddata.ona.length ? imtypesorteddata.ona.map(data => <SeasonalCard key={data.id} animeData={data}/>) : []
-        let typesortedcards = { tv, tvlo, ova, movie, special, ona }
+        let typesortedcards = { tv, tvlo, tvshort, ova, movie, special, ona }
         this.setState({ typesortedcards, typesorteddata: imtypesorteddata, isLoading: false })
     }
 }

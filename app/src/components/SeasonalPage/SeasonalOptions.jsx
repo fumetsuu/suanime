@@ -28,7 +28,7 @@ export default class SeasonalOptions extends Component {
 
                 <div className="dropdown-container">
                 <div className="small-header"> Sort </div>
-                <Dropdown className="dropdown-options" options={sortOptions} onChange={this.handleSortChange.bind(this)} value={sortOptions.find(el => el.label.toLowerCase() == sort.toLowerCase())} placeholder="SORT"/></div>
+                <Dropdown className="dropdown-options" options={sortOptions} onChange={this.handleSortChange.bind(this)} value={sortOptions.find(el => el.label.toLowerCase() == sort.toLowerCase() || el.label.toLowerCase() == sort.substr(1).toLowerCase())} placeholder="SORT"/></div>
 
             </div>
         )
@@ -56,8 +56,14 @@ export default class SeasonalOptions extends Component {
     }
     
     handleSortChange(selected) {
-        let { year, season, type } = this.props
-        let newsort = selected.label
+        console.log(selected)
+        let { year, season, type, sort } = this.props
+        let newsort
+        if(sort == selected.label) {
+            newsort = 'v'+selected.label
+        } else {
+            newsort = selected.label
+        }
         let newlocation = `#/seasonal/${year}/${season}/${type}/${newsort}`
         window.location.hash = newlocation
     }
