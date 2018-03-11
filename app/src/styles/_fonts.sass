@@ -1,0 +1,59 @@
+// =============================================================================
+// String Replace
+// =============================================================================
+
+@function str-replace($string, $search, $replace: "") 
+	$index: str-index($string, $search)
+
+	@if $index 
+		@return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace)
+	
+
+	@return $string
+
+
+// =============================================================================
+// Font Face
+// =============================================================================
+
+@mixin font-face($name, $path, $weight: null, $style: null, $exts: eot woff2 woff ttf svg) 
+	$src: null
+
+	$extmods: (eot: "?", svg: "#" + str-replace($name, " ", "_"))
+
+	$formats: ( otf: "opentype", ttf: "truetype" )
+
+	@each $ext in $exts 
+		$extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext)
+		$format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext)
+		$src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma)
+	
+
+	@font-face 
+		font-family: quote($name)
+		font-style: $style
+		font-weight: $weight
+		src: $src
+	
+
+
+@include font-face(Lato, '../assets/fonts/Lato-LightItalic', 300, italic, woff2)
+@include font-face(Lato, '../assets/fonts/Lato-Regular', 400, normal, woff2)
+@include font-face("Material Icons", '../assets/fonts/Material-Icons', 400, normal, woff2)
+@include font-face("Source Sans Pro", '../assets/fonts/SourceSansPro-Bold', 700, normal, woff2)
+@include font-face("Source Sans Pro", '../assets/fonts/SourceSansPro-Black', 900, normal, woff2)
+
+.material-icons
+  font-family: 'Material Icons'
+  font-weight: normal
+  font-style: normal
+  font-size: 24px
+  line-height: 1
+  letter-spacing: normal
+  text-transform: none
+  display: inline-block
+  white-space: nowrap
+  word-wrap: normal
+  direction: ltr
+  -webkit-font-feature-settings: 'liga'
+  -webkit-font-smoothing: antialiased

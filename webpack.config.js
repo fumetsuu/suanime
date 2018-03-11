@@ -47,7 +47,7 @@ module.exports = {
 				test: /\.(png|jpg|gif|svg|eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 				options: {
-					name: 'img/[name].[ext]'
+					name: 'assets/[name].[ext]'
 				}
 			},
 			{ test: /\.html$/, use: ['html-loader'] }
