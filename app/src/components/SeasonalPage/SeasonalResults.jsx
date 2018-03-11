@@ -20,7 +20,6 @@ export default class SeasonalResults extends Component {
     }
 
     componentDidMount() {
-        console.log("hi", this.props)
         let { year, season, sort } = this.props
         this.dataToState(year, season, sort)
     }
@@ -28,12 +27,11 @@ export default class SeasonalResults extends Component {
     componentWillReceiveProps(nextProps) {
         let { year, season, type, sort } = nextProps
         let thisyear = this.props.year, thisseason = this.props.season
-        console.log(this.props, nextProps)
         if(thisyear != year || thisseason != season) {
             this.dataToState(year, season, sort)
         }
         this.setState({ type })
-        if(sort != this.props.sort) {
+        if(sort != this.props.sort && !this.state.isLoading) {
             this.cardsToState(sort)
         }
     }
@@ -113,7 +111,7 @@ export default class SeasonalResults extends Component {
 
     dataToState(year, season, sort) {
         this.setState({ isLoading: true, APIerror: false })
-        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity,average_episode_duration,start_date,end_date`
+        const url = `https://api.myanimelist.net/v0.20/anime/season/${year}/${season.toLowerCase()}?limit=500&fields=media_type,num_episodes,source,mean,synopsis,start_date,popularity,average_episode_duration,start_date,end_date,status`
         rp({ uri: url, json: true }).then(rawdata => {
             let tv = [], tvlo = [], tvshort =[], ova = [], movie = [], special = [], ona = []
             rawdata.data.forEach(el => {
@@ -146,6 +144,7 @@ export default class SeasonalResults extends Component {
     }
 
     cardsToState(sort) {
+        console.log(sort, this.props.sort)
         let imtypesorteddata = this.state.typesorteddata
         sort = sort.toLowerCase()
         let orderA, orderB

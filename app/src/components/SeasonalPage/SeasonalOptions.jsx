@@ -56,7 +56,6 @@ export default class SeasonalOptions extends Component {
     }
     
     handleSortChange(selected) {
-        console.log(selected)
         let { year, season, type, sort } = this.props
         let newsort
         if(sort == selected.label) {
