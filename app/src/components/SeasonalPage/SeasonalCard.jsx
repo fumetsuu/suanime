@@ -16,7 +16,7 @@ class SeasonalCard extends Component {
     }
     
     render() {
-        let { title, main_picture, media_type, num_episodes, source, mean, synopsis, average_episode_duration, id, start_date, end_date } = this.props.animeData
+        let { title, main_picture, media_type, num_episodes, source, mean, synopsis, average_episode_duration, id, start_date, end_date, broadcast } = this.props.animeData
         let animelistObj = this.props.listdata.find(el => el.series_animedb_id == id)
         return (
         <div className="seasonal-card">
@@ -38,6 +38,7 @@ class SeasonalCard extends Component {
                     : <div className="list-edit"><div className="add-to-list" onClick={this.addToList}>Add To List</div></div>
                 }
                 <div className="anime-synopsis">{synopsis}</div>
+                <div className="broadcast-data">{broadcast ? broadcast.day_of_the_week+' - '+broadcast.start_time+' (JST)' : ''}</div>
                 <div className="bottom">
                     <div className="stat-data first-bottom">{source ? source.replace(/_/g, ' ') : ''}</div>
                     <div className="stat-data">{convertSec(average_episode_duration) || '?'}</div>

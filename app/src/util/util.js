@@ -116,3 +116,11 @@ export function isLeftover(Cyear, Cseason, startdate) {
     }
     return false
 }
+
+export function dayToString(day) {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    if(day == 0) return 'Today'
+    //where day = 0 is TODAY
+    //if today is wednesday, todayrealday is 3, but day is 0
+    return days[(day+new Date().getDay())%7]
+}

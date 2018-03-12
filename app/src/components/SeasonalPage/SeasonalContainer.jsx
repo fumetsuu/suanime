@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import SeasonalOptions from './SeasonalOptions.jsx'
 import SeasonalResults from './SeasonalResults.jsx'
+import SeasonalSchedule from './SeasonalSchedule.jsx'
 import { seasonFromDate } from '../../util/util.js'
 
 export default class SeasonalContainer extends Component {
@@ -10,6 +11,16 @@ export default class SeasonalContainer extends Component {
     season = season || seasonFromDate().season
     type = type || 'all'
     sort = sort || 'Score'
+    if(year == 'schedule') {
+        return (
+            <div className="seasonal-wrapper">
+                <div className="seasonal-container">
+                    <SeasonalOptions year={year} season={season} type={type} sort={sort}/>
+                    <SeasonalSchedule/>
+                </div>
+            </div> 
+        )
+    }
     return (
         <div className="seasonal-wrapper">
             <div className="seasonal-container">

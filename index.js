@@ -1,20 +1,18 @@
 const electron = require('electron')
 const { app, BrowserWindow, ipcMain } = electron
 const path = require('path')
+require('electron-debug')()
 const { autoUpdater } = require('electron-updater')
 autoUpdater.autoDownload = false
 
 var eStore = require('electron-store')
 global.estore = new eStore()
-require('electron-debug')()
 
 if(process.mainModule.filename.indexOf('app.asar') === -1) {
     require('electron-reload')(path.join(__dirname, '/build/'))
 }
 
 let mainWindow
-let start = Date.now()
-
 app.on('ready', () => {
     mainWindow = new BrowserWindow({ frame: false, width: global.estore.get('initWidth') || 1280, height: global.estore.get('initHeight') || 720, show: false, webPreferences: {
         webSecurity: false

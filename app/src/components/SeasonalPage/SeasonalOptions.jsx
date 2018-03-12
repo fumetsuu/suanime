@@ -30,6 +30,9 @@ export default class SeasonalOptions extends Component {
                 <div className="small-header"> Sort </div>
                 <Dropdown className="dropdown-options" options={sortOptions} onChange={this.handleSortChange.bind(this)} value={sortOptions.find(el => el.label.toLowerCase() == sort.toLowerCase() || el.label.toLowerCase() == sort.substr(1).toLowerCase())} placeholder="SORT"/></div>
 
+                <div className="schedule" onClick={this.gotoSchedule.bind(this)}>
+                    <i className="material-icons">event</i>
+                </div>
             </div>
         )
     }
@@ -65,5 +68,9 @@ export default class SeasonalOptions extends Component {
         }
         let newlocation = `#/seasonal/${year}/${season}/${type}/${newsort}`
         window.location.hash = newlocation
+    }
+
+    gotoSchedule() {
+        window.location.hash = '#/seasonal/schedule'
     }
 }
