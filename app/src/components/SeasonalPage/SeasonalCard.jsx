@@ -12,6 +12,7 @@ class SeasonalCard extends Component {
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
         this.addToList = this.addToList.bind(this)
+        this.launchInfoPage = this.launchInfoPage.bind(this)
     }
     
     render() {
@@ -21,7 +22,7 @@ class SeasonalCard extends Component {
         <div className="seasonal-card">
             <div className="bg-img" style={{ backgroundImage: `url('${(main_picture ? main_picture.medium : 'http://sweettutos.com/wp-content/uploads/2015/12/placeholder.png')}')` }}/>
             <div className="left-data">
-                <div className="anime-title">{title}</div>
+                <div className="anime-title" onClick={this.launchInfoPage}>{title}</div>
             </div>
             <div className="right-data">
                 <div className="stats-data anime-meta">
@@ -99,6 +100,11 @@ class SeasonalCard extends Component {
         })
         this.props.addAnime(id, newAnimeListObject)
     }
+
+    launchInfoPage() {
+        let { id, title } = this.props.animeData     
+        launchInfo(title, null, null, id)
+      }
 }
 
 const mapStateToProps = state => {

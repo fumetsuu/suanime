@@ -41,7 +41,6 @@ export default class InfoEpisodes extends Component {
   stateFromName(animeName) {
     const searchURL = `https://www.masterani.me/api/anime/search?search=${fixURLMA(animeName)}&sb=1`
     rp({ uri: searchURL, json: true }).then(searchResults => {
-      console.log(searchResults)
       let searchHit = searchResults.find(el => encodeURIComponent(el.title) == encodeURIComponent(animeName))
       if(!searchHit) {
         this.setState({
