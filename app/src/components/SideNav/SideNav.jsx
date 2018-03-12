@@ -12,19 +12,14 @@ class SideNav extends Component {
     this.state = {
       showToggle: toggableHashes.some(el => window.location.hash.includes(el))
     }
-    window.addEventListener('hashchange', () => {
-      console.log(window.location.hash)
-      let toggable = toggableHashes.some(el => window.location.hash.includes(el))
-      this.setState({
-        showToggle: toggable
-      })
-      if(toggable) {
-        sidenavhide()
-      } else {
-        sidenavshow()
-      }
-    })
+    this.onHashChange = this.onHashChange.bind(this)
   }
+
+  componentDidMount() {
+    this.onHashChange()
+    window.addEventListener('hashchange', this.onHashChange)
+  }
+  
 
   render() {
     let props = this.props
@@ -50,6 +45,18 @@ class SideNav extends Component {
         </div>
       </div>
     )
+  }
+
+  onHashChange() {
+    let toggable = toggableHashes.some(el => window.location.hash.includes(el))
+    this.setState({
+      showToggle: toggable
+    })
+    if(toggable) {
+      sidenavhide()
+    } else {
+      sidenavshow()
+    }
   }
 }
 
