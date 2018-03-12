@@ -17,8 +17,7 @@ export default class InfoEpisodes extends Component {
   
   
   componentWillMount() {
-    console.log(this.props)
-    if(!this.props.animeID) {
+    if(this.props.animeID == "null") {
       this.stateFromName(this.props.animeName)
     } else {
       this.stateFromID(this.props.animeID)
@@ -41,13 +40,10 @@ export default class InfoEpisodes extends Component {
 
   stateFromName(animeName) {
     const searchURL = `https://www.masterani.me/api/anime/search?search=${fixURLMA(animeName)}&sb=1`
-
-    console.log(searchURL)
     rp({ uri: searchURL, json: true }).then(searchResults => {
       console.log(searchResults)
       let searchHit = searchResults.find(el => encodeURIComponent(el.title) == encodeURIComponent(animeName))
       if(!searchHit) {
-        console.log("HEY")
         this.setState({
           isLoading: false,
           epCards: null,
@@ -56,17 +52,7 @@ export default class InfoEpisodes extends Component {
         return false
       }
       let id = searchHit.id
-      const reqURL = `https://www.masterani.me/api/anime/${id}/detailed`
-      var epCards = []
-      rp({ uri: reqURL, json: true }).then(data => {
-          data.episodes.forEach(ep => {
-            epCards.push(<InfoEpisodeCard key={ep.info.id} epData={ep.info} broadData={data.info} poster={data.poster}/>)
-          })
-          this.setState({
-            isLoading: false,
-            epCards
-          })
-        }).catch(err => { console.log(err) })
+     this.stateFromID(id)
     }).catch(err => console.log(err))
   }
 

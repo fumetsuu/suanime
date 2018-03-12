@@ -170,8 +170,7 @@ class ListCard extends Component {
         let { series_title, series_animedb_id } = this.props.animeData     
         var animeName = series_title
         var malID = series_animedb_id
-        this.props.launchInfo(animeName, null, null, malID)
-        window.location.hash = "#/info"
+        launchInfo(animeName, null, null, malID)
       }
 
 }
@@ -179,8 +178,7 @@ class ListCard extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj)),
-        launchInfo: (animeName, a, b, malID) => dispatch(launchInfo(animeName, null, null, malID))
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj))
     }
 }
 

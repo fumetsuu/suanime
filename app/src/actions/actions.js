@@ -45,15 +45,11 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	}
 }
 
-export function launchInfo(animeName, slug, animeID, malID) {
-	return {
-	type: 'LAUNCH_INFO',
-		payload: {
-			animeName: animeName,
-			slug: slug,
-			animeID: animeID,
-			malID: malID
-		}
+export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
+	if(animeID) {
+		window.location.hash = `#/info/${animeName}/${slug}/${animeID}`
+	} else if(malID) {
+		window.location.hash = `#/info/${animeName}/null/null/${malID}`
 	}
 }
 

@@ -10,7 +10,7 @@ Todo
 - [ ] queued/automatic downloads
 - [ ] anime airing schedule
 - [x] seasonal anime
-- [ ] search page back button
+- [x] search page back button
 - [ ] mal update history
 - [ ] next/previous ep button on watch page
 - [x] update list on watch page

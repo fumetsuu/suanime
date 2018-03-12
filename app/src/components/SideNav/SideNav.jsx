@@ -10,11 +10,11 @@ class SideNav extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      showToggle: toggableHashes.includes(window.location.hash)
+      showToggle: toggableHashes.some(el => window.location.hash.includes(el))
     }
     window.addEventListener('hashchange', () => {
       console.log(window.location.hash)
-      let toggable = toggableHashes.includes(window.location.hash)
+      let toggable = toggableHashes.some(el => window.location.hash.includes(el))
       this.setState({
         showToggle: toggable
       })

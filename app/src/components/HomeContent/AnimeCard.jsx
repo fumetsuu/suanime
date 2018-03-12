@@ -71,8 +71,7 @@ class AnimeCard extends Component {
 
   launchInfoPage() {
     let { title, slug, id } = this.props.animeDataRecent.anime
-    this.props.launchInfo(title, slug, id, null)
-    window.location.hash = "#/info"
+    launchInfo(title, slug, id, null)
   }
 }
 
@@ -90,9 +89,6 @@ const mapDispatchToProps = dispatch => {
 	),
     playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
 		playAnime(videoFile, animeName, epNumber, posterImg, slug)
-	),
-    launchInfo: (animeName, slug, animeID, a) => dispatch(
-		launchInfo(animeName, slug, animeID, null)
 	)
   }
 }

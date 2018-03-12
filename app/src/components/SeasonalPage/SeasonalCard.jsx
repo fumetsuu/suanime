@@ -111,7 +111,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj)),
-        launchInfo: (animeName, a, b, malID) => dispatch(launchInfo(animeName, null, null, malID)),
         addAnime: (malID, animeObj) => dispatch(addAnime(malID, animeObj))
     }
 }

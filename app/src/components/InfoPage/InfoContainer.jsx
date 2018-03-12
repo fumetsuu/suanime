@@ -4,15 +4,14 @@ import Loader from '../Loader/Loader.jsx'
 import InfoHeader from './InfoHeader.jsx'
 import InfoMain from './InfoMain.jsx'
 import InfoEpisodes from './InfoEpisodes.jsx'
-import { connect } from 'react-redux'
 import { fixURL } from '../../util/util.js'
 
-class InfoContainer extends Component {
+export default class InfoContainer extends Component {
     constructor(props) {
         super(props)
-        if(!props.animeID && !props.malID) {
-            window.location.hash = "#/"
-        }
+        // if(!props.animeID && !props.malID) {
+        //     window.location.hash = "#/"
+        // }
         this.state = {
             isLoading: true,
             MALData: null,
@@ -21,7 +20,8 @@ class InfoContainer extends Component {
     }
 
     componentDidMount() {
-        let { animeName, malID } = this.props
+        console.log(this.props)
+        let { animeName, malID } = this.props.match.params
         if(malID) {
             this.stateFromMALID(malID)
         } else {
@@ -33,7 +33,7 @@ class InfoContainer extends Component {
         if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
-        let { slug, animeID, animeName } = this.props
+        let { slug, animeID, animeName } = this.props.match.params
         let { MALData } = this.state
         let { title, title_english, title_japanese, link_canonical, mal_id, status, aired, image_url, episodes, type } = MALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
@@ -68,14 +68,3 @@ class InfoContainer extends Component {
     }
 
 }
-
-const mapStateToProps = state => {
-    return {
-        animeName: state.infoReducer.animeName,
-        slug: state.infoReducer.slug,
-        animeID: state.infoReducer.animeID,
-        malID: state.infoReducer.malID
-    }
-}
-
-export default connect(mapStateToProps)(InfoContainer)

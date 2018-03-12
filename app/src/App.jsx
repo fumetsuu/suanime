@@ -29,7 +29,7 @@ export default class App extends Component {
 							<Route path="/search" component={SearchPage}/>
 							<Route path="/seasonal/:year?/:season?/:type?/:sort?" component={SeasonalPage}/>
 							<Route path="/downloads" component={DownloadsPage}/>
-							<Route path="/info" component={InfoPage}/>
+							<Route path="/info/:animeName?/:slug?/:animeID?/:malID?" component={InfoPage}/>
 							<Route path="/integration" component={IntegrationPage}/>
 							<Route path="/watch" component={WatchPage}/>
 							<Route path="/settings" component={SettingsPage}/>
