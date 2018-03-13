@@ -251,6 +251,11 @@
                     grid-template-rows: 3fr 1fr 1fr
                     margin: 12px
                     box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.2)
+                    &:hover
+                        cursor: pointer
+                        & > .bg-img
+                            opacity: 1
+                            filter: brightness(1)
                     .bg-img
                         position: absolute
                         width: 230px
@@ -260,6 +265,7 @@
                         filter: brightness(0.8)
                         background-size: cover
                         background-position: 50% 40%
+                        transition: 0.4s
                     .broadcast-time
                         color: $light-grey
                         font-family: 'Lato'
