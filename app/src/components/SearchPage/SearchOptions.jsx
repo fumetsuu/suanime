@@ -52,7 +52,8 @@ class SearchOptions extends Component {
         )
     }
 
-    fireSearch() {
+    fireSearch(e) {
+        e.preventDefault; e.stopPropagation();
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = this.state
         this.props.search(searchValue, searchSort, searchType, searchStatus, searchGenre)
     }

@@ -45,11 +45,13 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	}
 }
 
+import { fixURL } from '../util/util.js'
+
 export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
 	if(animeID) {
-		window.location.hash = `#/info/${animeName}/${slug}/${animeID}`
+		window.location.hash = `#/info/${fixURL(animeName)}/${slug}/${animeID}`
 	} else if(malID) {
-		window.location.hash = `#/info/${animeName}/null/null/${malID}`
+		window.location.hash = `#/info/${fixURL(animeName)}/null/null/${malID}`
 	}
 }
 

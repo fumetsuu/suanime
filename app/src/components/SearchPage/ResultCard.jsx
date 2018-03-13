@@ -23,6 +23,7 @@ export default class ResultCard extends Component {
         let { title, id, slug } = this.props.animeData     
         var animeName = title
         var animeID = id
+        console.log(title)
         launchInfo(animeName, slug, animeID, null)
       }
       

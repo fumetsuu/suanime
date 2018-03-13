@@ -62,11 +62,11 @@ export function momentDuration(sec) {
 }
 
 export function fixURL(url) {
-    return encodeURIComponent(url.replace(/\/|\./g, ""))
+    return encodeURIComponent(url.replace(/\//g, ""))
 }
 
 export function fixURLMA(url) {
-    return encodeURIComponent(url.replace(/\/|\./, "").substr(0, 25))
+    return encodeURIComponent(url.replace(/\//g, "").substr(0, 25))
 }
 
 export function toWordDate(date) {

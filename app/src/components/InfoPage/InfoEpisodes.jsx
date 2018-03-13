@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import InfoEpisodeCard from './InfoEpisodeCard.jsx'
 const rp = require('request-promise')
 import Loader from '../Loader/Loader.jsx'
-import { fixURLMA } from '../../util/util.js'
+import { fixURLMA, fixURL } from '../../util/util.js'
 export default class InfoEpisodes extends Component {
   constructor(props) {
     super(props)
@@ -40,8 +40,9 @@ export default class InfoEpisodes extends Component {
 
   stateFromName(animeName) {
     const searchURL = `https://www.masterani.me/api/anime/search?search=${fixURLMA(animeName)}&sb=1`
+    console.log(fixURLMA(animeName), animeName, searchURL)
     rp({ uri: searchURL, json: true }).then(searchResults => {
-      let searchHit = searchResults.find(el => encodeURIComponent(el.title) == encodeURIComponent(animeName))
+      let searchHit = searchResults.find(el => decodeURIComponent(fixURL(el.title)) == decodeURIComponent(animeName))
       if(!searchHit) {
         this.setState({
           isLoading: false,

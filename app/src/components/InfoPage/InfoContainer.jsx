@@ -9,9 +9,6 @@ import { fixURL } from '../../util/util.js'
 export default class InfoContainer extends Component {
     constructor(props) {
         super(props)
-        // if(!props.animeID && !props.malID) {
-        //     window.location.hash = "#/"
-        // }
         this.state = {
             isLoading: true,
             MALData: null,
@@ -20,12 +17,20 @@ export default class InfoContainer extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props)
         let { animeName, malID } = this.props.match.params
         if(malID) {
             this.stateFromMALID(malID)
         } else {
-            this.stateFromMAL(animeName)
+            this.stateFromMAL(decodeURIComponent(animeName))
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let { animeName, malID } = nextProps.match.params
+        if(malID) {
+            this.stateFromMALID(malID)
+        } else {
+            this.stateFromMAL(decodeURIComponent(animeName))
         }
     }
     
@@ -37,7 +42,6 @@ export default class InfoContainer extends Component {
         let { MALData } = this.state
         let { title, title_english, title_japanese, link_canonical, mal_id, status, aired, image_url, episodes, type } = MALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
-        //pass maldata to infomain and masterani slug to episodes
         return (
         <div className="info-wrapper">
             <div className="info-container">
@@ -50,9 +54,12 @@ export default class InfoContainer extends Component {
     }
 
     stateFromMAL(animeName) {
+        this.setState({ isLoading: true })
         const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
+        console.log(searchURL)
         rp({ uri: searchURL, json: true }).then(results => {
-            var first = results.result.find(el => el.title == animeName) || results.result[1]
+            console.log(results, animeName)
+            var first = results.result.find(el => decodeURIComponent(fixURL(el.title)) == animeName) || results.result[1]
             const infoURL = `http://api.jikan.me/anime/${first.id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
@@ -61,6 +68,7 @@ export default class InfoContainer extends Component {
     }
 
     stateFromMALID(malID) {
+        this.setState({ isLoading: true })
         const infoURL = `http://api.jikan.me/anime/${malID}`
         rp({ uri: infoURL, json: true }).then(MALData => {
             this.setState({ MALData, isLoading: false })

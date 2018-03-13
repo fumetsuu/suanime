@@ -1,18 +1,23 @@
 import React, { Component } from 'react'
 const h2p = require('html2plaintext')
-import { browserLink } from '../../util/browserlink';
+import { browserLink } from '../../util/browserlink'
+import { launchInfo } from '../../actions/actions.js'
+
 export default class InfoMain extends Component {
   constructor(props) {
     super(props)
   }
   
   render() {
-    let { score, rank, premiered, image_url, type, episodes, status, broadcast, studio, source, duration, rating, synopsis, genre } = this.props.MALData
+    let { score, rank, premiered, image_url, type, episodes, status, broadcast, studio, source, duration, rating, synopsis, genre, related } = this.props.MALData
     return (
       <div className="info-main">
-        <div className="primary-stats">
-          <div className="primary-stat">{score}</div> <div className="vertical-blue"/> <div className="primary-stat">#{rank}</div> <div className="vertical-blue"/> <div className="primary-stat">{premiered}</div>
-        </div>
+      <div className="primary-stats">
+      <div className="primary-stat">{score}</div> <div className="vertical-blue"/> <div className="primary-stat">#{rank}</div> {!premiered?null:(<div className="primary-stat"><div className="vertical-blue"/>{premiered}</div>)} 
+      </div>
+      <ul className="genres">
+        {this.nameList(genre)}
+      </ul>
         <div className="secondary-stats-container">
           <div className="anime-image" style={{backgroundImage: `url('${image_url}')`}}/>
           <table className="secondary-stats">
@@ -31,7 +36,7 @@ export default class InfoMain extends Component {
             </tr>
             <tr>
                 <td className="data-label">Broadcast:</td>
-                <td>{broadcast}</td>
+                <td>{broadcast || '?'}</td>
             </tr>
             <tr>
               <td className="data-label">Studio:</td>
@@ -55,14 +60,31 @@ export default class InfoMain extends Component {
         <div className="synopsis-main">
           {h2p(synopsis)}
         </div>
-        <ul className="genres">
-          {this.nameList(genre)}
-        </ul>
+        <table className="related-anime">
+          <tbody>
+            {this.relatedList(related)}
+          </tbody>
+        </table>
       </div>
     )
   }
 
   nameList(data) {
     return data.map((el, i) => <span key={i}>{i?<div className="vertical-blue"/>:null}<span className="info-clickable" onClick={()=>browserLink(el.url)}>{h2p(el.name)}</span></span>)
+  }
+
+  relatedList(data) {
+    let relations = Object.keys(data)
+    if(!relations.length) return null
+    let tablerows = []
+    relations.forEach(relation => {
+      tablerows.push(
+        <tr key={relation}>
+          <td className="data-label">{relation}</td>
+          <td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?"related-link disabled":"related-link"} onClick={() => {launchInfo(h2p(el.title), null, null, el.mal_id)}}>{h2p(el.title)}</span></span>)}</td>
+        </tr>
+      )
+    })
+    return tablerows
   }
 }

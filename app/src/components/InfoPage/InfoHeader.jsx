@@ -3,6 +3,7 @@ import { browserLink } from '../../util/browserlink.js'
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
+const h2p = require('html2plaintext')
 import { updateAnime, addAnime } from '../../actions/actions.js'
 import { statusToCode, typeToCode, updateScore } from '../../util/animelist.js'
 class InfoHeader extends React.Component {
@@ -25,8 +26,8 @@ class InfoHeader extends React.Component {
             <div className="info-header">
             <div className="back-button" onClick={() => {this.props.history.goBack()}}><i className="material-icons">chevron_left</i></div>
                 <div className="info-header-title">
-                    {title}
-                    {title_japanese ? <div className="jp-title"><br/>JP: {title_japanese}</div> : null}
+                    {h2p(title)}
+                    {title_japanese ? <div className="jp-title"><br/>JP: {h2p(title_japanese)}</div> : null}
                 </div>
                 {this.props.listdata?(!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
                     <div className="list-update">
