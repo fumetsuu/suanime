@@ -3,13 +3,15 @@ const rp = require('request-promise')
 import { dayToString, dayofweekFromDayandTime } from '../../util/util.js'
 import Loader from '../Loader/Loader.jsx'
 import ScheduleCard from './ScheduleCard.jsx'
+import { connect } from 'react-redux'
 
-export default class SeasonalSchedule extends Component {
+class SeasonalSchedule extends Component {
     constructor(props) {
         super(props)
         this.state = {
             sortedschedulecards: [],
-            isLoading: true
+            isLoading: true,
+            filterWatching: false
         }
         this.getScheduleData = this.getScheduleData.bind(this)
         this.cardsFromData = this.cardsFromData.bind(this)
@@ -26,11 +28,12 @@ export default class SeasonalSchedule extends Component {
         }
         return (
         <div className="schedule-results">
+            <div className={this.state.filterWatching?"filter-watching blue-bg":"filter-watching"} onClick={() => {this.setState({filterWatching: !this.state.filterWatching})}}>Filter Watching</div>
             {this.state.sortedschedulecards.map((el, idx) =>
                 <div className="schedule-sector-container">
                     <div className="schedule-sector-title">{dayToString(idx)}</div>
                     <div className="schedule-sector">
-                        {el}
+                        {this.state.filterWatching ? this.filterWatching(el) : el}
                     </div>
                 </div>
             )}
@@ -66,4 +69,19 @@ export default class SeasonalSchedule extends Component {
         console.log(sortedschedulecards)
         this.setState({ sortedschedulecards, isLoading: false })
     }
+    
+    filterWatching(cat) {
+        let { listdata } = this.props
+        console.log(cat)
+        if(!listdata) return cat
+        return cat.filter(el => listdata.find(listel => listel.series_title == el.props.cardData.anime.title) && listdata.find(listel => listel.series_title == el.props.cardData.anime.title).my_status == 1)
+    }
 }
+
+const mapStateToProps = state => {
+    return {
+        listdata: state.animelistReducer.listdata
+    }
+}
+
+export default connect(mapStateToProps)(SeasonalSchedule)

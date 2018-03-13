@@ -239,7 +239,22 @@
                                     background-color: lighten($black, 5%)
 
     .schedule-results
-       .schedule-sector-container
+        .filter-watching
+            background-color: $dark-grey
+            padding: 4px 12px
+            height: 30px
+            width: fit-content
+            line-height: 30px
+            text-align: center
+            font-family: 'Lato'
+            font-size: 12px
+            font-weight: 400
+            float: right
+            margin: 20px 0
+            &:hover
+                cursor: pointer
+                background-color: lighten($black, 5%)    
+        .schedule-sector-container
             .schedule-sector
                 justify-content: flex-start
                 .schedule-card
