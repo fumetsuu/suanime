@@ -8,7 +8,7 @@ Todo
 - [x] view anime info
 - [x] mal integration
 - [ ] queued/automatic downloads
-- [ ] anime airing schedule
+- [x] anime airing schedule
 - [x] seasonal anime
 - [x] search page back button
 - [ ] mal update history
