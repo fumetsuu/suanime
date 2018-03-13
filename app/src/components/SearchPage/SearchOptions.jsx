@@ -12,11 +12,11 @@ class SearchOptions extends Component {
         super(props)
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = this.props
         this.state = {
-            searchValue,
-            searchSort,
-            searchType,
-            searchStatus,
-            searchGenre
+            searchValue: searchValue || '',
+            searchSort: searchSort || 'score_desc',
+            searchType: searchType || 'default',
+            searchStatus: searchStatus || 'default',
+            searchGenre: searchGenre || 'default'
         }
     }
 

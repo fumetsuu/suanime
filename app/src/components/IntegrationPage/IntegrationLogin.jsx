@@ -49,7 +49,8 @@ class IntegrationLogin extends Component {
         this.setState({ pass: e.target.value, loginstatus: 200 })
     }
 
-    MALLogin() {
+    MALLogin(e) {
+        e.preventDefault(); e.stopPropagation();
         this.setState({ loggingIn: true, loginstatus: 200 })
         let { user, pass } = this.state
         this.pclient.setUser(user, pass)

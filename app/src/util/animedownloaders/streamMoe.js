@@ -146,7 +146,7 @@ export function streamMoe() {
                             percentage: '100',
                             remaining: '0 sec',
                             elapsed: this.heldState.elapsed,
-                            completeDate: new Date().toLocaleString()
+                            completeDate: Date.now()
                         }
                         this.updateState()
                         store.dispatch(

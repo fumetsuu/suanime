@@ -67,10 +67,13 @@ class SearchResults extends Component {
     
 
     componentWillReceiveProps(nextProps) {
+        if(!global.estore.get('usepaginationsearch')) {
+            window.addEventListener('scroll', this.onscroll, true)
+            this.setState({ resultCards: [] })
+        }        
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
         const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
         this.stateFromURL(searchURL)
-        if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)        
     }
 
     stateFromURL(url) {

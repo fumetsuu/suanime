@@ -17,7 +17,7 @@ class SeasonalCard extends Component {
     
     render() {
         let { title, main_picture, media_type, num_episodes, source, mean, synopsis, average_episode_duration, id, start_date, end_date, broadcast } = this.props.animeData
-        let animelistObj = this.props.listdata.find(el => el.series_animedb_id == id)
+        let animelistObj = this.props.listdata ? this.props.listdata.find(el => el.series_animedb_id == id) : null
         return (
         <div className="seasonal-card">
             <div className="bg-img" style={{ backgroundImage: `url('${(main_picture ? main_picture.medium : 'http://sweettutos.com/wp-content/uploads/2015/12/placeholder.png')}')` }}/>
@@ -30,12 +30,12 @@ class SeasonalCard extends Component {
                     <div className="stat-data middle">{average_episode_duration && average_episode_duration < 900 ? 'Short' : (media_type.length < 4 ? media_type.toUpperCase() : media_type[0].toUpperCase()+media_type.substr(1))}</div>
                     <div className="stat-data">{num_episodes==0?'?':num_episodes} eps</div>
                 </div>
-                {animelistObj ?
+                {this.props.listdata ? (animelistObj ?
                     <div className="list-edit">
                         <Dropdown className="scores-dropdown" value={scoresData.find(el => el.value == animelistObj.my_score)} options={scoresData} onChange={this.updateScore} key="scores"/>
                         <Dropdown className={"status-dropdown "+myStatusToColour(animelistObj.my_status)} value={statusData.find(el => el.value == animelistObj.my_status)} options={statusData} onChange={this.updateStatus} key="statuses"/>
                     </div>
-                    : <div className="list-edit"><div className="add-to-list" onClick={this.addToList}>Add To List</div></div>
+                    : <div className="list-edit"><div className="add-to-list" onClick={this.addToList}>Add To List</div></div>) : <div className="empty"/>
                 }
                 <div className="anime-synopsis">{synopsis}</div>
                 <div className="broadcast-data">{broadcast ? broadcast.day_of_the_week+' - '+broadcast.start_time+' (JST)' : ''}</div>

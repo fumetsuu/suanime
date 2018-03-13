@@ -28,7 +28,7 @@ class InfoHeader extends React.Component {
                     {title}
                     {title_japanese ? <div className="jp-title"><br/>JP: {title_japanese}</div> : null}
                 </div>
-                {!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
+                {this.props.listdata?(!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
                     <div className="list-update">
                         <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
                         <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
@@ -36,7 +36,7 @@ class InfoHeader extends React.Component {
                         <div className={this.state.animeListObject.my_watched_episodes==this.state.animeListObject.series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
                         <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
                     </div>
-        )}    
+        )):<div className="empty"/>}    
                 <div className="anime-out-link masterani-circle" onClick={() => browserLink(masteraniLink)}/>
                 <div className="anime-out-link mal-circle" onClick={() => browserLink(link)}/>
             </div>
@@ -45,9 +45,13 @@ class InfoHeader extends React.Component {
 
     getAnimeListObject(id) {
         var animelist = this.props.listdata
-        return (animelist.find(anime => {
-            return anime.series_animedb_id == id
-        }))
+        if(animelist) {
+            return (animelist.find(anime => {
+                return anime.series_animedb_id == id
+            }))
+        } else {
+            return null
+        }
     }
 
     addToList() {
