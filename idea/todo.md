@@ -16,6 +16,7 @@ Todo
 - [x] update list on watch page
 - [ ] sort downloads by title, date, size, etc
 - [ ] mal list stats and info
+- [ ] related anime with links on info page
 
 ## development
 - [x] refactor home page code
