@@ -120,7 +120,54 @@ export function isLeftover(Cyear, Cseason, startdate) {
 export function dayToString(day) {
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     if(day == 0) return 'Today'
+    if(day == 1) return 'Tomorrow'
     //where day = 0 is TODAY
     //if today is wednesday, todayrealday is 3, but day is 0
     return days[(day+new Date().getDay())%7]
+}
+
+export function toAMPM(time) {
+    if(time.timeInHours) {
+        return toAMPM(Math.floor(time.timeInHours)+':'+Math.round(60*(time.timeInHours - Math.floor(time.timeInHours))).toString().padStart(2, '0'))
+    }
+    if(parseInt(time.split(':')[0])<12) return time.split(':')[0]+':'+time.split(':')[1].toString().padStart(2, '0')+' AM'
+    if(parseInt(time.split(':')[0])==12) return time.split(':')[0]+':'+time.split(':')[1].toString().padStart(2, '0')+' PM'
+    return parseInt(time.split(':')[0])-12+':'+time.split(':')[1].toString().padStart(2, '0')+' PM'
+}
+
+export function dayofweekFromDayandTime(day, time) { 
+    if(time == '?') {
+        return day
+    }
+    let { dayChange } = fixTzOffset(time)
+    if(day == 6 && dayChange == 1) {
+        return 0
+    }
+    if(day == 0 && dayChange == -1) {
+        return 6
+    }
+    return day + dayChange
+}
+
+export function fixTzOffset(time) {
+    //time is GMT 0 00:00:00 format 
+    const timezoneOffsetHrs = new Date().getTimezoneOffset() / 60
+    var timeInHours = Number(time.split(':')[0])+(Number(time.split(':')[1]) / 60)
+    var localisedTimeInHours = timeInHours - timezoneOffsetHrs
+    if(localisedTimeInHours < 0) {
+        return {
+            timeInHours: 24 + localisedTimeInHours,
+            dayChange: -1
+        }
+    }
+    if(localisedTimeInHours > 24) {
+        return {
+            timeInHours: localisedTimeInHours - 24,
+            dayChange: 1
+        }
+    }
+    return {
+        timeInHours: localisedTimeInHours,
+        dayChange: 0
+    }
 }

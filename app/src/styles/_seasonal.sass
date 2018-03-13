@@ -243,19 +243,21 @@
             .schedule-sector
                 justify-content: flex-start
                 .schedule-card
-                    width: 390px
-                    height: 180px
+                    width: 230px
+                    height: 120px
                     position: relative
                     display: grid
-                    background-color: $black
+                    background-color: black
                     grid-template-rows: 3fr 1fr 1fr
                     margin: 12px
+                    box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.2)
                     .bg-img
                         position: absolute
-                        width: 390px
-                        height: 180px
+                        width: 230px
+                        height: 120px
                         z-index: 1
-                        opacity: 0.4
+                        opacity: 0.6
+                        filter: brightness(0.8)
                         background-size: cover
                         background-position: 50% 40%
                     .broadcast-time
@@ -266,13 +268,17 @@
                         position: relative
                         z-index: 2
                         grid-row: 2
-                        margin-left: 20px
+                        margin-left: 12px
                     .anime-title
                         font-family: 'Source Sans Pro'
                         color: white
                         font-weight: 700
-                        font-size: 16px
+                        font-size: 14px
                         position: relative
                         z-index: 2
                         grid-row: 3
-                        margin-left: 20px
+                        margin-left: 12px
+                        width: 190px
+                        overflow: hidden
+                        white-space: nowrap
+                        text-overflow: ellipsis

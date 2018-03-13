@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 const rp = require('request-promise')
-import { dayToString } from '../../util/util.js'
+import { dayToString, dayofweekFromDayandTime } from '../../util/util.js'
 import Loader from '../Loader/Loader.jsx'
 import ScheduleCard from './ScheduleCard.jsx'
 
@@ -58,7 +58,8 @@ export default class SeasonalSchedule extends Component {
         let schedulecards = [[],[],[],[],[],[],[]]
         scheduledata.schedules.forEach(el => {
             const card = <ScheduleCard key={el.anime_id || el.id} cardData={el}/>
-            schedulecards[el.day_of_week].push(card)
+            var fixedDay = dayofweekFromDayandTime(el.day_of_week, el.release_time || '?')
+            schedulecards[fixedDay].push(card)
         })
         let today = new Date().getDay()
         let sortedschedulecards = schedulecards.slice(today).concat(schedulecards.slice(0, today))
