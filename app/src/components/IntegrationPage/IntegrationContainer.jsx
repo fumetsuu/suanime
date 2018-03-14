@@ -30,7 +30,7 @@ class IntegrationContainer extends Component {
           <div className="integration-container">
             <Switch>
               <Route path="/integration/login" component={IntegrationLogin}/>
-              <Route path="/integration/animelist" component={AnimeListContainer}/>
+              <Route path="/integration/animelist/:stats?" component={AnimeListContainer}/>
             </Switch>
           </div>
         </div>

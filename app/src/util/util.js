@@ -70,12 +70,14 @@ export function fixURLMA(url) {
 }
 
 export function toWordDate(date) {
-    if(date.includes('-')) {
-        return toWordDateLegacy(date)
-    }
-    if(date.includes('/')) {
-        var fixedDate = date.split(',')[0].split('/').reverse().join('-')+date.split(',')[1]
-        return toWordDateLegacy(fixedDate.toString())
+    if(isNaN(date)) {
+        if(date.includes('-')) {
+            return toWordDateLegacy(date)
+        }
+        if(date.includes('/')) {
+            var fixedDate = date.split(',')[0].split('/').reverse().join('-')+date.split(',')[1]
+            return toWordDateLegacy(fixedDate.toString())
+        }
     }
     let unixdate = new Date(date)
     var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

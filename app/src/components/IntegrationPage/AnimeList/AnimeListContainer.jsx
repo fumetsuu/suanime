@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
+import ListStats from './ListStats.jsx'
 import { savelist } from '../../../actions/actions.js'
 const COMPACT_PER_LOAD = 50
 const ROWS_PER_LOAD = 20
@@ -64,30 +65,37 @@ class AnimeListContainer extends Component {
                 <div className={`status-tab${listStatus == 6?' status-tab-active':''}`} statusvalue={6} onClick={this.setListStatus}>Plan to watch {user_plantowatch?`(${user_plantowatch})`:''}</div>
                 <div className="username"> {user_name}</div>
                 <div className="square sync" onClick={this.syncList}><i className="material-icons">sync</i></div>
-                <div className="square info"><i className="material-icons">info</i></div>
+                <div className="square info" onClick={this.openInfo.bind(this)}><i className="material-icons">info</i></div>
                 <div className="square logout" onClick={this.logout}><i className="material-icons">exit_to_app</i></div>
             </div>
-            <div className="animelist-container"> 
-                <div className="sort-area"> 
-                    <div className="sort-by-text">Sort by: </div> 
-                    <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
-                    <div sortvalue="PROGRESS" onClick={this.setListSort} className={`sort-by${/PROGRESS/.test(listSort)?' sort-by-active':''}`}>Progress</div> 
-                    <div sortvalue="SCORE" onClick={this.setListSort} className={`sort-by${/SCORE/.test(listSort)?' sort-by-active':''}`}>Score</div>
-                    <div sortvalue="AIRED" onClick={this.setListSort} className={`sort-by${/AIRED/.test(listSort)?' sort-by-active':''}`}>Aired</div>
-                    <div sortvalue="LAST_UPDATED" onClick={this.setListSort} className={`sort-by${/LAST_UPDATED/.test(listSort)?' sort-by-active':''}`}>Last updated</div> 
-                    <div className="spacer-horizontal"/>
-                    <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
-                    <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
-                    <div viewvalue="CARDS" className={`view-mode square${listView == 'CARDS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_module</i></div>
+            {this.props.match.params.stats ? <ListStats/> : 
+                <div className="animelist-container"> 
+                    <div className="sort-area"> 
+                        <div className="sort-by-text">Sort by: </div> 
+                        <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
+                        <div sortvalue="PROGRESS" onClick={this.setListSort} className={`sort-by${/PROGRESS/.test(listSort)?' sort-by-active':''}`}>Progress</div> 
+                        <div sortvalue="SCORE" onClick={this.setListSort} className={`sort-by${/SCORE/.test(listSort)?' sort-by-active':''}`}>Score</div>
+                        <div sortvalue="AIRED" onClick={this.setListSort} className={`sort-by${/AIRED/.test(listSort)?' sort-by-active':''}`}>Aired</div>
+                        <div sortvalue="LAST_UPDATED" onClick={this.setListSort} className={`sort-by${/LAST_UPDATED/.test(listSort)?' sort-by-active':''}`}>Last updated</div> 
+                        <div className="spacer-horizontal"/>
+                        <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
+                        <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
+                        <div viewvalue="CARDS" className={`view-mode square${listView == 'CARDS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_module</i></div>
+                    </div>
+                    {isLoading ? <Loader loaderClass="central-loader"/>  :
+                    <div className="animelist-display">
+                        {this.state.listCards}
+                    </div>
+                    }
                 </div>
-                {isLoading ? <Loader loaderClass="central-loader"/>  :
-                <div className="animelist-display">
-                    {this.state.listCards}
-                </div>
-                }
-            </div>
+            }
         </div> 
         )
+    }
+
+    openInfo() {
+        window.location.hash = '#/integration/animelist/stats'
+        this.setState({ listStatus: 0 })
     }
 
     logout() {
@@ -120,6 +128,7 @@ class AnimeListContainer extends Component {
     }
 
     setListStatus(e) {
+        if(window.location.hash != '#/integration/animelist') window.location.hash = '#/integration/animelist'
         var listStatus = e.target.getAttribute("statusvalue")
         this.setState({ listStatus }, () => {
             this.updateDisplay()
