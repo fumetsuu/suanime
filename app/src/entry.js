@@ -13,6 +13,12 @@ var eStore = require('electron-store')
 global.estore = new eStore()
 
 const suDownloader = require('./suDownloader/suDownloader')
+
+if(!global.estore.get("sudownloaderSettings")) {
+    global.estore.set("sudownloaderSettings", {})
+}
+let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get("sudownloaderSettings")
+suDownloader.setSettings({ maxConcurrentDownloads, autoQueue, autoStart })
 suDownloader.populateState()
 
 if(!global.estore.get('initialised')) {
@@ -22,6 +28,7 @@ if(!global.estore.get('initialised')) {
     global.estore.set('storedClearedArray', [])
     global.estore.set('storedDownloading', [])
     global.estore.set('storedCompleted', [])
+    global.estore.set('sudownloaderSettings', {})
     //storedDownloading and storedCompleted are arrays of only the filenames used to check the status of a download, ALWAYS updates with its corresponding props arrays
     global.estore.set('downloadsPath', path.join(tempcwd, '/downloads/'))
 } else {

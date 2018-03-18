@@ -13,7 +13,8 @@ function suDownloader() {
 
     this.settings = {
         maxConcurrentDownloads: 4,
-        autoQueue: true
+        autoQueue: true,
+        autoStart: true
     }
 
     this.downloads = {
@@ -33,7 +34,9 @@ function suDownloader() {
                 if(sudownloads.activeDownloads.length) {
                     this.downloads.activeDownloads = sudownloads.activeDownloads.map(el => new suDownloadItem(el.options))
                     this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => el.status == 'DOWNLOADING').length
-                    this.startQueue()
+                    if(this.settings.autoStart) {
+                        this .startQueue()
+                    }
                 }
             }
         },
@@ -118,7 +121,11 @@ function suDownloader() {
      * set downloader settings (maxConcurrentDownloads, autoQueue)
      */
     this.setSettings = settings => {
-        this.settings = Object.assign({}, this.settings, settings)
+        this.settings = {
+            maxConcurrentDownloads: settings.maxConcurrentDownloads || 4,
+            autoQueue: settings.autoQueue || true,
+            autoStart: settings.autoStart || true
+        }
     }
 
     /**

@@ -11,33 +11,38 @@
     height: 100%
     margin-top: 25px
     .settings-item
-        width: auto
-        height: 70px
+        width: fit-content
+        padding: 12px 20px
+        height: auto
         display: grid
-        margin: 0 20px 40px 0
-        grid-template-columns: 75% 25%
-        grid-template-rows: 15px 55px
+        margin: 0 10px 20px 0
+        grid-template-columns: 100%
+        grid-template-rows: 15px auto
         font-weight: 400
         font-family: 'Lato'
+        background-color: $dark-grey
         .settings-item-label
-            font-size: 12px
+            font-size: 14px
             line-height: 15px
-            grid-column: 1/#{3}
+            font-family: 'Source Sans Pro'
+            font-weight: 900
+            text-transform: uppercase
+            color: lighten($grey, 8%)
         .settings-item-content
+            .label-text
+                font-size: 12px
+            background-color: transparent
             width: fit-content
             height: 100%
             padding: 0 8px
             font-size: 14px
             line-height: 55px
-            &:hover
-                cursor: pointer
         .settings-underline
             border-bottom: 1px solid $light-blue
     
 .toggle
     width: 80px
     height: 30px
-    border-radius: 50px
     background-color: $black
     font-family: 'Lato'
     font-weight: 400
@@ -52,3 +57,28 @@
     background-color: $light-blue
 .toggle-margin
     margin-left: 20px
+
+.settings
+    .settings-item
+        .settings-item-content
+            .dropdown-options
+                background-color: $black !important
+                color: $light-grey
+                font-size: 10px
+                text-align: center
+                line-height: 30px
+                height: 30px
+                float: right
+                position: relative
+                z-index: 10
+                width: 80px
+                margin: 15px 0 0 30px
+                &:hover
+                    cursor: pointer
+                    background-color: darken($dark-grey, 5%)
+                .Dropdown-menu
+                    background-color: $dark-grey
+                    .Dropdown-option
+                        border-bottom: 1px solid $grey
+                        &:hover
+                            background-color: darken($dark-grey, 5%)
