@@ -34,7 +34,7 @@ export function convertMS(ms) {
 
 export function convertSec(sec) {
     var d, h, m, s
-    m = Math.floor(sec / 60)
+    m = Math.floor(Math.round(sec) / 60)
     s = sec % 60;
     h = Math.floor(m / 60)
     m = m % 60;

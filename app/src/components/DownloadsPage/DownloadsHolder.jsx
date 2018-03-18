@@ -19,9 +19,16 @@ class DownloadsHolder extends Component {
         if(alldlPropsArray.length) {
             alldlPropsArray.forEach(el => {
                 if(this.props.completedArray.includes(el)) {
-                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" totalSize={el.props.totalSize} completeDate={el.props.completeDate} elapsed={el.props.elapsed} key={el.props.animeFilename} viewType={listView}/>)
+                    if(!el.props.persistedState) { //legacy support
+                        var persistedState = {
+                            totalSize: el.props.totalSize,
+                            elapsed: el.props.elapsed,
+                            completeDate: el.props.completeDate
+                        }
+                    }
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} completed="true" key={el.props.animeFilename} persistedState={el.props.persistedState || persistedState} viewType={listView}/>)
                 } else {
-                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename} viewType={listView}/>)
+                    dlArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename} persistedState={el.props.persistedState} viewType={listView}/>)
                 }
             })
         }

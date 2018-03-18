@@ -1,7 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 const suDownloader = require('../suDownloader/suDownloader')
-import { fixFilename } from '../util/util.js'
+import { fixFilename, fixURL } from '../util/util.js'
+import { getDownloadLink } from '../util/getDownloadLink.js';
 
 export function clearDL(animeFilename) {
 	return {
@@ -25,7 +26,7 @@ export function playAnime(videoFile, animeName, epNumber, posterImg, slug) {
 	}
 }
 
-export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
+export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle, persistedState = {}) {
 	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
@@ -44,13 +45,11 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 			animeFilename,
 			posterImg,
 			animeName,
-			epTitle
+			epTitle,
+			persistedState
 		}
 	}
 }
-
-import { fixURL } from '../util/util.js'
-import { getDownloadLink } from '../util/getDownloadLink.js';
 
 export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
 	if(animeID) {
@@ -60,14 +59,22 @@ export function launchInfo(animeName, slug, animeID, malID) { //animeID is maste
 	}
 }
 
-export function completeDL(animeFilename, totalSize, elapsed, completeDate) {
+export function completeDL(animeFilename, persistedState) {
 	return {
 		type: 'COMPLETED_DOWNLOAD',
 		payload: {
 			animeFilename,
-			totalSize,
-			elapsed,
-			completeDate
+			persistedState
+		}
+	}
+}
+
+export function persistDL(animeFilename, persistedState) {
+	return {
+		type: 'PERSIST_DOWNLOAD',
+		payload: {
+			animeFilename,
+			persistedState
 		}
 	}
 }

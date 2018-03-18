@@ -3,6 +3,9 @@ const fs = require('fs')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
 
+var eStore = require('electron-store')
+global.estore = new eStore()
+
 /**
  * 
  * @param {object} settings - maxConcurrentDownloads and autoQueue 
@@ -12,7 +15,7 @@ function suDownloader() {
     this.setMaxListeners(50)
 
     this.settings = {
-        maxConcurrentDownloads: 2,
+        maxConcurrentDownloads: 4,
         autoQueue: true
     }
 
@@ -26,6 +29,14 @@ function suDownloader() {
     }
 
     const internals = {
+        populateState: () => {
+            var sudownloads = global.estore.get('sudownloads')
+            if(sudownloads) {
+                this.downloads = sudownloads
+                this.downloads.activeDownloads = sudownloads.activeDownloads.map(el => new suDownloadItem(el.options))
+            }
+        },
+
         getQueueDownload: key => {
             return this.downloads.queuedDownloads.find(el => el.key == key)
         },
@@ -46,6 +57,7 @@ function suDownloader() {
             this.downloads.activeNumberOfDownloads = this.downloads.activeDownloads.length
             this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => el.status == 'DOWNLOADING').length
             this.downloads.queuedNumberOfDownloads = this.downloads.queuedDownloads.length
+            this.persistToDisk()
         },
 
         removeFromQueue: key => {
@@ -95,6 +107,8 @@ function suDownloader() {
         }
     }
 
+    internals.populateState()    
+
     this.setSettings = settings => {
         this.settings = Object.assign({}, this.settings, settings)
     }
@@ -133,7 +147,14 @@ function suDownloader() {
     this.startDownload = key => {
         let downloadQueueIndex = internals.getQueueDownloadIndex(key)
 
-        if(downloadQueueIndex == -1) return false
+        if(downloadQueueIndex == -1) {
+            let predownloadItem = internals.getActiveDownload(key)
+            if(predownloadItem && predownloadItem.status != 'DOWNLOADING') {
+                this.resumeDownload(key)
+                return true
+            }
+            return false
+        }
 
         console.log('starting download ', key)
         let downloadOptions = internals.getQueueDownload(key)
@@ -220,6 +241,12 @@ function suDownloader() {
 
     this.getActiveDownload = key => {
         return internals.getActiveDownload(key)
+    }
+
+    this.persistToDisk = () => {
+        var storeDownloads = this.downloads
+        storeDownloads.activeDownloads = storeDownloads.activeDownloads.map(el => el.options)
+        global.estore.set("sudownloads", storeDownloads)
     }
 
 }

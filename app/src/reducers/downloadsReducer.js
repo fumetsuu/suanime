@@ -8,7 +8,6 @@ export default function reducer(state={
 }, action) {
     switch(action.type) {
         case "QUEUE_DOWNLOAD": {
-            var start = Date.now()
             console.log(action)
             var newDLProps = {
                 props: {
@@ -22,7 +21,6 @@ export default function reducer(state={
             var newDL = action.payload.animeFilename
             global.estore.set("storedDownloadsArray", [newDLProps, ...global.estore.get("storedDownloadsArray")])
             global.estore.set("storedDownloading", [newDL, ...global.estore.get("storedDownloading")])
-            console.log(Date.now() - start)
             return Object.assign({}, state, {
                 downloadsArray: [newDLProps, ...state.downloadsArray],
                 downloading: [newDL, ...state.downloading],
@@ -36,17 +34,10 @@ export default function reducer(state={
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = action.payload.animeFilename
             global.estore.set("storedCompleted", [newCompleted, ...global.estore.get("storedCompleted")])
-            var newCompletedProps
-            var newDownloadsArray = state.downloadsArray.filter(el => {
-                if(el.props.animeFilename == action.payload.animeFilename) {
-                    newCompletedProps = el
-                    newCompletedProps.props['totalSize'] = action.payload.totalSize
-                    newCompletedProps.props['elapsed'] = action.payload.elapsed
-                    newCompletedProps.props['completeDate'] = action.payload.completeDate
-                    return false
+            var newDownloadsArray = state.downloadsArray.filter(el => el.props.animeFilename != action.payload.animeFilename)
+                var newCompletedProps = {
+                    props: action.payload.persistedState
                 }
-                return true
-            })
             global.estore.set("storedDownloadsArray", newDownloadsArray)
             var newCompletedArray = [newCompletedProps, ...global.estore.get("storedCompletedArray")]
             global.estore.set("storedCompletedArray", newCompletedArray)
@@ -55,6 +46,26 @@ export default function reducer(state={
                 completed: [newCompleted, ...state.completed],
                 downloadsArray: newDownloadsArray,
                 completedArray: newCompletedArray
+            })
+        }
+        case "PERSIST_DOWNLOAD": {
+            var persistedDLProps = {
+                props: {
+                    persistedState: action.payload.persistedState
+                }
+            }
+            var newDownloadsArray = state.downloadsArray.map(el => {
+                if(el.props.animeFilename == action.payload.animeFilename) {
+                    return {
+                        props: Object.assign({}, el.props, { persistedState: action.payload.persistedState })
+                    }
+                } else {
+                    return el
+                }
+            })
+            global.estore.set("storedDownloadsArray", newDownloadsArray)
+            return Object.assign({}, state, {
+                downloadsArray: newDownloadsArray
             })
         }
         case "CLEAR_DOWNLOAD": {

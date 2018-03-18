@@ -5,7 +5,6 @@ const muxer = require('muxer')
 const mtd = require('mt-downloader')
 
 function suDownloadItem(options) {
-    console.log('constructed ', options.key)
     util.inherits(suDownloadItem, EventEmitter)
 
     this.meta = {}
@@ -76,8 +75,6 @@ function suDownloadItem(options) {
         .subscribe(
             x => {
                 this.emit('start', x)
-                this.reqobj = x.request
-                this.sockets = x.request.agent.sockets[Object.keys(x.request.agent.sockets)[0]]
             },
             err => {
                 this.handleError(err)
@@ -111,17 +108,8 @@ function suDownloadItem(options) {
     }
 
     this.pause = () => {
-        if(this.reqobj && this.sockets) {
-            this.status = 'PAUSED'
-            this.progressSubscription.dispose()
-            this.reqobj.abort()
-            this.reqobj.end()
-            this.sockets.forEach(socket => {
-                socket.end()
-                socket.pause()
-                socket.destroy()
-            })
-        }
+        this.status = 'PAUSED'
+        this.progressSubscription.dispose()
     }
 
     this.restart = () => {

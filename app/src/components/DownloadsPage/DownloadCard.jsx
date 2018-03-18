@@ -4,8 +4,8 @@ import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
 const fs = require('fs')
 const path = require('path')
 const bytes = require('bytes')
-import { createdlObj, clearDL, playAnime, completeDL } from '../../actions/actions.js'
-import { toWordDate } from '../../util/util'
+import { createdlObj, clearDL, playAnime, completeDL, persistDL } from '../../actions/actions.js'
+import { toWordDate, fixFilename, convertSec } from '../../util/util'
 
 const suDownloader = require('../../suDownloader/suDownloader')
 
@@ -23,7 +23,7 @@ class DownloadCard extends Component {
     this.removeStatusListeners = this.removeStatusListeners.bind(this)
 
 		if (this.props.completed) {
-			let { totalSize, elapsed, completeDate } = this.props
+			let { totalSize, elapsed, completeDate } = this.props.persistedState
 			this.state = {
 				status: 'COMPLETED',
 				speed: '',
@@ -36,7 +36,7 @@ class DownloadCard extends Component {
 			}
 		} else {
       this.configureDownloadItem()
-			this.state = {
+			this.state = this.props.persistedState || {
 				status: 'NOT_STARTED',
 				speed: '0 B/s',
 				progressSize: '0MB',
@@ -57,6 +57,9 @@ class DownloadCard extends Component {
 	componentWillUnmount() {
     this.removeStatusListeners()
     suDownloader.removeListener('new_download_started', this.configureDownloadItem)
+    if(this.downloadItem && this.state.status != 'STARTING_DOWNLOAD') {
+      this.props.persistDL(this.props.animeFilename, this.state)
+    }
   }
 
 	render() {
@@ -176,6 +179,7 @@ class DownloadCard extends Component {
 
 	startDownload() {
     suDownloader.startDownload(this.props.animeFilename)
+    console.log(suDownloader)
     this.setState({
       status: 'STARTING_DOWNLOAD'
     })
@@ -197,7 +201,7 @@ class DownloadCard extends Component {
 
 	playDownload() {
 		var animeName = this.props.animeName
-		var videoFile = path.join(global.estore.get('downloadsPath'), this.props.animeFilename)
+		var videoFile = path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}`)
 		var epNumber = this.props.epTitle
 		var posterImg = this.props.posterImg
 		var slug = this.props.epLink.split('watch/')[1].split('/')[0]
@@ -237,8 +241,8 @@ class DownloadCard extends Component {
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
         var percentage = x.total.completed
-        var elapsed = (x.present.time / 1000).toFixed(2)
-        var remaining = (x.future.eta).toFixed(2)
+        var elapsed = convertSec((x.present.time / 1000))
+        var remaining = convertSec((x.future.eta))
         this.setState({
           status,
           speed,
@@ -257,15 +261,14 @@ class DownloadCard extends Component {
         this.setState({
           status: 'COMPLETED',
           speed: '',
-          progressSize: x.total.size,
+          progressSize: bytes(x.total.size),
           percentage: '100',
           remaining: '0',
-          elapsed: (x.present.time / 1000).toFixed(2),
+          elapsed: convertSec((x.present.time / 1000)),
           completeDate
       })
-      this.props.completeDL(this.props.animeFilename, x.total.size, (x.present.time / 1000).toFixed(2), completeDate)
+      this.props.completeDL(this.props.animeFilename, bytes(x.total.size), convertSec(x.present.time / 1000), completeDate, this.state)
       })
-
   }
 }
 
@@ -273,7 +276,8 @@ const mapDispatchToProps = dispatch => {
 	return {
 		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
     playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(playAnime(videoFile, animeName, epNumber, posterImg, slug)),
-    completeDL: (animeFilename, totalSize, elapsed, completeDate) => dispatch(completeDL(animeFilename, totalSize, elapsed, completeDate))
+    completeDL: (animeFilename, persistedState) => dispatch(completeDL(animeFilename, persistedState)),
+    persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
 	}
 }
 
