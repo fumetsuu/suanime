@@ -34,10 +34,15 @@ export default function reducer(state={
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = action.payload.animeFilename
             global.estore.set("storedCompleted", [newCompleted, ...global.estore.get("storedCompleted")])
-            var newDownloadsArray = state.downloadsArray.filter(el => el.props.animeFilename != action.payload.animeFilename)
-                var newCompletedProps = {
-                    props: action.payload.persistedState
+            var newCompletedProps
+            var newDownloadsArray = state.downloadsArray.filter(el => {
+                if(el.props.animeFilename == action.payload.animeFilename) {
+                    newCompletedProps = el
+                    return false
                 }
+                return true
+            })
+            newCompletedProps.props = Object.assign({}, newCompletedProps.props, { persistedState: action.payload.persistedState })
             global.estore.set("storedDownloadsArray", newDownloadsArray)
             var newCompletedArray = [newCompletedProps, ...global.estore.get("storedCompletedArray")]
             global.estore.set("storedCompletedArray", newCompletedArray)
