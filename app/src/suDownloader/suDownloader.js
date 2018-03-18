@@ -3,9 +3,6 @@ const fs = require('fs')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
 
-var eStore = require('electron-store')
-global.estore = new eStore()
-
 /**
  * 
  * @param {object} settings - maxConcurrentDownloads and autoQueue 
@@ -244,9 +241,13 @@ function suDownloader() {
     }
 
     this.persistToDisk = () => {
-        var storeDownloads = this.downloads
-        storeDownloads.activeDownloads = storeDownloads.activeDownloads.map(el => el.options)
-        global.estore.set("sudownloads", storeDownloads)
+        var bareDLs = this.downloads.activeDownloads.map(el => {
+            return {
+             options: el.options,
+             stats: el.stats
+            }
+        })
+        global.estore.set("sudownloads", Object.assign({}, this.downloads, { activeDownloads: bareDLs }))
     }
 
 }
