@@ -241,8 +241,8 @@ class DownloadCard extends Component {
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
         var percentage = x.total.completed
-        var elapsed = convertSec((x.present.time / 1000))
-        var remaining = convertSec((x.future.eta))
+        var elapsed = convertSec(Math.round((x.present.time / 1000)))
+        var remaining = convertSec(Math.round(x.future.eta))
         this.setState({
           status,
           speed,
@@ -264,10 +264,10 @@ class DownloadCard extends Component {
           progressSize: bytes(x.total.size),
           percentage: '100',
           remaining: '0',
-          elapsed: convertSec((x.present.time / 1000)),
+          elapsed: convertSec(Math.round(x.present.time / 1000)),
           completeDate
       })
-      this.props.completeDL(this.props.animeFilename, bytes(x.total.size), convertSec(x.present.time / 1000), completeDate, this.state)
+      this.props.completeDL(this.props.animeFilename, this.state)
       })
   }
 }
