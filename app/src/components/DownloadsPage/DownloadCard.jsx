@@ -178,8 +178,8 @@ class DownloadCard extends Component {
 	}
 
 	startDownload() {
+		console.log(suDownloader)
     suDownloader.startDownload(this.props.animeFilename)
-    console.log(suDownloader)
     this.setState({
       status: 'STARTING_DOWNLOAD'
     })
@@ -210,12 +210,10 @@ class DownloadCard extends Component {
 	}
 
 	clearDownload() {
-		if (confirm('Are you sure you want to delete ' + this.props.animeFilename + '?')) {
-      if(this.downloadItem) {
-        suDownloader.clearDownload(this.props.animeFilename, true)
-      }
-			this.props.clearDL(this.props.animeFilename)
+		if(this.downloadItem) {
+			suDownloader.clearDownload(this.props.animeFilename, true)
 		}
+		this.props.clearDL(this.props.animeFilename)
   }
     
   configureDownloadItem() {
@@ -240,7 +238,7 @@ class DownloadCard extends Component {
         var speed = bytes(x.present.speed) + '/s'
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
-        var percentage = x.total.completed
+        var percentage = x.total.completed-0.01
         var elapsed = convertSec(Math.round((x.present.time / 1000)))
         var remaining = convertSec(Math.round(x.future.eta))
         this.setState({
@@ -256,7 +254,6 @@ class DownloadCard extends Component {
       .on('error', err => console.log(err))
       .on('finish', x => {
         this.removeStatusListeners()
-        console.log('finished....?')
         var completeDate = Date.now()
         this.setState({
           status: 'COMPLETED',

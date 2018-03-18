@@ -15,6 +15,9 @@ class DownloadsHolder extends Component {
     render() {
         var dlArray = []
         var alldlPropsArray = [...this.props.downloadsArray, ...this.props.completedArray]
+        if(!alldlPropsArray.length) {
+            return <div className="downloads-holder"><div className="no-downloads">No downloads!</div></div>
+        }
         let { listView } = this.state
         if(alldlPropsArray.length) {
             alldlPropsArray.forEach(el => {

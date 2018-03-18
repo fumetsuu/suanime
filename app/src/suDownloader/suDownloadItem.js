@@ -17,7 +17,7 @@ function suDownloadItem(options) {
         path: options.path,
         mtdpath: mtd.MTDPath(options.path),
         range: options.range || 8,
-        throttleRate: options.throttleRate || 500
+        throttleRate: options.throttleRate || 501
     }
 
     this.stats = {
@@ -109,7 +109,9 @@ function suDownloadItem(options) {
 
     this.pause = () => {
         this.status = 'PAUSED'
-        this.progressSubscription.dispose()
+        if(this.progressSubscription) {
+            this.progressSubscription.dispose()
+        }
     }
 
     this.restart = () => {
@@ -168,7 +170,9 @@ function suDownloadItem(options) {
     }
 
     this.calculateStartTime = () => {
-        this.stats.time.start = Math.floor(Date.now())
+        if(!this.stats.time.start) {
+            this.stats.time.start = Math.floor(Date.now())
+        }
     }
 
     this.calculateEndTime = () => {

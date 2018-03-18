@@ -12,6 +12,9 @@ const tempcwd = require('electron').remote.app.getPath('userData')
 var eStore = require('electron-store')
 global.estore = new eStore()
 
+const suDownloader = require('./suDownloader/suDownloader')
+suDownloader.populateState()
+
 if(!global.estore.get('initialised')) {
     global.estore.set('initialised', 'true')
     global.estore.set('storedDownloadsArray', [])
