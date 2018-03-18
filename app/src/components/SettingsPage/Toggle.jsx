@@ -8,8 +8,16 @@ export default class Toggle extends Component {
         }
     }
     
+    componentWillReceiveProps(nextProps) {
+        this.setState({
+            toggleOn: this.props.toggleOn
+        })
+    }
+    
+
     render() {
         let { toggleOn } = this.state
+        console.log(toggleOn)
         let toggleClass = 'toggle'
         toggleClass+=this.props.className ? ' '+this.props.className : ''
         toggleClass+=toggleOn ? ' toggle-active' : ''
