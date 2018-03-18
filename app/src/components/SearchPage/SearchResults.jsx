@@ -4,9 +4,6 @@ import { connect } from 'react-redux'
 import Loader from '../Loader/Loader.jsx'
 import ResultCard from './ResultCard.jsx'
 
-var eStore = require('electron-store')
-global.estore = new eStore()
-
 class SearchResults extends Component {
     constructor(props) {
         super(props)

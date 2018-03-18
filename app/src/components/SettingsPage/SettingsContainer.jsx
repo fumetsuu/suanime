@@ -7,9 +7,6 @@ import Toggle from './Toggle.jsx'
 import { maxDownloads } from './settingsOptionsData'
 import { initialiseDB, setDownloaderSettings } from '../../util/estoreUtil';
 
-var eStore = require('electron-store')
-global.estore = new eStore()
-
 export default class SettingsContainer extends React.Component {
     constructor(props) {
         super(props)

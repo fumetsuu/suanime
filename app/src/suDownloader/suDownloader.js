@@ -2,10 +2,13 @@ const suDownloadItem = require('./suDownloadItem')
 const fs = require('fs')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
+const bytes = require('bytes')
+const store = require('../store.js')
+import { convertSec } from '../util/util.js'
 
 /**
  * 
- * @param {object} settings - maxConcurrentDownloads and autoQueue 
+ * suDownloader
  */
 function suDownloader() {
     util.inherits(suDownloader, EventEmitter)
@@ -103,9 +106,24 @@ function suDownloader() {
             })
         },
 
-        handleDownloadFinished: key => {
+        handleDownloadFinished: (key, x) => {
             let downloadsIdx = internals.getActiveDownloadIndex(key)
             this.downloads.activeDownloads.splice(downloadsIdx, 1)
+            store.dispatch({
+                type: 'COMPLETED_DOWNLOAD',
+                payload: {
+                    animeFilename: key,
+                    persistedState: {
+                        status: 'COMPLETED',
+                        speed: '',
+                        progressSize: bytes(x.total.size),
+                        percentage: '100',
+                        remaining: '0',
+                        elapsed: convertSec(Math.round(x.present.time / 1000)),
+                        completeDate: Date.now()
+                    }
+                }
+            })
             internals.calculateCurrentDownloads()
             internals.downloadNextInQueue()
         }
@@ -179,7 +197,7 @@ function suDownloader() {
         this.emit('new_download_started', key)
         
         downloadItem.start()
-        downloadItem.on('finish', (data) => internals.handleDownloadFinished(key))
+        downloadItem.on('finish', (data) => internals.handleDownloadFinished(key, data))
         
         
         internals.calculateCurrentDownloads()

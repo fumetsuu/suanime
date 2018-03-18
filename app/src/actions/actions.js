@@ -1,8 +1,10 @@
 const path = require('path')
 const fs = require('fs')
-const suDownloader = require('../suDownloader/suDownloader')
 import { fixFilename, fixURL } from '../util/util.js'
 import { getDownloadLink } from '../util/getDownloadLink.js';
+
+const suDownloader = require('../suDownloader/suDownloader')
+console.log(suDownloader)
 
 export function clearDL(animeFilename) {
 	return {
@@ -36,6 +38,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle, pe
 			path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
 			url: downloadURL
 		}
+		console.log(suDownloader)
 		suDownloader.QueueDownload(dlOptions)
 	})
 	return {

@@ -7,6 +7,7 @@ const pclient = popura()
 const tempcwd = require('electron').remote.app.getPath('userData')
 
 const suDownloader = require('../suDownloader/suDownloader')
+console.log(suDownloader)
 
 export function initialiseDB() {
     if(!global.estore.get("sudownloaderSettings")) {
@@ -16,7 +17,7 @@ export function initialiseDB() {
     let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get("sudownloaderSettings")
 
     suDownloader.setSettings({ maxConcurrentDownloads, autoQueue, autoStart })
-
+    console.log(suDownloader)
     suDownloader.populateState()
 
     if(!isInitialised()) {
@@ -33,18 +34,17 @@ export function initialiseDB() {
         })
         global.estore.set('usepagination', false)
         global.estore.set('downloadsPath', path.join(tempcwd, '/downloads/'))
-    } else {
-        store.dispatch({
-            type: 'HYDRATE_DOWNLOADS',
-            payload: {
-                downloadsArray: global.estore.get("storedDownloadsArray"),
-                completedArray: global.estore.get("storedCompletedArray"),
-                clearedArray: global.estore.get("storedClearedArray"),
-                downloading: global.estore.get("storedDownloading"),
-                completed: global.estore.get("storedCompleted")
-            }
-        })
-    }
+    } 
+    store.dispatch({
+        type: 'HYDRATE_DOWNLOADS',
+        payload: {
+            downloadsArray: global.estore.get("storedDownloadsArray"),
+            completedArray: global.estore.get("storedCompletedArray"),
+            clearedArray: global.estore.get("storedClearedArray"),
+            downloading: global.estore.get("storedDownloading"),
+            completed: global.estore.get("storedCompleted")
+        }
+    })
     if(global.estore.get("listdata") && global.estore.get("listinfo")) {
         store.dispatch({
             type: 'HYDRATE_LIST',

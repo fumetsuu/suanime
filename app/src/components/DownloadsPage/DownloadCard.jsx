@@ -8,7 +8,6 @@ import { createdlObj, clearDL, playAnime, completeDL, persistDL } from '../../ac
 import { toWordDate, fixFilename, convertSec } from '../../util/util'
 
 const suDownloader = require('../../suDownloader/suDownloader')
-
 //status can be 'NOT_STARTED', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'STARTING_DOWNLOAD'
 class DownloadCard extends Component {
 	constructor(props) {
@@ -254,17 +253,6 @@ class DownloadCard extends Component {
       .on('error', err => console.log(err))
       .on('finish', x => {
         this.removeStatusListeners()
-        var completeDate = Date.now()
-        this.setState({
-          status: 'COMPLETED',
-          speed: '',
-          progressSize: bytes(x.total.size),
-          percentage: '100',
-          remaining: '0',
-          elapsed: convertSec(Math.round(x.present.time / 1000)),
-          completeDate
-      })
-      this.props.completeDL(this.props.animeFilename, this.state)
       })
   }
 }
@@ -273,7 +261,6 @@ const mapDispatchToProps = dispatch => {
 	return {
 		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
     playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(playAnime(videoFile, animeName, epNumber, posterImg, slug)),
-    completeDL: (animeFilename, persistedState) => dispatch(completeDL(animeFilename, persistedState)),
     persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
 	}
 }
