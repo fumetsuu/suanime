@@ -1,14 +1,7 @@
-
-
-export function createdlObj(animeFilename, newdlObj) {
-	return {
-		type: 'CREATE_DLOBJ',
-		payload: {
-			id: animeFilename,
-			dlObj: newdlObj
-		}
-	}
-}
+const path = require('path')
+const fs = require('fs')
+const suDownloader = require('../suDownloader/suDownloader')
+import { fixFilename } from '../util/util.js'
 
 export function clearDL(animeFilename) {
 	return {
@@ -23,29 +16,41 @@ export function playAnime(videoFile, animeName, epNumber, posterImg, slug) {
 	return {
 		type: 'PLAY_ANIME',
 		 payload: {
-			videoFile: videoFile,
-			animeName: animeName,
-			epNumber: epNumber,
-			posterImg: posterImg,
-			slug: slug
+			videoFile,
+			animeName,
+			epNumber,
+			posterImg,
+			slug
 		}
 	}
 }
 
 export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
+	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
+		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
+	}
+	getDownloadLink(epLink).then(downloadURL => {
+		const dlOptions = {
+			key: animeFilename,
+			path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
+			url: downloadURL
+		}
+		suDownloader.QueueDownload(dlOptions)
+	})
 	return {
 		type: 'QUEUE_DOWNLOAD',
 		payload: {
-			epLink: epLink,
-			animeFilename: animeFilename,
-			posterImg: posterImg,
-			animeName: animeName,
-			epTitle: epTitle
+			epLink,
+			animeFilename,
+			posterImg,
+			animeName,
+			epTitle
 		}
 	}
 }
 
 import { fixURL } from '../util/util.js'
+import { getDownloadLink } from '../util/getDownloadLink.js';
 
 export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
 	if(animeID) {
@@ -59,10 +64,10 @@ export function completeDL(animeFilename, totalSize, elapsed, completeDate) {
 	return {
 		type: 'COMPLETED_DOWNLOAD',
 		payload: {
-			animeFilename: animeFilename,
-			totalSize: totalSize,
-			elapsed: elapsed,
-			completeDate: completeDate
+			animeFilename,
+			totalSize,
+			elapsed,
+			completeDate
 		}
 	}
 }
@@ -71,11 +76,11 @@ export function search(searchValue, searchSort, searchType, searchStatus, search
 	return {
 		type: "SEARCH",
 		payload: {
-			searchValue: searchValue,
-			searchSort: searchSort,
-			searchType: searchType,
-			searchStatus: searchStatus,
-			searchGenre: searchGenre
+			searchValue,
+			searchSort,
+			searchType,
+			searchStatus,
+			searchGenre
 		}
 	}
 }
@@ -96,9 +101,9 @@ export function updateAnime(malID, updatedObj) {
 	return {
 		type: "UPDATE_ANIME",
 		payload: {
-			malID: malID,
+			malID,
 			updatedObj: updatedObjWithTime || updatedObj,
-			newStatus: newStatus
+			newStatus
 		}
 	}
 }
@@ -107,8 +112,8 @@ export function addAnime(malID, animeObj) {
 	return {
 		type: "ADD_ANIME",
 		payload: {
-			malID: malID,
-			animeObj: animeObj
+			malID,
+			animeObj
 		}
 	}
 }
@@ -117,8 +122,8 @@ export function savelist(listdata, listinfo) {
 	return {
 		type: "SAVE_LIST",
 		payload: {
-			listdata: listdata,
-			listinfo: listinfo
+			listdata,
+			listinfo
 		}
 	}
 }

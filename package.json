@@ -63,6 +63,8 @@
     "html2plaintext": "^2.0.1",
     "image-cache": "^1.0.1",
     "loadable-components": "^1.1.1",
+    "mt-downloader": "^2.2.2",
+    "muxer": "^1.0.1",
     "node-sass": "^4.7.2",
     "popura": "^1.2.5",
     "progress-stream": "^2.0.0",

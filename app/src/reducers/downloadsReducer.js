@@ -4,11 +4,11 @@ export default function reducer(state={
     downloadsArray: [],
     downloading: [],
     completed: [],
-    completedArray: [],
-    dlObjs: []
+    completedArray: []
 }, action) {
     switch(action.type) {
         case "QUEUE_DOWNLOAD": {
+            var start = Date.now()
             console.log(action)
             var newDLProps = {
                 props: {
@@ -22,8 +22,8 @@ export default function reducer(state={
             var newDL = action.payload.animeFilename
             global.estore.set("storedDownloadsArray", [newDLProps, ...global.estore.get("storedDownloadsArray")])
             global.estore.set("storedDownloading", [newDL, ...global.estore.get("storedDownloading")])
+            console.log(Date.now() - start)
             return Object.assign({}, state, {
-                //pass props instead of entire component
                 downloadsArray: [newDLProps, ...state.downloadsArray],
                 downloading: [newDL, ...state.downloading],
                 epLink: action.payload.epLink,
@@ -66,21 +66,11 @@ export default function reducer(state={
             global.estore.set("storedDownloadsArray", newDownloadsArray)
             var newCompletedArray = state.completedArray.filter(el => el.props.animeFilename != action.payload.animeFilename)
             global.estore.set("storedCompletedArray", newCompletedArray)
-            var newDlObjs = state.dlObjs.filter(el => el.id != action.payload.animeFilename)
             return Object.assign({}, state, {
                 downloading: newDownloading,
                 completed: newCompleted,
                 downloadsArray: newDownloadsArray,
-                completedArray: newCompletedArray,
-                dlObjs: newDlObjs
-            })
-        }
-        case "CREATE_DLOBJ": {
-            return Object.assign({}, state, {
-                dlObjs: [...state.dlObjs, {
-                    id: action.payload.id,
-                    dlObj: action.payload.dlObj
-                }]
+                completedArray: newCompletedArray
             })
         }
         case "HYDRATE_DOWNLOADS": {

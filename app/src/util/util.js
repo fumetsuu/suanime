@@ -69,6 +69,10 @@ export function fixURLMA(url) {
     return encodeURIComponent(url.replace(/\//g, "").substr(0, 25))
 }
 
+export function fixFilename(filename) {
+    return filename.replace(/[/\\?%*:|"<>]/g, '')
+}
+
 export function toWordDate(date) {
     if(isNaN(date)) {
         if(date.includes('-')) {
