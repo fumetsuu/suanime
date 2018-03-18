@@ -32,6 +32,7 @@ function suDownloader() {
                 this.downloads = sudownloads
                 this.downloads.activeDownloads = sudownloads.activeDownloads.map(el => new suDownloadItem(el.options))
             }
+            console.log(this.downloads)
         },
 
         getQueueDownload: key => {
@@ -229,7 +230,7 @@ function suDownloader() {
             let downloadItem = internals.getActiveDownload(key)
             downloadItem.pause()
             if(deleteFile) {
-                fs.unlink(downloadItem.options.mtdpath, internals.removeFromActive(key))
+                fs.unlink(downloadItem.options.mtdpath, () => { internals.removeFromActive(key) })
             } else {
                 internals.removeFromActive(key)
             }
@@ -241,12 +242,16 @@ function suDownloader() {
     }
 
     this.persistToDisk = () => {
-        var bareDLs = this.downloads.activeDownloads.map(el => {
-            return {
-             options: el.options,
-             stats: el.stats
-            }
-        })
+        if(this.downloads.activeDownloads.length) {
+            var bareDLs = this.downloads.activeDownloads.map(el => {
+                return {
+                 options: el.options,
+                 stats: el.stats
+                }
+            })
+        } else {
+            var bareDLs = {}
+        }
         global.estore.set("sudownloads", Object.assign({}, this.downloads, { activeDownloads: bareDLs }))
     }
 
