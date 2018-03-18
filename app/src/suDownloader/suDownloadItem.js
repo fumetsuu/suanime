@@ -17,8 +17,11 @@ function suDownloadItem(options) {
         path: options.path,
         mtdpath: mtd.MTDPath(options.path),
         range: options.range || 8,
-        throttleRate: options.throttleRate || 501
+        throttleRate: options.throttleRate || 501,
+        retry: options.retry || 5
     }
+
+    this.retried = 0
 
     this.stats = {
         time: {
@@ -100,9 +103,10 @@ function suDownloadItem(options) {
             },
             err => { 
                 this.handleError(err)
-                this.restart()
              },
-            () => { this.handleFinishDownload() }
+            () => {
+                this.handleFinishDownload()
+            }
         )
 
     }
@@ -151,9 +155,16 @@ function suDownloadItem(options) {
         this.calculateSpeeds()
         this.calculateFutureRemaining()
         this.calculateFutureEta()
-        fs.rename(this.options.mtdpath, this.options.path, () => { 
-            this.emit('finish', this.stats)
-         })       
+        if(this.stats.total.completed < 99.5) {
+            if(this.retried < this.options.retry) {
+                this.restart()
+                this.retried++
+            }
+        } else {
+            fs.rename(this.options.mtdpath, this.options.path, () => { 
+                this.emit('finish', this.stats)
+             })       
+        }
     }
 
     this.calculateDownloaded = () => {
@@ -226,6 +237,12 @@ function suDownloadItem(options) {
 
     this.handleError = err => {
         this.emit('error', err)
+        if(this.retried < this.options.retry) {
+            this.restart()
+            this.retried++
+        } else {
+            this.pause()
+        }
     }
 }
 

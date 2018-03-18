@@ -4,12 +4,9 @@ const path = require('path')
 import store from '../store.js'
 import popura from 'popura'
 const pclient = popura()
-var eStore = require('electron-store')
-global.estore = new eStore()
 const tempcwd = require('electron').remote.app.getPath('userData')
 
 const suDownloader = require('../suDownloader/suDownloader')
-
 
 export function initialiseDB() {
     if(!global.estore.get("sudownloaderSettings")) {
@@ -76,9 +73,14 @@ export function initialiseDB() {
 }
 
 function isInitialised() {
-    return global.estore.get('initialiseed')
+    return global.estore.get('initialised')
 }
 
+export function setDownloaderSettings() {
+    let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get("sudownloaderSettings")
+
+    suDownloader.setSettings({ maxConcurrentDownloads, autoQueue, autoStart })
+}
 
 
 

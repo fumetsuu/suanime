@@ -5,7 +5,7 @@ import Dropdown from 'react-dropdown'
 
 import Toggle from './Toggle.jsx'
 import { maxDownloads } from './settingsOptionsData'
-import { initialiseDB } from '../../util/estoreUtil';
+import { initialiseDB, setDownloaderSettings } from '../../util/estoreUtil';
 
 var eStore = require('electron-store')
 global.estore = new eStore()
@@ -93,14 +93,17 @@ export default class SettingsContainer extends React.Component {
     changeMCD(selected) {
         global.estore.set('sudownloaderSettings', Object.assign({}, global.estore.get('sudownloaderSettings'), { maxConcurrentDownloads: selected.value }))
         this.setState({ maxConcurrentDownloads: selected.value })
+        setDownloaderSettings()
     }
 
     changeAutoQueue() {
         global.estore.set('sudownloaderSettings', Object.assign({}, global.estore.get('sudownloaderSettings'), { autoQueue: !global.estore.get('sudownloaderSettings').autoQueue }))
+        setDownloaderSettings()
     }
 
     changeAutoStart() {
         global.estore.set('sudownloaderSettings', Object.assign({}, global.estore.get('sudownloaderSettings'), { autoStart: !global.estore.get('sudownloaderSettings').autoStart }))
+        setDownloaderSettings()
     }
 
     clearEverything() {
