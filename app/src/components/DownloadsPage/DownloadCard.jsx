@@ -238,7 +238,7 @@ class DownloadCard extends Component {
         var speed = bytes(x.present.speed) + '/s'
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
-        var percentage = x.total.completed-0.01
+        var percentage = (x.total.completed-0.01).toFixed(2)
         var elapsed = convertSec(Math.round((x.present.time / 1000)))
         var remaining = convertSec(Math.round(x.future.eta))
         this.setState({
