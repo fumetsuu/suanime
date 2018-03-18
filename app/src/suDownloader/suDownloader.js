@@ -3,7 +3,7 @@ const fs = require('fs')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
 const bytes = require('bytes')
-const store = require('../store.js')
+import store from '../store.js'
 import { convertSec } from '../util/util.js'
 
 /**
@@ -107,8 +107,13 @@ function suDownloader() {
         },
 
         handleDownloadFinished: (key, x) => {
+            let downloadsItem = internals.getActiveDownload(key)
+            downloadsItem.removeAllListeners('progress')
+            downloadsItem.removeAllListeners('error')
+            downloadsItem.removeAllListeners('finish')
             let downloadsIdx = internals.getActiveDownloadIndex(key)
             this.downloads.activeDownloads.splice(downloadsIdx, 1)
+            console.log(store)
             store.dispatch({
                 type: 'COMPLETED_DOWNLOAD',
                 payload: {
@@ -197,7 +202,7 @@ function suDownloader() {
         this.emit('new_download_started', key)
         
         downloadItem.start()
-        downloadItem.on('finish', (data) => internals.handleDownloadFinished(key, data))
+        downloadItem.on('finish', data => internals.handleDownloadFinished(key, data))
         
         
         internals.calculateCurrentDownloads()
@@ -268,6 +273,7 @@ function suDownloader() {
                 internals.removeFromActive(key)
             }
         }
+        console.log(this)
     }
 
     this.getActiveDownload = key => {
@@ -278,7 +284,7 @@ function suDownloader() {
         if(this.downloads.activeDownloads.length) {
             var bareDLs = this.downloads.activeDownloads.map(el => {
                 return {
-                 options: el.options,
+                 options: Object.assign({}, el.options, { status: 'PAUSED' }),
                  stats: el.stats
                 }
             })

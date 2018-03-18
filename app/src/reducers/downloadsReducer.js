@@ -30,6 +30,7 @@ export default function reducer(state={
             })
         }
         case "COMPLETED_DOWNLOAD": {
+            console.log(action)
             var newDownloading = state.downloading.filter(el => el!=action.payload.animeFilename)
             global.estore.set("storedDownloading", newDownloading)
             var newCompleted = action.payload.animeFilename

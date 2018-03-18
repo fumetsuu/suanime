@@ -225,13 +225,13 @@ class DownloadCard extends Component {
     if(!this.downloadItem) return false
     this.downloadItem.removeAllListeners('progress')
     this.downloadItem.removeAllListeners('error')
-    this.downloadItem.removeAllListeners('finish')
   }
 
   addStatusListeners() {
     if(!this.downloadItem) return false
     this.downloadItem
       .on('progress', x => {
+				console.log(x)
         if(x.future.eta == 'Infinity' || isNaN(x.future.eta)) return false
         var status = 'DOWNLOADING'
         var speed = bytes(x.present.speed) + '/s'
@@ -250,10 +250,19 @@ class DownloadCard extends Component {
           remaining
         })
       })
-      .on('error', err => console.log(err))
-      .on('finish', x => {
-        this.removeStatusListeners()
-      })
+			.on('error', err => console.log('err: ', err))
+			.on('finish', x => { 
+				this.setState({
+					status: 'COMPLETED',
+					speed: '',
+					progressSize: bytes(x.total.size),
+					percentage: '100',
+					remaining: '0',
+					elapsed: convertSec(Math.round(x.present.time / 1000)),
+					completeDate: Date.now()
+				})
+				this.removeStatusListeners()
+			})
   }
 }
 
