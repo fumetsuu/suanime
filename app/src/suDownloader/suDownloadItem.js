@@ -37,6 +37,7 @@ function suDownloadItem(options) {
             downloaded: 0
         },
         present: {
+            deltaTime: 0,
             deltaDownloaded: 0,
             downloaded: 0,
             time: 0,
@@ -89,10 +90,10 @@ function suDownloadItem(options) {
         .subscribe(
             response => {
                 this.calculateInitialStats(response)
-                    this.updateInterval = setInterval(() => {
-                        this.calculatePresentTime()
-                        this.emit('progress', this.stats)
-                    }, dlopts.throttleRate)
+                this.updateInterval = setInterval(() => {
+                    this.calculatePresentTime()
+                    this.emit('progress', this.stats)
+                }, dlopts.throttleRate)
             },
             err => { 
                 this.handleError(err)
@@ -226,7 +227,12 @@ function suDownloadItem(options) {
     }
 
     this.calculateSpeeds = () => {
-        this.stats.present.speed = this.stats.present.deltaDownloaded / (this.options.throttleRate / 1000)
+        if(!this.stats.present.deltaTime) {
+            this.stats.present.deltaTime = Date.now()
+        } else {
+            this.stats.present.deltaTime = Date.now() - this.stats.present.deltaTime
+        }
+        this.stats.present.speed = this.stats.present.deltaDownloaded / (this.stats.present.deltaTime / 1000) //not sure
         this.stats.present.averageSpeed = this.stats.present.downloaded / this.stats.present.time
     }
 

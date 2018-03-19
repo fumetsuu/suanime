@@ -113,9 +113,10 @@ class DownloadCard extends Component {
 			}
 		}
 		let { viewType, animeName, epTitle, posterImg } = this.props
-		let downloadSize = this.state.status == 'COMPLETED' ? this.state.progressSize : this.state.progressSize + '/' + this.state.totalSize
-		let percentage = this.state.status == 'COMPLETED' ? '' : `${this.state.percentage}%`
-		let remaining = this.state.status == 'COMPLETED' ? '' : `|  Remaining: ${this.state.remaining}`
+		let isCompleted = this.state.status == 'COMPLETED'
+		let downloadSize = isCompleted ? this.state.progressSize : this.state.progressSize + '/' + this.state.totalSize
+		let percentage = isCompleted ? '' : `${this.state.percentage}%`
+		let remaining = isCompleted ? '' : `|  Remaining: ${this.state.remaining}`
 		if (viewType == 'ROWS') {
 			return (
 				<div className="download-card-container">
@@ -147,7 +148,7 @@ class DownloadCard extends Component {
 				</div>
 			)
 		} else if (viewType == 'COMPACT') {
-			let statusColour = this.state.status == 'COMPLETED' ? '#51e373' : this.state.status == 'NOT_STARTED' || this.state.status == 'STARTING_DOWNLOAD' ? '#dadada' : '#f55353'
+			let statusColour = isCompleted ? '#51e373' : this.state.status == 'NOT_STARTED' || this.state.status == 'STARTING_DOWNLOAD' ? '#dadada' : '#f55353'
 			statusColour = this.state.status == 'DOWNLOADING' ? 'transparent' : statusColour
 			return (
 				<div className="download-card-container download-card-container-compact">
@@ -157,13 +158,13 @@ class DownloadCard extends Component {
 					</div>
 					<div className="download-complete-date">{this.state.completeDate ? toWordDate(this.state.completeDate) : statusText}</div>
 					<div className="download-progress-bar-container">
-						<div className="download-progress-bar" style={{ width: this.state.percentage == 100 ? 0 : this.state.percentage + '%' }} />
+						<div className="download-progress-bar" style={{ width: isCompleted ? 0 : this.state.percentage + '%' }} />
 					</div>
 					<div className="download-network-data download-speed">{this.state.speed}</div>
 					<div className="download-network-data download-size">{downloadSize}</div>
 					<div className="download-network-data download-percentage">{percentage}</div>
 					<div className="download-network-data download-elapsed">{this.state.elapsed}</div>
-					<div className="download-network-data download-remaining">{this.state.status == 'COMPLETED' ? '' : this.state.remaining}</div>
+					<div className="download-network-data download-remaining">{isCompleted ? '' : this.state.remaining}</div>
 					<div className={controlClass} onClick={controlAction}>
 						<i className="material-icons">{controlIcon}</i>
 					</div>
@@ -234,7 +235,7 @@ class DownloadCard extends Component {
         var speed = bytes(x.present.speed) + '/s'
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
-        var percentage = (x.total.completed-0.01).toFixed(2)
+        var percentage = (x.total.completed).toFixed(2)
         var elapsed = convertSec(Math.round((x.present.time / 1000)))
         var remaining = convertSec(Math.round(x.future.eta))
         this.setState({
