@@ -35,7 +35,11 @@ function suDownloader() {
             if(sudownloads) {
                 this.downloads = sudownloads
                 if(sudownloads.activeDownloads.length) {
-                    this.downloads.activeDownloads = sudownloads.activeDownloads.map(el => new suDownloadItem(el.options))
+                    this.downloads.activeDownloads = sudownloads.activeDownloads.map(el => {
+                        let downloadItem = new suDownloadItem(el.options)
+                        downloadItem.on('finish', data => internals.handleDownloadFinished(el.options.key, data))
+                        return downloadItem
+                    })
                     this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => el.status == 'DOWNLOADING').length
                     if(this.settings.autoStart) {
                         this .startQueue()

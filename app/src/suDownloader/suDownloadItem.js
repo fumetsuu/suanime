@@ -37,8 +37,6 @@ function suDownloadItem(options) {
             downloaded: 0
         },
         present: {
-            deltaTime: 0,
-            deltaDownloaded: 0,
             downloaded: 0,
             time: 0,
             speed: 0,
@@ -89,9 +87,10 @@ function suDownloadItem(options) {
         .take(1)
         .subscribe(
             response => {
+                this.retried = 0
                 this.calculateInitialStats(response)
                 this.updateInterval = setInterval(() => {
-                    this.calculatePresentTime()
+                    this.calculateStats()
                     this.emit('progress', this.stats)
                 }, dlopts.throttleRate)
             },
@@ -103,8 +102,7 @@ function suDownloadItem(options) {
         this.progressSubscription = meta$
         .subscribe(
             response => {
-                this.calculateStats(response)
-                this.retried = 0
+                this.setMeta(response)
             },
             err => { 
                 this.handleError(err)
@@ -130,6 +128,11 @@ function suDownloadItem(options) {
     }
 
     //region STATS CALCULATION FUNCTIONS
+    this.setMeta = meta => {
+        let { range, totalBytes, threads, offsets } = meta
+        this.meta = { range, totalBytes, threads, offsets }
+    }
+
     this.calculateInitialStats = data => {
         let { range, totalBytes, threads, offsets } = data
         this.meta = { range, totalBytes, threads, offsets }
@@ -138,13 +141,11 @@ function suDownloadItem(options) {
         this.calculateTotalSize()
     }
 
-    this.calculateStats = data => {
-        if(!data.range) return null
-        let { range, totalBytes, threads, offsets } = data
-        this.meta = { range, totalBytes, threads, offsets }
+    this.calculateStats = () => {
         this.calculateTotalDownloaded()
         this.calculateTotalCompleted()
         this.calculatePresentDownloaded()
+        this.calculatePresentTime()
         this.calculateSpeeds()
         this.calculateFutureRemaining()
         this.calculateFutureEta()
@@ -156,6 +157,7 @@ function suDownloadItem(options) {
             //     this.restart()
             //     this.retried++
             // }
+            console.log('hey')
             this.restart()
         } else {
             this.calculateTotalDownloaded()
@@ -204,18 +206,12 @@ function suDownloadItem(options) {
     }
     
     this.calculateTotalDownloaded = () => {
-        if(!this.stats.total.downloaded) {
-            this.stats.present.deltaDownloaded = this.stats.past.downloaded
-        } else {
-            this.stats.present.deltaDownloaded = this.stats.total.downloaded
-        }
         this.stats.total.downloaded = this.calculateDownloaded()
-        this.stats.present.deltaDownloaded = this.stats.total.downloaded - this.stats.present.deltaDownloaded
     }
 
     this.calculateTotalCompleted = () => {
         let { downloaded, size } = this.stats.total
-        this.stats.total.completed = (100*downloaded / size).toFixed(2)
+        this.stats.total.completed = 100*downloaded / size
     }
 
     this.calculatePresentDownloaded = () => {
@@ -227,13 +223,8 @@ function suDownloadItem(options) {
     }
 
     this.calculateSpeeds = () => {
-        if(!this.stats.present.deltaTime) {
-            this.stats.present.deltaTime = Date.now()
-        } else {
-            this.stats.present.deltaTime = Date.now() - this.stats.present.deltaTime
-        }
-        this.stats.present.speed = this.stats.present.deltaDownloaded / (this.stats.present.deltaTime / 1000) //not sure
-        this.stats.present.averageSpeed = this.stats.present.downloaded / this.stats.present.time
+        this.stats.present.averageSpeed = 1000*this.stats.present.downloaded / this.stats.present.time
+        this.stats.present.speed = this.stats.present.averageSpeed
     }
 
     this.calculateFutureRemaining = () => {
@@ -241,7 +232,7 @@ function suDownloadItem(options) {
     }
 
     this.calculateFutureEta = () => {
-        this.stats.future.eta = this.stats.future.remaining / (1000 * this.stats.present.averageSpeed)
+        this.stats.future.eta = this.stats.future.remaining / this.stats.present.averageSpeed
     }
     //endregion
 
