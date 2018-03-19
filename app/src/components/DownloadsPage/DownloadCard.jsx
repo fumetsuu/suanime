@@ -22,12 +22,11 @@ class DownloadCard extends Component {
     this.removeStatusListeners = this.removeStatusListeners.bind(this)
 
 		if (this.props.completed) {
-			let { totalSize, elapsed, completeDate } = this.props.persistedState
+			let { progressSize, elapsed, completeDate } = this.props.persistedState
 			this.state = {
 				status: 'COMPLETED',
 				speed: '',
-				progressSize: totalSize,
-				totalSize: totalSize,
+				progressSize: progressSize,
 				percentage: '100',
 				elapsed: elapsed,
 				remaining: '0',
@@ -114,7 +113,7 @@ class DownloadCard extends Component {
 			}
 		}
 		let { viewType, animeName, epTitle, posterImg } = this.props
-		let downloadSize = this.state.status == 'COMPLETED' ? this.state.totalSize : this.state.progressSize + '/' + this.state.totalSize
+		let downloadSize = this.state.status == 'COMPLETED' ? this.state.progressSize : this.state.progressSize + '/' + this.state.totalSize
 		let percentage = this.state.status == 'COMPLETED' ? '' : `${this.state.percentage}%`
 		let remaining = this.state.status == 'COMPLETED' ? '' : `|  Remaining: ${this.state.remaining}`
 		if (viewType == 'ROWS') {
@@ -177,7 +176,6 @@ class DownloadCard extends Component {
 	}
 
 	startDownload() {
-		console.log(suDownloader)
     suDownloader.startDownload(this.props.animeFilename)
     this.setState({
       status: 'STARTING_DOWNLOAD'
@@ -231,7 +229,6 @@ class DownloadCard extends Component {
     if(!this.downloadItem) return false
     this.downloadItem
       .on('progress', x => {
-				console.log(x)
         if(x.future.eta == 'Infinity' || isNaN(x.future.eta)) return false
         var status = 'DOWNLOADING'
         var speed = bytes(x.present.speed) + '/s'

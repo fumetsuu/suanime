@@ -113,7 +113,6 @@ function suDownloader() {
             downloadsItem.removeAllListeners('finish')
             let downloadsIdx = internals.getActiveDownloadIndex(key)
             this.downloads.activeDownloads.splice(downloadsIdx, 1)
-            console.log(store)
             store.dispatch({
                 type: 'COMPLETED_DOWNLOAD',
                 payload: {

@@ -89,6 +89,10 @@ function suDownloadItem(options) {
         .subscribe(
             response => {
                 this.calculateInitialStats(response)
+                    this.updateInterval = setInterval(() => {
+                        this.calculatePresentTime()
+                        this.emit('progress', this.stats)
+                    }, dlopts.throttleRate)
             },
             err => { 
                 this.handleError(err)
@@ -96,10 +100,10 @@ function suDownloadItem(options) {
         )
 
         this.progressSubscription = meta$
-        .throttle(dlopts.throttleRate)
         .subscribe(
             response => {
                 this.calculateStats(response)
+                this.retried = 0
             },
             err => { 
                 this.handleError(err)
@@ -112,6 +116,7 @@ function suDownloadItem(options) {
     }
 
     this.pause = () => {
+        clearInterval(this.updateInterval)
         this.status = 'PAUSED'
         if(this.progressSubscription) {
             this.progressSubscription.dispose()
@@ -139,29 +144,28 @@ function suDownloadItem(options) {
         this.calculateTotalDownloaded()
         this.calculateTotalCompleted()
         this.calculatePresentDownloaded()
-        this.calculatePresentTime()
         this.calculateSpeeds()
         this.calculateFutureRemaining()
         this.calculateFutureEta()
-        this.emit('progress', this.stats)
     }
 
     this.handleFinishDownload = () => {
-        this.calculateTotalDownloaded()
-        this.calculateTotalCompleted()
-        this.calculatePresentDownloaded()
-        this.calculatePresentTime()
-        this.calculateEndTime()
-        this.calculateSpeeds()
-        this.calculateFutureRemaining()
-        this.calculateFutureEta()
-        if(this.stats.total.completed < 99.5) {
-            if(this.retried < this.options.retry) {
-                this.restart()
-                this.retried++
-            }
+        if(this.stats.total.completed < 99) {
+            // if(this.retried < this.options.retry) {
+            //     this.restart()
+            //     this.retried++
+            // }
+            this.restart()
         } else {
+            this.calculateTotalDownloaded()
+            this.calculateTotalCompleted()
+            this.calculatePresentDownloaded()
+            this.calculateEndTime()
+            this.calculateSpeeds()
+            this.calculateFutureRemaining()
+            this.calculateFutureEta()
             fs.rename(this.options.mtdpath, this.options.path, () => { 
+                clearInterval(this.updateInterval)
                 this.emit('finish', this.stats)
              })       
         }
@@ -218,7 +222,7 @@ function suDownloadItem(options) {
     }
 
     this.calculatePresentTime = () => {
-        this.stats.present.time = Math.floor(Date.now()) - this.stats.time.start
+        this.stats.present.time += this.options.throttleRate
     }
 
     this.calculateSpeeds = () => {
@@ -237,6 +241,7 @@ function suDownloadItem(options) {
 
     this.handleError = err => {
         this.emit('error', err)
+        console.log("hi......", err)
         if(this.retried < this.options.retry) {
             this.restart()
             this.retried++
