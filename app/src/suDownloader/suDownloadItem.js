@@ -89,10 +89,7 @@ function suDownloadItem(options) {
             response => {
                 this.retried = 0
                 this.calculateInitialStats(response)
-                this.updateInterval = setInterval(() => {
-                    this.calculateStats()
-                    this.emit('progress', this.stats)
-                }, dlopts.throttleRate)
+                this.updateInterval = setInterval(this.handleProgress, dlopts.throttleRate)
             },
             err => { 
                 this.handleError(err)
@@ -125,6 +122,17 @@ function suDownloadItem(options) {
     this.restart = () => {
         this.pause()
         this.downloadFromExisting()
+    }
+
+    this.handleProgress = () => {
+        this.calculateStats()
+        this.emit('progress', this.stats)
+        if(this.stats.total.completed == 100) {
+            if(this.progressSubscription) {
+                this.progressSubscription.dispose()
+            }
+            this.handleFinishDownload()
+        }
     }
 
     //region STATS CALCULATION FUNCTIONS

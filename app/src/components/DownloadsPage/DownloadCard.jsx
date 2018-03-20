@@ -209,11 +209,12 @@ class DownloadCard extends Component {
 			}).catch(err => {
 				this.setState({ status: 'ERROR' })
 			})
+		} else {
+			suDownloader.startDownload(this.props.animeFilename)
+			this.setState({
+				status: 'FETCHING_URL'
+			})
 		}
-    suDownloader.startDownload(this.props.animeFilename)
-    this.setState({
-      status: 'FETCHING_URL'
-    })
 	}
 
 	pauseDownload() {
