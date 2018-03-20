@@ -5,6 +5,7 @@ import InfoHeader from './InfoHeader.jsx'
 import InfoMain from './InfoMain.jsx'
 import InfoEpisodes from './InfoEpisodes.jsx'
 import { fixURL } from '../../util/util.js'
+const h2p = require('html2plaintext')
 
 export default class InfoContainer extends Component {
     constructor(props) {
@@ -59,7 +60,7 @@ export default class InfoContainer extends Component {
         console.log(searchURL)
         rp({ uri: searchURL, json: true }).then(results => {
             console.log(results, animeName)
-            var first = results.result.find(el => decodeURIComponent(fixURL(el.title)) == animeName) || results.result[1]
+            var first = results.result.find(el => fixURL(h2p(el.title)) == fixURL(animeName)) || results.result[1]
             const infoURL = `http://api.jikan.me/anime/${first.id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
