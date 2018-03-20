@@ -5,6 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const bytes = require('bytes')
 import { createdlObj, clearDL, playAnime, completeDL, persistDL } from '../../actions/actions.js'
+import { getDownloadLink } from '../../util/getDownloadLink'
 import { toWordDate, fixFilename, convertSec } from '../../util/util'
 
 const suDownloader = require('../../suDownloader/suDownloader')
@@ -54,7 +55,13 @@ class DownloadCard extends Component {
     if(!this.downloadItem && !this.props.completed) {
 			suDownloader.on('new_download_started', this.configureDownloadItem)
 			suDownloader.on('new_download_queued', this.configureDownloadItem)
-    }
+		}
+		suDownloader.on('error', x => {
+			if(x.key == this.props.animeFilename) {
+				console.log(x.err)
+				this.setState({ status: 'ERROR' })
+			}
+		})
 	}
 
 	componentWillUnmount() {
@@ -99,7 +106,7 @@ class DownloadCard extends Component {
 			}
 			case 'ERROR': {
 				controlIcon = 'play_arrow'
-				statusText = 'Error - please try again later'
+				statusText = 'Error - 404'
 				controlAction = this.startDownload
 				break
 			}
@@ -117,9 +124,9 @@ class DownloadCard extends Component {
 				controlAction = this.playDownload
 				break
 			}
-			case 'NETWORK_ERROR': {
+			case 'ERROR': {
 				controlIcon = 'settings_backup_restore'
-				statusText = 'Network Error - please restart download'
+				statusText = 'Error'
 				controlAction = this.startDownload
 				break
 			}
@@ -189,6 +196,20 @@ class DownloadCard extends Component {
 	}
 
 	startDownload() {
+		if(this.state.status == 'ERROR') {
+			let { animeFilename, animeName, epLink } = this.props
+			getDownloadLink(epLink).then(downloadURL => {
+				const dlOptions = {
+					key: animeFilename,
+					path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
+					url: downloadURL
+				}
+				console.log(suDownloader)
+				suDownloader.QueueDownload(dlOptions)
+			}).catch(err => {
+				this.setState({ status: 'ERROR' })
+			})
+		}
     suDownloader.startDownload(this.props.animeFilename)
     this.setState({
       status: 'FETCHING_URL'
@@ -236,9 +257,11 @@ class DownloadCard extends Component {
 			this.downloadItem = downloadItem
 			this.addStatusListeners()
 		} else {
-			let downloadOptions = suDownloader.getQueuedDownload
+			let downloadOptions = suDownloader.getQueuedDownload(this.props.animeFilename)
 			if(downloadOptions) {
 				this.setState({ status: 'QUEUED' })
+			} else {
+				this.setState({ status: 'ERROR' })
 			}
 		}
 	}

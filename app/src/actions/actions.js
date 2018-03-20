@@ -46,6 +46,10 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle, pe
 		}
 		console.log(suDownloader)
 		suDownloader.QueueDownload(dlOptions)
+	}).catch(err => {
+		if(err) {
+			suDownloader.emit('error', { key: animeFilename, err })
+		}
 	})
 	return {
 		type: 'QUEUE_DOWNLOAD',

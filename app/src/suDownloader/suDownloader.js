@@ -166,11 +166,7 @@ function suDownloader() {
          * downloadOptions = {
          * key: String,
          * path: String,
-         * url: String,
-         * onStart: function,
-         * onProgress: function,
-         * onFinish: function,
-         * onError: function
+         * url: String
          * }
          */
         this.downloads.queuedDownloads.push(downloadOptions)
