@@ -29,4 +29,4 @@ Todo
 - [x] use url for info params instead of redux
 - [x] handle network errors/infinite starting for downloads
 - [ ] mal list persistent tab, sort and view type
-- [ ] fix download progress and status when queueing
+- [x] fix download progress and status when queueing
