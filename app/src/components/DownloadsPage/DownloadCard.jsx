@@ -261,8 +261,6 @@ class DownloadCard extends Component {
 			let downloadOptions = suDownloader.getQueuedDownload(this.props.animeFilename)
 			if(downloadOptions) {
 				this.setState({ status: 'QUEUED' })
-			} else {
-				this.setState({ status: 'ERROR' })
 			}
 		}
 	}

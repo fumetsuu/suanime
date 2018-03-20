@@ -81,7 +81,13 @@ class DownloadsHolder extends Component {
         }
         switch(listSort) {
             case 'TITLE': case 'vTITLE': {
+                console.log(alldlPropsArray)
                 alldlPropsArray = alldlPropsArray.sort((a1, a2) => {
+                    if(a1.props.animeName == a2.props.animeName) {
+                        var a1ep = parseInt(a1.props.epTitle.split('Episode ')[1])
+                        var a2ep = parseInt(a2.props.epTitle.split('Episode ')[1])
+                        return a1ep <= a2ep ? orderA : orderB
+                    }
                     return a1.props.animeName <= a2.props.animeName ? orderA : orderB
                 })
                 break
