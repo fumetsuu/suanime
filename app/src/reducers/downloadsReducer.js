@@ -90,6 +90,18 @@ export default function reducer(state={
                 completedArray: newCompletedArray
             })
         }
+        case "CLEAR_ALL_DOWNLOADS": {
+            global.estore.set("storedDownloading", [])
+            global.estore.set("storedCompleted", [])
+            global.estore.set("storedDownloadsArray", [])
+            global.estore.set("storedCompletedArray", [])
+            return Object.assign({}, state, {
+                downloading: [],
+                completed: [],
+                downloadsArray: [],
+                completedArray: []
+            })
+        }
         case "HYDRATE_DOWNLOADS": {
             return Object.assign({}, state, {
                 downloadsArray: action.payload.downloadsArray,

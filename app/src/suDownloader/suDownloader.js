@@ -20,7 +20,7 @@ function suDownloader() {
         autoStart: true
     }
 
-    this.downloads = {
+    this.defaultDownloads = {
         activeDownloads: [], //contains suDownloadItem
         queuedDownloads: [], //contains downloadOptions
         activeNumberOfDownloads: 0,
@@ -28,6 +28,8 @@ function suDownloader() {
         queuedNumberOfDownloads: 0,
         queueIsRunning: true
     }
+
+    this.downloads = Object.assign({}, this.defaultDownloads)
 
     const internals = {
         populateState: () => {
@@ -172,6 +174,7 @@ function suDownloader() {
          * }
          */
         this.downloads.queuedDownloads.push(downloadOptions)
+        this.emit('new_download_queued', downloadOptions.key)
         if(internals.canStartNextInQueue() && this.settings.autoQueue) {
             this.startDownload(downloadOptions.key)
         } else {
@@ -269,8 +272,14 @@ function suDownloader() {
          */
         if(!internals.removeFromQueue(key)) { //try remove from queue first
             let downloadItem = internals.getActiveDownload(key)
-            downloadItem.pause()
-            if(deleteFile) {
+            if(downloadItem) {
+                downloadItem.removeAllListeners('start')
+                downloadItem.removeAllListeners('progress')
+                downloadItem.removeAllListeners('error')
+                downloadItem.removeAllListeners('finish')
+                downloadItem.pause()
+            }
+            if(deleteFile && downloadItem) {
                 fs.unlink(downloadItem.options.mtdpath, () => { internals.removeFromActive(key) })
             } else {
                 internals.removeFromActive(key)
@@ -279,8 +288,19 @@ function suDownloader() {
         console.log(this)
     }
 
+    this.clearAll = () => {
+        this.downloads.activeDownloads.forEach(el => {
+            this.clearDownload(el.options.key)
+        })
+        this.downloads = Object.assign({}, this.defaultDownloads)
+    }
+
     this.getActiveDownload = key => {
         return internals.getActiveDownload(key)
+    }
+
+    this.getQueuedDownload = key => {
+        return internals.getQueueDownload(key)
     }
 
     this.persistToDisk = () => {

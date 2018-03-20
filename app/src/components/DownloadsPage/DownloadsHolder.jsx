@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DownloadCard from './DownloadCard.jsx'
+import { clearAllDownloads } from '../../actions/actions'
 
+const suDownloader = require('../../suDownloader/suDownloader')
 
 class DownloadsHolder extends Component {
     constructor(props) {
@@ -33,10 +35,13 @@ class DownloadsHolder extends Component {
         return (
         <div className="downloads-holder">
             <div className="sort-area"> 
+                <div className="sort-by" onClick={this.startQueue}>Start Queue</div>
+                <div className="sort-by" onClick={this.stopQueue}>Stop Queue</div>
+                <div className="sort-by" onClick={this.clearAll.bind(this)}>Clear All</div>
+                <div className="spacer-horizontal"/>
                 <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
                 <div sortvalue="DATE" onClick={this.setListSort} className={`sort-by${/DATE/.test(listSort)?' sort-by-active':''}`}>Date</div> 
                 <div sortvalue="SIZE" onClick={this.setListSort} className={`sort-by${/SIZE/.test(listSort)?' sort-by-active':''}`}>Size</div>
-                <div className="spacer-horizontal"/>
                 <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
                 <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
             </div>
@@ -84,14 +89,14 @@ class DownloadsHolder extends Component {
             case 'DATE': case 'vDATE': {
                 alldlPropsArray = alldlPropsArray.sort((a1, a2) => {
                     if(!a1.props.persistedState) {
-                        var a1date = a1.props.completeDate
+                        var a1date = a1.props.completeDate || 0
                     } else {
-                        var a1date = a1.props.persistedState.completeDate
+                        var a1date = a1.props.persistedState.completeDate || 0
                     }
                     if(!a2.props.persistedState) {
-                        var a2date = a2.props.completeDate
+                        var a2date = a2.props.completeDate || 0
                     } else {
-                        var a2date = a2.props.persistedState.completeDate
+                        var a2date = a2.props.persistedState.completeDate || 0
                     }
                     return a1date <= a2date ? orderA : orderB
                 })
@@ -109,8 +114,7 @@ class DownloadsHolder extends Component {
                     } else {
                         var a2size = a2.props.persistedState.progressSize
                     }
-                    console.log(a1size, a2size)
-                    return parseFloat(a1size) <= parseFloat(a2size) ? orderA : orderB
+                    return parseFloat(a1size) > parseFloat(a2size) ? orderA : orderB
                 })
                 break
             }
@@ -133,6 +137,19 @@ class DownloadsHolder extends Component {
         }
         this.setState({ cardsArray })
     }
+
+    startQueue() {
+        suDownloader.startQueue()
+    }
+
+    stopQueue() {
+        suDownloader.stopQueue()
+    }
+
+    clearAll() {
+        suDownloader.clearAll()
+        this.props.clearAllDownloads()
+    }
 }
 
 
@@ -145,4 +162,10 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps)(DownloadsHolder)
+const mapDispatchToProps = dispatch => {
+    return {
+        clearAllDownloads: () => dispatch(clearAllDownloads())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DownloadsHolder)

@@ -34,6 +34,7 @@ export function initialiseDB() {
         })
         global.estore.set('usepagination', false)
         global.estore.set('downloadsPath', path.join(tempcwd, '/downloads/'))
+        suDownloader.clearAll()
     } 
     store.dispatch({
         type: 'HYDRATE_DOWNLOADS',

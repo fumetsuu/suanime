@@ -16,7 +16,7 @@ function suDownloadItem(options) {
         url: options.url,
         path: options.path,
         mtdpath: mtd.MTDPath(options.path),
-        range: options.range || 8,
+        range: options.range || 4,
         throttleRate: options.throttleRate || 501,
         retry: options.retry || 5
     }
@@ -153,10 +153,6 @@ function suDownloadItem(options) {
 
     this.handleFinishDownload = () => {
         if(this.stats.total.completed < 99) {
-            // if(this.retried < this.options.retry) {
-            //     this.restart()
-            //     this.retried++
-            // }
             console.log('hey')
             this.restart()
         } else {

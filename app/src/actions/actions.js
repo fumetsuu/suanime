@@ -15,6 +15,12 @@ export function clearDL(animeFilename) {
 	}
 }
 
+export function clearAllDownloads() {
+	return {
+		type: 'CLEAR_ALL_DOWNLOADS'
+	}
+}
+
 export function playAnime(videoFile, animeName, epNumber, posterImg, slug) {
 	return {
 		type: 'PLAY_ANIME',
