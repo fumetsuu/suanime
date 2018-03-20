@@ -142,7 +142,7 @@
         height: 40px
         display: grid
         padding: 0 0 5px 0
-        grid-template-columns: auto repeat(2, 40px)
+        grid-template-columns: repeat(3, minmax(auto, 1px)) auto 40px 40px
         .view-mode
             background-color: $black
             margin-top: -5px
@@ -153,3 +153,32 @@
         .view-mode-active
             background-color: $light-blue
             pointer-events: none
+        .sort-by-text 
+            font-weight: 300
+            line-height: 50px
+            font-family: 'Lato'
+            color: $light-grey
+            font-size: 14px
+            white-space: nowrap
+            margin-right: 15px
+        .sort-by
+            padding: 0 20px
+            font-size: 12px
+            height: 30px
+            margin: 0 10px 0 0
+            justify-self: start
+            background-color: $dark-grey
+            font-family: 'Source Sans Pro'
+            font-weight: 900
+            text-transform: uppercase
+            text-align: center
+            line-height: 30px
+            white-space: nowrap
+            &:hover
+                cursor: pointer
+                color: $light-blue
+        .sort-by-active
+            background-color: $light-blue
+            &:hover
+                color: white
+                background-color: darken($light-blue, 5%)
