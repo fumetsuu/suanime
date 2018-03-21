@@ -254,7 +254,7 @@ function suDownloader() {
      */
     this.resumeDownload = key => {
         let downloadItem = internals.getActiveDownload(key)
-        downloadItem.downloadFromExisting()
+        downloadItem.start()
         internals.calculateCurrentDownloads()
     }
 
