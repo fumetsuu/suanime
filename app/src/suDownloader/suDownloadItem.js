@@ -114,6 +114,7 @@ function suDownloadItem(options) {
     this.pause = () => {
         clearInterval(this.updateInterval)
         this.status = 'PAUSED'
+        this.emit('pause')
         if(this.progressSubscription) {
             this.progressSubscription.dispose()
         }
