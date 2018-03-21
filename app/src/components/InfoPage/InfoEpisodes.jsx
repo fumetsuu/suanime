@@ -4,7 +4,7 @@ const rp = require('request-promise')
 import Loader from '../Loader/Loader.jsx'
 import { fixURLMA, fixURL, genFilename } from '../../util/util.js'
 import { connect } from 'react-redux'
-import { queueDL } from '../../actions/actions';
+import { queueDLAll } from '../../actions/actions';
 
 class InfoEpisodes extends Component {
   constructor(props) {
@@ -78,22 +78,26 @@ class InfoEpisodes extends Component {
 
   downloadAll() {
     let { epCards } = this.state
+    let paramsArray = []
+    let title
     epCards.forEach(el => {
       let { poster } = el.props
-      let { title, slug } = el.props.broadData
+      let { slug } = el.props.broadData
+      title = el.props.broadData.title
       let { episode } = el.props.epData
       var epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
       var animeFilename = genFilename(title, episode)
       var posterImg = `https://cdn.masterani.me/poster/${poster}`
       var epTitle = 'Episode '+episode
-      this.props.queueDL(epLink, animeFilename, posterImg, title, epTitle)
+      paramsArray.push({ epLink, animeFilename, posterImg, title, epTitle })
     })
+    this.props.queueDLAll(paramsArray, title)
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(queueDL(epLink, animeFilename, posterImg, animeName, epTitle))
+    queueDLAll: (optsArray, animeName) => dispatch(queueDLAll(optsArray, animeName))
   }
 }
 

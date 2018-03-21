@@ -64,6 +64,29 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	}
 }
 
+export function queueDLAll(paramsArray, animeName) {
+	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
+		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
+	}
+	var linkPromises = paramsArray.map(el => getDownloadLink(el.epLink))
+	Promise.all(linkPromises).then(downloadURLs => {
+		downloadURLs.forEach((downloadURL, i) => {
+			const dlOptions = {
+				key: paramsArray[i].animeFilename,
+				temppath: path.join(global.tempDLPath, fixFilename(paramsArray[i].animeFilename)),
+				path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(paramsArray[i].animeFilename)}`),
+				url: downloadURL
+			}
+			console.log(suDownloader)
+			suDownloader.QueueDownload(dlOptions)
+		})
+	})
+	return {
+		type: 'QUEUE_ALL',
+		payload: paramsArray
+	}
+}
+
 export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
 	if(animeID) {
 		window.location.hash = `#/info/${fixURL(animeName)}/${slug}/${animeID}`

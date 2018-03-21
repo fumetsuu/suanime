@@ -23,10 +23,27 @@ export default function reducer(state={
             global.estore.set("storedDownloading", [newDL, ...global.estore.get("storedDownloading")])
             return Object.assign({}, state, {
                 downloadsArray: [newDLProps, ...state.downloadsArray],
-                downloading: [newDL, ...state.downloading],
-                epLink: action.payload.epLink,
-                animeFilename: action.payload.animeFilename,
-                posterImg: action.payload.posterImg
+                downloading: [newDL, ...state.downloading]
+            })
+        }
+        case "QUEUE_ALL": {
+            var newDLProps = action.payload.map(el => {
+                return {
+                    props: {
+                        epLink: el.epLink,
+                        animeFilename: el.animeFilename,
+                        posterImg: el.posterImg,
+                        animeName: el.title,
+                        epTitle: el.epTitle
+                    }
+                }
+            })
+            var newDL = action.payload.map(el => el.animeFilename)
+            global.estore.set("storedDownloadsArray", [...newDLProps, ...global.estore.get("storedDownloadsArray")])
+            global.estore.set("storedDownloading", [...newDL, ...global.estore.get("storedDownloading")])
+            return Object.assign({}, state, {
+                downloadsArray: [...newDLProps, ...state.downloadsArray],
+                downloading: [...newDL, ...state.downloading]
             })
         }
         case "COMPLETED_DOWNLOAD": {
