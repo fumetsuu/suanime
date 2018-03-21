@@ -242,7 +242,6 @@ function suDownloadItem(options) {
 
     this.handleError = err => {
         this.emit('error', err)
-        console.log("hi......", err)
         if(this.retried < this.options.retry) {
             this.restart()
             this.retried++

@@ -95,6 +95,7 @@ export default function reducer(state={
             global.estore.set("storedCompleted", [])
             global.estore.set("storedDownloadsArray", [])
             global.estore.set("storedCompletedArray", [])
+            global.estore.set("sudownloads", null)
             return Object.assign({}, state, {
                 downloading: [],
                 completed: [],

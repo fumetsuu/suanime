@@ -1,3 +1,4 @@
+require('ssl-root-cas').inject()
 const suDownloadItem = require('./suDownloadItem')
 const fs = require('fs')
 const util = require('util')
