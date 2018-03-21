@@ -22,7 +22,11 @@ export function getDownloadLink(epLink) {
                         return resolve(downloadURL)
                     }).catch(err => {
                         if(err) {
-                            return reject(err)
+                            getAikaURL(body).then(downloadURL => {
+                                return resolve(downloadURL)
+                            }).catch(err => {
+                                return reject(err)
+                            })
                         }
                     })
                 }
@@ -59,6 +63,28 @@ export function getDownloadLink(epLink) {
                 }
                 return reject('ERR 404')
             })
+        })
+    }
+
+    function getAikaURL(pagehtml) {
+        return new Promise((resolve, reject) => {
+            var videosformat = /var videos = \[(.*)\]/g
+            var match = videosformat.exec(pagehtml)
+            var videosdata = JSON.parse( //array
+                match[0].split("videos = ")[1]
+            )
+            var downloadURL
+            videosdata.some(el => {
+                if(el.label == "HD") {
+                    downloadURL = el.src
+                    return true
+                }
+                return false
+            })
+            if(downloadURL) {
+                return resolve(downloadURL)
+            }
+            return reject('ERR 404')
         })
     }
 }

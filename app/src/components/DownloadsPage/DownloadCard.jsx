@@ -197,6 +197,7 @@ class DownloadCard extends Component {
 
 	startDownload() {
 		if(this.state.status == 'ERROR') {
+			this.setState({ status: 'FETCHING_URL' })
 			let { animeFilename, animeName, epLink } = this.props
 			getDownloadLink(epLink).then(downloadURL => {
 				const dlOptions = {
@@ -207,6 +208,7 @@ class DownloadCard extends Component {
 				console.log(suDownloader)
 				suDownloader.QueueDownload(dlOptions)
 			}).catch(err => {
+				console.log(err)
 				this.setState({ status: 'ERROR' })
 			})
 		} else {
@@ -245,6 +247,7 @@ class DownloadCard extends Component {
 		if(this.downloadItem) {
 			suDownloader.clearDownload(this.props.animeFilename, true)
 		}
+		this.removeStatusListeners()
 		this.props.clearDL(this.props.animeFilename)
   }
 		

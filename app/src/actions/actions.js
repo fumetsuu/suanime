@@ -34,7 +34,7 @@ export function playAnime(videoFile, animeName, epNumber, posterImg, slug) {
 	}
 }
 
-export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle, persistedState = {}) {
+export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
@@ -58,8 +58,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle, pe
 			animeFilename,
 			posterImg,
 			animeName,
-			epTitle,
-			persistedState
+			epTitle
 		}
 	}
 }

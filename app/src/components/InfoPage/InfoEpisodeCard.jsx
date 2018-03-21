@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 const path = require('path')
 import { queueDL, playAnime } from '../../actions/actions.js'
 import { connect } from 'react-redux'
+import { genFilename } from '../../util/util';
 
 class InfoEpisodeCard extends Component {
     constructor(props) {
@@ -48,7 +49,7 @@ class InfoEpisodeCard extends Component {
         var epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
         var animeName = title
         var epTitle = 'Episode '+episode
-        var animeFilename = `${title} - ${episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
+        var animeFilename = genFilename(animeName, episode)
         var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
         this.props.queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
       }
@@ -60,7 +61,7 @@ class InfoEpisodeCard extends Component {
         var epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
         var animeName = title
         var epNumber = 'Episode '+episode
-        var animeFilename = `${title} - ${episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')
+        var animeFilename = genFilename(animeName, episode)
         var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
         var videoFile = path.join(global.estore.get('downloadsPath'), animeFilename)
         this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)

@@ -73,6 +73,10 @@ export function fixFilename(filename) {
     return filename.replace(/[/\\?%*:|"<>]/g, '')
 }
 
+export function genFilename(animeName, episode) {
+    return fixFilename(`${animeName} - ${episode}.mp4`)
+}
+
 export function toWordDate(date) {
     if(isNaN(date)) {
         if(date.includes('-')) {

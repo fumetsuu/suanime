@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { convertMS, fixFilename } from '../../util/util.js'
+import { convertMS, fixFilename, genFilename } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
 const rp = require('request-promise')
 
@@ -18,7 +18,7 @@ class AnimeCard extends Component {
     this.lastEp = episode
     var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
     this.timeago = convertMS(Date.now()-Date.parse(created_at)-tzOffset)
-    this.animeFilename = `${title} - ${episode}.mp4`.replace(/[\\/:"*?<>|]+/, '')    
+    this.animeFilename = genFilename(title, episode)    
     this.epTitle = 'Episode '+episode
   }
 

@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import InfoEpisodeCard from './InfoEpisodeCard.jsx'
 const rp = require('request-promise')
 import Loader from '../Loader/Loader.jsx'
-import { fixURLMA, fixURL } from '../../util/util.js'
-export default class InfoEpisodes extends Component {
+import { fixURLMA, fixURL, genFilename } from '../../util/util.js'
+import { connect } from 'react-redux'
+import { queueDL } from '../../actions/actions';
+
+class InfoEpisodes extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -64,9 +67,34 @@ export default class InfoEpisodes extends Component {
     return (
       <div className="info-episodes-wrapper">
         <div className="info-episodes-container">
+          {epCards?
+            <div className="download-all" onClick={this.downloadAll.bind(this)}>Download All Episodes</div>
+            :null}
           {epCards?epCards:<div className="noeps">{this.state.error}</div>}
         </div>
       </div>
     )
   }
+
+  downloadAll() {
+    let { epCards } = this.state
+    epCards.forEach(el => {
+      let { poster } = el.props
+      let { title, slug } = el.props.broadData
+      let { episode } = el.props.epData
+      var epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
+      var animeFilename = genFilename(title, episode)
+      var posterImg = `https://cdn.masterani.me/poster/${poster}`
+      var epTitle = 'Episode '+episode
+      this.props.queueDL(epLink, animeFilename, posterImg, title, epTitle)
+    })
+  }
 }
+
+const mapDispatchToProps = dispatch => {
+  return {
+    queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(queueDL(epLink, animeFilename, posterImg, animeName, epTitle))
+  }
+}
+
+export default connect(null, mapDispatchToProps)(InfoEpisodes)
