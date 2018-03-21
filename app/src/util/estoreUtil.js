@@ -5,7 +5,7 @@ import store from '../store.js'
 import popura from 'popura'
 const pclient = popura()
 const tempcwd = require('electron').remote.app.getPath('userData')
-
+global.tempDLPath = path.join(tempcwd, '/downloads/')
 const suDownloader = require('../suDownloader/suDownloader')
 console.log(suDownloader)
 

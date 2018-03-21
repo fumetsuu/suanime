@@ -17,9 +17,9 @@ class DownloadCard extends Component {
 		this.continueDownload = this.continueDownload.bind(this)
 		this.clearDownload = this.clearDownload.bind(this)
 		this.pauseDownload = this.pauseDownload.bind(this)
-    this.playDownload = this.playDownload.bind(this)
-    this.configureDownloadItem = this.configureDownloadItem.bind(this)
-    this.addStatusListeners = this.addStatusListeners.bind(this)
+		this.playDownload = this.playDownload.bind(this)
+		this.configureDownloadItem = this.configureDownloadItem.bind(this)
+		this.addStatusListeners = this.addStatusListeners.bind(this)
 		this.removeStatusListeners = this.removeStatusListeners.bind(this)
 		this.checkPersisted = this.checkPersisted.bind(this)
 

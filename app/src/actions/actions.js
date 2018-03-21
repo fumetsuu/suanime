@@ -41,6 +41,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	getDownloadLink(epLink).then(downloadURL => {
 		const dlOptions = {
 			key: animeFilename,
+			temppath: path.join(global.tempDLPath, fixFilename(animeFilename)),
 			path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
 			url: downloadURL
 		}

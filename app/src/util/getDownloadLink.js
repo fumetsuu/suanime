@@ -36,8 +36,7 @@ export function getDownloadLink(epLink) {
     
     function getStreamMoeURL(streamdata) {
         return new Promise((resolve, reject) => {
-            var workingMirror = streamdata.mirrors.find(mirror => 
-                mirror.host.id == 19 && mirror.quality == 480)
+            var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 19)
             if(!workingMirror) {
                 return reject('ERR 404')
             }

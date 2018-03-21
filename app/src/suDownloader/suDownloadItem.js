@@ -15,8 +15,9 @@ function suDownloadItem(options) {
         key: options.key,
         url: options.url,
         path: options.path,
+        temppath: options.temppath,
         mtdpath: mtd.MTDPath(options.path),
-        range: options.range || 4,
+        range: options.range || 10,
         throttleRate: options.throttleRate || 501,
         retry: options.retry || 5
     }
@@ -104,9 +105,7 @@ function suDownloadItem(options) {
             err => { 
                 this.handleError(err)
              },
-            () => {
-                this.handleFinishDownload()
-            }
+            () => console.log(dlopts.key, ' finished early ?')
         )
 
     }
@@ -161,22 +160,17 @@ function suDownloadItem(options) {
     }
 
     this.handleFinishDownload = () => {
-        if(this.stats.total.completed < 99) {
-            console.log('hey')
-            this.restart()
-        } else {
-            this.calculateTotalDownloaded()
-            this.calculateTotalCompleted()
-            this.calculatePresentDownloaded()
-            this.calculateEndTime()
-            this.calculateSpeeds()
-            this.calculateFutureRemaining()
-            this.calculateFutureEta()
-            fs.rename(this.options.mtdpath, this.options.path, () => { 
-                clearInterval(this.updateInterval)
-                this.emit('finish', this.stats)
-             })       
-        }
+        this.calculateTotalDownloaded()
+        this.calculateTotalCompleted()
+        this.calculatePresentDownloaded()
+        this.calculateEndTime()
+        this.calculateSpeeds()
+        this.calculateFutureRemaining()
+        this.calculateFutureEta()
+        fs.rename(this.options.mtdpath, this.options.path, () => { 
+            clearInterval(this.updateInterval)
+            this.emit('finish', this.stats)
+            })       
     }
 
     this.calculateDownloaded = () => {
