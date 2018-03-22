@@ -2,6 +2,7 @@ const defaultState = {
     pclient: null,
     listdata: null,
     listinfo: [],
+    malhistory: [],
     persistedMAL: {
         listStatus: 1,
         listSort: 'TITLE',
@@ -32,9 +33,14 @@ export default function reducer(state = defaultState, action) {
         case 'UPDATE_ANIME': {
             var storedlistdata = global.estore.get('listdata')
             var storedlistinfo = global.estore.get('listinfo')
+            var storedmalhistory = global.estore.get('malhistory')
             var malID = action.payload.malID
             var updatedObj = action.payload.updatedObj
             var targetAnimeObj = storedlistdata.find(listDataNode => animeFinder(listDataNode, malID))
+            if(updatedObj.my_watched_episodes != targetAnimeObj.my_watched_episodes) {
+                var newHistoryObj = createHistoryObject(updatedObj, targetAnimeObj)
+                storedmalhistory.push(newHistoryObj)
+            }
             var animeIndexInList = storedlistdata.indexOf(targetAnimeObj)
             var newAnimeObj = Object.assign({}, targetAnimeObj, updatedObj)
             var newStatus = action.payload.newStatus
@@ -47,8 +53,8 @@ export default function reducer(state = defaultState, action) {
                 storedlistinfo[newStatusIndex]++
             }
             storedlistdata[animeIndexInList] = newAnimeObj
-            global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
-            return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
+            global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo, 'malhistory': storedmalhistory })
+            return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo, malhistory: storedmalhistory })
         }
         case 'ADD_ANIME': {
             var storedlistdata = global.estore.get('listdata')
@@ -72,9 +78,11 @@ export default function reducer(state = defaultState, action) {
             return defaultState
         }
         case 'HYDRATE_LIST': {
+            let { listdata, listinfo, malhistory } = action.payload
             return Object.assign({}, state, {
-                listdata: action.payload.listdata,
-                listinfo: action.payload.listinfo
+                listdata,
+                listinfo,
+                malhistory
             })
         }
         default: return state
@@ -83,4 +91,17 @@ export default function reducer(state = defaultState, action) {
 
 function animeFinder(listDataNode, malID) {
     return listDataNode.series_animedb_id == malID
+}
+
+function createHistoryObject(updatedObj, listDataNode) {
+    let { my_watched_episodes, my_last_updated } = updatedObj
+    let { series_animedb_id, series_title, series_status, series_image } = listDataNode
+    return {
+        series_animedb_id,
+        series_title,
+        my_watched_episodes,
+        series_status,
+        series_image,
+        my_last_updated
+    }
 }

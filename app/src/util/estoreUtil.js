@@ -27,6 +27,7 @@ export function initialiseDB() {
         global.estore.set('storedClearedArray', [])
         global.estore.set('storedDownloading', [])
         global.estore.set('storedCompleted', [])
+        global.estore.set('malhistory', [])
         global.estore.set('sudownloaderSettings', {
             maxConcurrentDownloads: 4,
             autoQueue: true,
@@ -51,7 +52,8 @@ export function initialiseDB() {
             type: 'HYDRATE_LIST',
             payload: {
                 listdata: global.estore.get("listdata"),
-                listinfo: global.estore.get("listinfo")
+                listinfo: global.estore.get("listinfo"),
+                malhistory: global.estore.get("malhistory")
             }
         })
     }

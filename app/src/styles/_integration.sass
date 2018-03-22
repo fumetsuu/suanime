@@ -99,7 +99,7 @@
             height: 40px
             background-color: $dark-grey
             display: grid
-            grid-template-columns: repeat(5, minmax(auto, 1px)) auto 40px 40px 40px
+            grid-template-columns: repeat(6, minmax(auto, 1px)) auto 40px 40px 40px
             .status-tab
                 border-right: 1px solid lighten($grey, 5%)
                 font-family: 'Lato'
@@ -612,3 +612,49 @@
                 color: white
                 font-family: 'Source Sans Pro'
                 font-weight: 900
+
+.history-empty
+    color: $grey
+    margin: 100px
+    font-size: 36px
+
+.history-container
+    min-height: 700px
+    width: 98%
+    margin: 15px 0 15px 1%
+    .history-card 
+        width: 100%
+        height: 30px
+        background-color: $grey
+        transition: 0.3s
+        display: grid
+        grid-template-columns: 30px 45% 25% 15%
+        grid-template-rows: 100%
+        transition: 0.3s
+        .status-button
+            width: 7px
+            height: 7px
+            border-radius: 50%
+            justify-self: center
+            margin-top: 10px
+        .series-title, .my-episodes, .last-updated
+            font-family: 'Lato'
+            font-weight: 400
+            line-height: 30px
+            color: white
+            font-size: 12px
+            border-right: 1px solid #4c4c4c
+        .series-title
+            overflow: hidden
+            text-overflow: ellipsis
+            margin-right: 10px
+            &:hover
+                color: $light-blue
+                cursor: pointer
+        .my-episodes
+            margin-right: 10px
+        .last-updated
+            border: none
+
+        &:nth-child(odd)
+            background-color: darken($grey, 5%)

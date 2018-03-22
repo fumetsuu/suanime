@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
 import ListStats from './ListStats.jsx'
+import MALHistory from './MALHistory.jsx'
 import { savelist, persistMAL } from '../../../actions/actions.js'
 const COMPACT_PER_LOAD = 50
 const ROWS_PER_LOAD = 20
@@ -65,12 +66,17 @@ class AnimeListContainer extends Component {
                 <div className={`status-tab${listStatus == 3?' status-tab-active':''}`} statusvalue={3} onClick={this.setListStatus}>On Hold {user_onhold?`(${user_onhold})`:''}</div>
                 <div className={`status-tab${listStatus == 4?' status-tab-active':''}`} statusvalue={4} onClick={this.setListStatus}>Dropped {user_dropped?`(${user_dropped})`:''}</div>
                 <div className={`status-tab${listStatus == 6?' status-tab-active':''}`} statusvalue={6} onClick={this.setListStatus}>Plan to watch {user_plantowatch?`(${user_plantowatch})`:''}</div>
+                <div className={`status-tab${listStatus == 7?' status-tab-active':''}`} statusvalue={7} onClick={this.setListStatus}>History</div>
                 <div className="username"> {user_name}</div>
                 <div className="square sync" onClick={this.syncList}><i className="material-icons">sync</i></div>
                 <div className="square info" onClick={this.openInfo.bind(this)}><i className="material-icons">info</i></div>
                 <div className="square logout" onClick={this.logout}><i className="material-icons">exit_to_app</i></div>
             </div>
-            {this.props.match.params.stats ? <ListStats/> : 
+            {listStatus == 7
+                ? <MALHistory/> 
+                : this.props.match.params.stats
+                    ? <ListStats/>
+                    : 
                 <div className="animelist-container"> 
                     <div className="sort-area"> 
                         <div className="sort-by-text">Sort by: </div> 
@@ -158,6 +164,7 @@ class AnimeListContainer extends Component {
     }
 
     updateDisplay(listdata, listinfo) {
+        if(this.state.listStatus == 7) return
         if(listinfo) {
             this.setState({ listInfo: listinfo })
         }
@@ -226,6 +233,10 @@ class AnimeListContainer extends Component {
             }
             this.setState({ listCards, sortFilteredData, isLoading: false })
         }
+    }
+
+    updateDisplayHistory(listdata) {
+        
     }
 
     onscroll(e) {
