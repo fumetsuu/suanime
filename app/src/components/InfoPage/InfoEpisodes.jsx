@@ -5,6 +5,7 @@ import Loader from '../Loader/Loader.jsx'
 import { fixURLMA, fixURL, genFilename } from '../../util/util.js'
 import { connect } from 'react-redux'
 import { queueDLAll } from '../../actions/actions';
+import { processExceptions } from './processExceptions';
 
 class InfoEpisodes extends Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class InfoEpisodes extends Component {
     const searchURL = `https://www.masterani.me/api/anime/search?search=${fixURLMA(animeName)}&sb=1`
     console.log(fixURLMA(animeName), animeName, searchURL)
     rp({ uri: searchURL, json: true }).then(searchResults => {
-      let searchHit = searchResults.find(el => decodeURIComponent(fixURL(el.title)) == decodeURIComponent(animeName))
+      let searchHit = processExceptions(searchResults, animeName, true)
       if(!searchHit) {
         this.setState({
           isLoading: false,

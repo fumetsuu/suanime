@@ -1,18 +1,23 @@
-export function processExceptions(data, animeName) {
-    var exceptionIdx = masteranimallinkexceptions.findIndex(el => el.animeName == animeName)
-    if(exceptionIdx != -1) {
-        return masteranimallinkexceptions[exceptionIdx].data
-    }
-    return data.result.find(el => el.title == this.props.animeName) || data.result[1]  //this relies on the name being consistent between MAL and Masterani databases, if they aren't consistent, takes the SECOND result to try and compensate
-}
+import { fixURL } from '../../util/util'
+const h2p = require('html2plaintext')
+const dym = require('didyoumean2')
 
-const masteranimallinkexceptions = [
-    {
-        animeName: "Bokura wa Minna Kawai-sou",
-        data: {
-            "id":21405,
-            "url":"https:\/\/myanimelist.net\/anime\/21405\/Bokura_wa_Minna_Kawai-sou",
-            "title":"Bokura wa Minna Kawai-sou"
-        }
+export function processExceptions(data, animeName, masteranisearch = false) {
+
+    if(!masteranisearch) {
+        var possible = data.result.find(el => fixURL(h2p(el.title)) == fixURL(animeName))
+        if(possible) return possible
+
+        var correctTitle = dym(animeName, data.result.map(el => el.title))
+        return data.result.find(el => el.title == correctTitle)
     }
-]
+
+    if(masteranisearch) {
+        var possible = data.find(el => fixURL(h2p(el.title)) == fixURL(animeName))
+        if(possible) return possible
+
+        var correctTitle = dym(animeName, data.map(el => el.title))
+        return data.find(el => el.title == correctTitle)
+    }
+
+}
