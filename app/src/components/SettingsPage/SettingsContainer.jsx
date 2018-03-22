@@ -27,7 +27,7 @@ export default class SettingsContainer extends React.Component {
                 <div className="settings-header">Settings</div>
                 <div className="settings">
                     <div className="settings-item">
-                        <div className="settings-item-label">
+                        <div className="settings-item-label dl-path" onClick={this.openDLFolder}>
                             Downloads Path
                         </div>
                         <div className="settings-item-content settings-underline" onClick={this.changeDownloadsPath.bind(this)}>
@@ -68,6 +68,11 @@ export default class SettingsContainer extends React.Component {
             </div>
         </div>
         )
+    }
+
+    openDLFolder() {
+        var dlfolder = global.estore.get('downloadsPath')
+        require('electron').shell.openItem(dlfolder)
     }
 
     changeDownloadsPath() {
