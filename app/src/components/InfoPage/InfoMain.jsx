@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-const h2p = require('html2plaintext')
+const decodeHTML = require('ent/decode')
 import { browserLink } from '../../util/browserlink'
 import { launchInfo } from '../../actions/actions.js'
 
@@ -58,7 +58,7 @@ export default class InfoMain extends Component {
         </table>
         </div>
         <div className="synopsis-main">
-          {h2p(synopsis)}
+          {decodeHTML(synopsis)}
         </div>
         <table className="related-anime">
           <tbody>
@@ -70,7 +70,7 @@ export default class InfoMain extends Component {
   }
 
   nameList(data) {
-    return data.map((el, i) => <span key={i}>{i?<div className="vertical-blue"/>:null}<span className="info-clickable" onClick={()=>browserLink(el.url)}>{h2p(el.name)}</span></span>)
+    return data.map((el, i) => <span key={i}>{i?<div className="vertical-blue"/>:null}<span className="info-clickable" onClick={()=>browserLink(el.url)}>{decodeHTML(el.name)}</span></span>)
   }
 
   relatedList(data) {
@@ -81,7 +81,7 @@ export default class InfoMain extends Component {
       tablerows.push(
         <tr key={relation}>
           <td className="data-label">{relation}</td>
-          <td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?"related-link disabled":"related-link"} onClick={() => {launchInfo(h2p(el.title), null, null, el.mal_id)}}>{h2p(el.title)}</span></span>)}</td>
+          <td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?"related-link disabled":"related-link"} onClick={() => {launchInfo(decodeHTML(el.title), null, null, el.mal_id)}}>{decodeHTML(el.title)}</span></span>)}</td>
         </tr>
       )
     })

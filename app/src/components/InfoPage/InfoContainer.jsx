@@ -5,8 +5,8 @@ import InfoHeader from './InfoHeader.jsx'
 import InfoMain from './InfoMain.jsx'
 import InfoEpisodes from './InfoEpisodes.jsx'
 import { fixURL } from '../../util/util.js'
-import { processExceptions } from './processExceptions';
-const h2p = require('html2plaintext')
+import { processExceptions } from './processExceptions'
+const decodeHTML = require('ent/decode')
 
 export default class InfoContainer extends Component {
     constructor(props) {

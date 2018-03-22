@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 const rp = require('request-promise')
 import screenfull from 'screenfull'
-import { browserLink } from '../../util/browserlink';
-import { fixURL } from '../../util/util';
-const h2p = require('html2plaintext')
+import { browserLink } from '../../util/browserlink'
+import { fixURL } from '../../util/util'
+const decodeHTML = require('ent/decode')
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
 import { updateAnime } from '../../actions/actions.js'
-import { processExceptions } from '../InfoPage/processExceptions';
+import { processExceptions } from '../InfoPage/processExceptions'
 
 class WatchInformation extends Component {
     constructor(props) {
@@ -39,14 +39,14 @@ class WatchInformation extends Component {
                     animeInfo: 
                     <div className="anime-information">
                         <div className="tiny-header">Alt. Titles</div>
-                        <div className="alt-titles">{data.title_japanese? h2p(data.title_japanese):''}{data.title_english ? ', '+h2p(data.title_english) : ''}{data.title_synonyms ? ', '+h2p(data.title_synonyms) : ''}</div>
+                        <div className="alt-titles">{data.title_japanese? decodeHTML(data.title_japanese):''}{data.title_english ? ', '+decodeHTML(data.title_english) : ''}{data.title_synonyms ? ', '+decodeHTML(data.title_synonyms) : ''}</div>
                         <ul className="primary-info">
                             <li>{data.score}</li>
                             <li>#{data.rank}</li>
                             <li className="info-clickable" onClick={() => browserLink(seasonLink)}>{data.premiered}</li>
                         </ul>
                         <div className="tiny-header">Synopsis</div>
-                        <div className="synopsis">{h2p(data.synopsis)}</div>
+                        <div className="synopsis">{decodeHTML(data.synopsis)}</div>
                         <table className="secondary-info">
                             <tbody>
                                 <tr>
@@ -161,11 +161,11 @@ class WatchInformation extends Component {
         )
     }
     linedList(data) {
-        return data.map((el, i) => <li key={i}>{h2p(el)}</li>)
+        return data.map((el, i) => <li key={i}>{decodeHTML(el)}</li>)
     }
 
     nameList(data) {
-        return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>browserLink(el.url)}>{h2p(el.name)}</span></span>)
+        return data.map((el, i) => <span key={i}><span>{i?',  ':''}</span><span className="info-clickable" onClick={()=>browserLink(el.url)}>{decodeHTML(el.name)}</span></span>)
     }
 
     getAnimeListObject(id) {
