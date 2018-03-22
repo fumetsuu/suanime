@@ -11,7 +11,7 @@ Todo
 - [x] anime airing schedule
 - [x] seasonal anime
 - [x] search page back button
-- [ ] mal update history
+- [x] mal update history
 - [ ] next/previous ep button on watch page
 - [x] update list on watch page
 - [x] sort downloads by title, date, size, etc
