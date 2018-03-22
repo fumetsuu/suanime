@@ -31,3 +31,4 @@ Todo
 - [ ] mal list persistent tab, sort and view type
 - [x] fix download progress and status when queueing
 - [ ] fix time ago in list
+- [ ] fix handling mismatch in masterani and mal titles for info and eps
