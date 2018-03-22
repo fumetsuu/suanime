@@ -32,3 +32,4 @@ Todo
 - [x] fix download progress and status when queueing
 - [x] fix time ago in list (popura parses utc into date (mmddyyyy)
 - [ ] fix handling mismatch in masterani and mal titles for info and eps
+- [ ] add added date to downloads
