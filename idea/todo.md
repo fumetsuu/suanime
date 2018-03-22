@@ -19,6 +19,7 @@ Todo
 - [x] related anime with links on info page
 - [x] open downloads folder from settings
 - [ ] have folders for downloads based on series
+- [ ] select quality preference for downloads
 
 ## development
 - [x] refactor home page code
