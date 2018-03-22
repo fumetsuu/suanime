@@ -71,6 +71,7 @@ class DownloadsHolder extends Component {
         var props = passedProps ? passedProps : this.props
         var cardsArray = []
         var alldlPropsArray = [...props.downloadsArray, ...props.completedArray]
+        var unchangedPropsArray = [...props.downloadsArray, ...props.completedArray]
         if(!alldlPropsArray.length) {
             this.setState({ empty: true })
         }
@@ -95,14 +96,14 @@ class DownloadsHolder extends Component {
             case 'DATE': case 'vDATE': {
                 alldlPropsArray = alldlPropsArray.sort((a1, a2) => {
                     if(!a1.props.persistedState) {
-                        var a1date = a1.props.completeDate || 0
+                        var a1date = a1.props.completeDate || unchangedPropsArray.indexOf(a1)
                     } else {
-                        var a1date = a1.props.persistedState.completeDate || 0
+                        var a1date = a1.props.persistedState.completeDate || unchangedPropsArray.indexOf(a1)
                     }
                     if(!a2.props.persistedState) {
-                        var a2date = a2.props.completeDate || 0
+                        var a2date = a2.props.completeDate || unchangedPropsArray.indexOf(a2)
                     } else {
-                        var a2date = a2.props.persistedState.completeDate || 0
+                        var a2date = a2.props.persistedState.completeDate || unchangedPropsArray.indexOf(a2)
                     }
                     return a1date <= a2date ? orderA : orderB
                 })
