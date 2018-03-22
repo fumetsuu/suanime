@@ -30,3 +30,4 @@ Todo
 - [x] handle network errors/infinite starting for downloads
 - [ ] mal list persistent tab, sort and view type
 - [x] fix download progress and status when queueing
+- [ ] fix time ago in list
