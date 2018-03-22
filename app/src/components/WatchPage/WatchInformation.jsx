@@ -8,6 +8,7 @@ import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
 import { updateAnime } from '../../actions/actions.js'
+import { processExceptions } from '../InfoPage/processExceptions';
 
 class WatchInformation extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class WatchInformation extends Component {
     componentDidMount() {
         var jikanBase = 'http://api.jikan.me'
         rp({uri: `${jikanBase}/search/anime/`+fixURL(this.props.animeName), json: true }).then(data => {
-            var first = data.result.find(el => el.title == this.props.animeName) || data.result[1]  //this relies on the name being consistent between MAL and Masterani databases, if they aren't consistent, takes the SECOND result to try and compensate
+            var first = processExceptions(data, this.props.animeName)
             this.setState({
                 MALlink: first.url
             })
