@@ -61,7 +61,7 @@ export default function reducer(state = defaultState, action) {
             var storedlistinfo = global.estore.get('listinfo')
             var malID = action.payload.malID
             var animeObj = action.payload.animeObj
-            storedlistdata.push(animeObj)
+            storedlistdata.unshift(animeObj)
             storedlistinfo[5] = storedlistinfo[5]+1
             global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
             return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
