@@ -1,7 +1,12 @@
 const defaultState = {
     pclient: null,
     listdata: null,
-    listinfo: []
+    listinfo: [],
+    persistedMAL: {
+        listStatus: 1,
+        listSort: 'TITLE',
+        listView: 'COMPACT'
+    }
 }
 
 export default function reducer(state = defaultState, action) {
@@ -54,6 +59,11 @@ export default function reducer(state = defaultState, action) {
             storedlistinfo[5] = storedlistinfo[5]+1
             global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
             return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
+        }
+        case 'PERSIST_MAL': {
+            let { listStatus, listSort, listView } = action.payload
+            var persistedMAL = { listStatus, listSort, listView }
+            return Object.assign({}, state, { persistedMAL })
         }
         case 'KILL_MAL': {
             global.estore.delete("mal")

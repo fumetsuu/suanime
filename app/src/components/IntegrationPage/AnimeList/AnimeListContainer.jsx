@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Loader from '../../Loader/Loader.jsx'
 import ListCard from './ListCard.jsx'
 import ListStats from './ListStats.jsx'
-import { savelist } from '../../../actions/actions.js'
+import { savelist, persistMAL } from '../../../actions/actions.js'
 const COMPACT_PER_LOAD = 50
 const ROWS_PER_LOAD = 20
 const CARDS_PER_LOAD = 20
@@ -34,6 +34,8 @@ class AnimeListContainer extends Component {
     }
 
     componentDidMount() {
+        let { listStatus, listSort, listView } = this.props.persistedMAL
+        this.setState({ listStatus, listSort, listView })
         if(this.props.listdata) {
             this.updateDisplay()
         } else {
@@ -133,6 +135,7 @@ class AnimeListContainer extends Component {
         this.setState({ listStatus }, () => {
             this.updateDisplay()
         })
+        this.props.persistMAL(listStatus, this.state.listSort, this.state.listView)
     }
 
     setListSort(e) {
@@ -143,6 +146,7 @@ class AnimeListContainer extends Component {
         this.setState({ listSort }, () => {
             this.updateDisplay()
         })
+        this.props.persistMAL(this.state.listStatus,listSort, this.state.listView)
     }
 
     setListView(e) {
@@ -150,6 +154,7 @@ class AnimeListContainer extends Component {
         this.setState({ listView }, () => {
             this.updateDisplay()
         })
+        this.props.persistMAL(this.state.listStatus, this.state.listSort, listView)
     }
 
     updateDisplay(listdata, listinfo) {
@@ -256,12 +261,14 @@ const mapStateToProps = state => {
     return {
         pclient: state.animelistReducer.pclient,
         listdata: state.animelistReducer.listdata,
-        listinfo: state.animelistReducer.listinfo
+        listinfo: state.animelistReducer.listinfo,
+        persistedMAL: state.animelistReducer.persistedMAL
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
+        persistMAL: (listStatus, listSort, listView) => dispatch(persistMAL(listStatus, listSort, listView)),
         savelist: (listdata, listinfo) => dispatch(savelist(listdata, listinfo)),
         killMAL: () => dispatch({
             type: 'KILL_MAL'

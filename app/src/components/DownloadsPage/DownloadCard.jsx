@@ -68,7 +68,7 @@ class DownloadCard extends Component {
     this.removeStatusListeners()
     suDownloader.removeListener('new_download_started', this.configureDownloadItem)
 		suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
-		if(this.downloadItem && this.state.status != 'FETCHING_URL') {
+	if(this.downloadItem && this.state.status != 'FETCHING_URL') {
       this.props.persistDL(this.props.animeFilename, this.state)
     }
   }

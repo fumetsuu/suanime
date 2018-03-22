@@ -161,6 +161,17 @@ export function addAnime(malID, animeObj) {
 	}
 }
 
+export function persistMAL(listStatus, listSort, listView) {
+	return {
+		type: "PERSIST_MAL",
+		payload: {
+			listStatus,
+			listSort,
+			listView
+		}
+	}
+}
+
 export function savelist(listdata, listinfo) {
 	return {
 		type: "SAVE_LIST",
