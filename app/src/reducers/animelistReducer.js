@@ -66,6 +66,14 @@ export default function reducer(state = defaultState, action) {
             global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
             return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
         }
+        case 'DELETE_HISTORY_CARD': {
+            var storedmalhistory = global.estore.get('malhistory')
+            let { malID, episode, timeUpdated } = action.payload
+            var historyIndex = storedmalhistory.findIndex(el => el.series_animedb_id == malID && el.my_watched_episodes == episode && el.my_last_updated == timeUpdated)
+            storedmalhistory.splice(historyIndex, 1)
+            global.estore.set('malhistory', storedmalhistory)
+            return Object.assign({}, state, { 'malhistory': storedmalhistory })
+        }
         case 'PERSIST_MAL': {
             let { listStatus, listSort, listView } = action.payload
             var persistedMAL = { listStatus, listSort, listView }

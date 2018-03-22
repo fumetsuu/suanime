@@ -18,6 +18,11 @@ class MALHistory extends Component {
 	componentDidMount() {
 		this.updateDisplay()
 	}
+
+	componentWillReceiveProps(nextProps) {
+		this.updateDisplay(nextProps.malhistory)
+	}
+	
 	
 	render() {
 		if(this.state.isLoading) return <div style={{ minHeight: '400px' }}><Loader loaderClass="central-loader"/></div>
@@ -29,14 +34,19 @@ class MALHistory extends Component {
 		)
 	}
 
-	updateDisplay() {
-		let { malhistory } = this.props
+	updateDisplay(history) {
+		let malhistory
+		if(history) {
+			malhistory = history
+		} else {
+			malhistory = this.props.malhistory
+		}
 		if(!malhistory.length) {
 			this.setState({ isLoading: false, isEmpty: true })
 			return false
 		}
 		console.log(malhistory)
-		var historyCards = malhistory.map(el => <HistoryCard key={el.series_animedb_id.toString() + el.my_watched_episodes.toString()} data={el}/>)
+		var historyCards = malhistory.map(el => <HistoryCard key={el.series_animedb_id.toString() + el.my_watched_episodes.toString() + el.my_last_updated.toString()} data={el}/>)
 		this.setState({ historyCards, isLoading: false, isEmpty: false })
 	}
 }

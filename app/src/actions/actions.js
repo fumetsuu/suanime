@@ -161,6 +161,17 @@ export function addAnime(malID, animeObj) {
 	}
 }
 
+export function deleteHistoryCard(malID, episode, timeUpdated) {
+	return {
+		type: "DELETE_HISTORY_CARD",
+		payload: {
+			malID,
+			episode,
+			timeUpdated
+		}
+	}
+}
+
 export function persistMAL(listStatus, listSort, listView) {
 	return {
 		type: "PERSIST_MAL",

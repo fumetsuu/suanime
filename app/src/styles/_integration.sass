@@ -616,6 +616,7 @@
 .history-empty
     color: $grey
     margin: 100px
+    height: 600px
     font-size: 36px
 
 .history-container
@@ -628,7 +629,7 @@
         background-color: $grey
         transition: 0.3s
         display: grid
-        grid-template-columns: 30px 45% 25% 15%
+        grid-template-columns: 30px 45% 25% 15% auto 30px
         grid-template-rows: 100%
         transition: 0.3s
         .status-button
@@ -655,6 +656,18 @@
             margin-right: 10px
         .last-updated
             border: none
-
+        .delete-history
+            grid-column: 6
+            border-radius: 3px
+            width: 30px
+            height: 30px
+            text-align: center
+            user-select: none
+            &:hover
+                cursor: pointer
+                background-color: $red
+            .material-icons
+                line-height: 30px
+                font-size: 16px
         &:nth-child(odd)
             background-color: darken($grey, 5%)
