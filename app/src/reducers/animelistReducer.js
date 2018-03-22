@@ -37,7 +37,7 @@ export default function reducer(state = defaultState, action) {
             var malID = action.payload.malID
             var updatedObj = action.payload.updatedObj
             var targetAnimeObj = storedlistdata.find(listDataNode => animeFinder(listDataNode, malID))
-            if(updatedObj.my_watched_episodes != targetAnimeObj.my_watched_episodes) {
+            if(updatedObj.my_last_updated) {
                 var newHistoryObj = createHistoryObject(updatedObj, targetAnimeObj)
                 storedmalhistory.push(newHistoryObj)
             }
