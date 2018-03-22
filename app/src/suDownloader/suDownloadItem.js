@@ -17,7 +17,7 @@ function suDownloadItem(options) {
         path: options.path,
         temppath: options.temppath,
         mtdpath: mtd.MTDPath(options.path),
-        range: options.range || 10,
+        range: options.range || 1,
         throttleRate: options.throttleRate || 501,
         retry: options.retry || 5
     }
