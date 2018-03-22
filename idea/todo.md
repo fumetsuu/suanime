@@ -30,5 +30,5 @@ Todo
 - [x] handle network errors/infinite starting for downloads
 - [ ] mal list persistent tab, sort and view type
 - [x] fix download progress and status when queueing
-- [ ] fix time ago in list
+- [x] fix time ago in list (popura parses utc into date (mmddyyyy)
 - [ ] fix handling mismatch in masterani and mal titles for info and eps
