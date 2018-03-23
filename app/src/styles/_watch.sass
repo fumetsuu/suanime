@@ -74,16 +74,30 @@
                 &:hover
                     cursor: pointer
                     filter: brightness(1.2)
-            .watch-title
-                font-size: 20px
-                justify-self: start
-                &:hover
-                    cursor: pointer
-                    color: $light-grey
+            .watch-title-container
+                display: grid
+                grid-template-columns: 50px 50px auto
+                grid-template-rows: 30px 30px auto
+                .watch-title
+                    grid-column: 1/#{4}
+                    font-size: 20px
+                    justify-self: start
+                    &:hover
+                        cursor: pointer
+                        color: $light-grey
                 .watch-episode
+                    grid-column: 1/#{4}
                     font-size: 12px
                     color: $light-blue
                     text-transform: uppercase
+                .ep-btn
+                    width: 30px
+                    height: 30px
+                    margin-left: 20px
+                    .material-icons
+                        text-align: center
+                        font-size: 20px
+                        line-height: 30px
             .anime-out-link
                 border-radius: 50%
                 width: 50px

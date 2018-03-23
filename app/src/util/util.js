@@ -1,3 +1,5 @@
+const path = require('path')
+
 export function convertMS(ms) {
     var d, h, m, s, Mo, y
     s = Math.floor(ms / 1000)
@@ -75,6 +77,10 @@ export function fixFilename(filename) {
 
 export function genFilename(animeName, episode) {
     return fixFilename(`${animeName} - ${episode}.mp4`)
+}
+
+export function genVideoPath(animeName, animeFilename) {
+    return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${animeFilename}`)
 }
 
 export function toWordDate(date) {

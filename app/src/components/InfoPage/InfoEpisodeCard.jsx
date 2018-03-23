@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 const path = require('path')
 import { queueDL, playAnime } from '../../actions/actions.js'
 import { connect } from 'react-redux'
-import { genFilename } from '../../util/util';
+import { genFilename, genVideoPath } from '../../util/util';
 
 class InfoEpisodeCard extends Component {
     constructor(props) {
@@ -63,7 +63,7 @@ class InfoEpisodeCard extends Component {
         var epNumber = 'Episode '+episode
         var animeFilename = genFilename(animeName, episode)
         var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
-        var videoFile = path.join(global.estore.get('downloadsPath'), animeFilename)
+        var videoFile = genVideoPath(title, animeFilename)
         this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
         window.location.hash="#/watch"
       }

@@ -6,7 +6,7 @@ const path = require('path')
 const bytes = require('bytes')
 import { createdlObj, clearDL, playAnime, completeDL, persistDL } from '../../actions/actions.js'
 import { getDownloadLink } from '../../util/getDownloadLink'
-import { toWordDate, fixFilename, convertSec } from '../../util/util'
+import { toWordDate, fixFilename, convertSec, genVideoPath } from '../../util/util'
 
 const suDownloader = require('../../suDownloader/suDownloader')
 //status can be 'QUEUED', 'QUEUED_R', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'FETCHING_URL'
@@ -237,8 +237,8 @@ class DownloadCard extends Component {
 	}
 
 	playDownload() {
-		var animeName = this.props.animeName
-		var videoFile = path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}`)
+		let { animeName, animeFilename } = this.props
+		var videoFile = genVideoPath(animeName, animeFilename)
 		var epNumber = this.props.epTitle
 		var posterImg = this.props.posterImg
 		var slug = this.props.epLink.split('watch/')[1].split('/')[0]

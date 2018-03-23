@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { convertMS, fixFilename, genFilename } from '../../util/util.js'
+import { convertMS, fixFilename, genFilename, genVideoPath } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
 const rp = require('request-promise')
 
@@ -64,7 +64,7 @@ class AnimeCard extends Component {
     let { slug, title } = this.props.animeDataRecent.anime
     let { episode } = this.props.animeDataRecent
     let { animeFilename, epTitle, poster } = this
-    var videoFile = path.join(global.estore.get('downloadsPath'), `${fixFilename(title)}/${fixFilename(animeFilename)}`)
+    var videoFile = genVideoPath(title, animeFilename)
     this.props.playAnime(videoFile, title, epTitle, poster, slug)
     window.location.hash="#/watch"
   }
