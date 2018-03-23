@@ -15,12 +15,13 @@ export default class SettingsContainer extends React.Component {
             maxConcurrentDownloads: global.estore.get('sudownloaderSettings').maxConcurrentDownloads || 4,
             usepagination: global.estore.get('usepagination'),
             autoQueue: global.estore.get('sudownloaderSettings').autoQueue,
-            autoStart: global.estore.get('sudownloaderSettings').autoStart
+            autoStart: global.estore.get('sudownloaderSettings').autoStart,
+            downloadHD: global.estore.get('downloadHD')
         }
     }
     
     render() {
-        let { downloadsPath, maxConcurrentDownloads, usepagination, autoQueue, autoStart } = this.state
+        let { downloadsPath, maxConcurrentDownloads, usepagination, autoQueue, autoStart, downloadHD } = this.state
         return(
         <div className="settings-wrapper">
             <div className="settings-container">
@@ -55,6 +56,9 @@ export default class SettingsContainer extends React.Component {
                         <div className="settings-item-content">
                             <span className="label-text">Automatically start downloading on startup:</span> <Toggle onToggle={this.changeAutoStart.bind(this)} className="toggle-margin" toggleOn={autoStart}/>
                         </div>
+                        <div className="settings-item-content">
+                            <span className="label-text">Download in highest quality:</span> <Toggle onToggle={this.changeDownloadHD.bind(this)} className="toggle-margin" toggleOn={downloadHD}/>
+                        </div>
                     </div>
                     <div className="settings-item">
                         <div className="settings-item-label">
@@ -85,11 +89,7 @@ export default class SettingsContainer extends React.Component {
     }
 
     changeSearchPagination() {
-        if(global.estore.get('usepaginationsearch')) {
             global.estore.set('usepaginationsearch', !global.estore.get('usepaginationsearch'))
-        } else {
-            global.estore.set('usepaginationsearch', true)
-        }
     }
 
     changeMCD(selected) {
@@ -108,6 +108,10 @@ export default class SettingsContainer extends React.Component {
         setDownloaderSettings()
     }
 
+    changeDownloadHD() {
+        global.estore.set('downloadHD', !global.estore.get('downloadHD'))
+    }
+
     clearEverything() {
         if(confirm('Everything will be deleted, this action cannot be reverted. Are you sure?')) {
             global.estore.clear()
@@ -117,7 +121,8 @@ export default class SettingsContainer extends React.Component {
                 maxConcurrentDownloads: 4,
                 usepagination: false,
                 autoQueue: true,
-                autoStart: true
+                autoStart: true,
+                downloadHD: true
             })
         }
     }

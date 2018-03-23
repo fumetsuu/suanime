@@ -28,6 +28,7 @@ export function initialiseDB() {
         global.estore.set('storedDownloading', [])
         global.estore.set('storedCompleted', [])
         global.estore.set('malhistory', [])
+        global.estore.set('downloadHD', true)
         global.estore.set('sudownloaderSettings', {
             maxConcurrentDownloads: 4,
             autoQueue: true,

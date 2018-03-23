@@ -36,7 +36,12 @@ export function getDownloadLink(epLink) {
     
     function getStreamMoeURL(streamdata) {
         return new Promise((resolve, reject) => {
-            var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 19)
+            console.log(global.estore.get('downloadHD'), streamdata)
+            if(global.estore.get('downloadHD')) {
+                var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 19)   
+            } else {
+                var workingMirror = streamdata.mirrors.reverse().find(mirror => mirror.host.id == 19)
+            }
             if(!workingMirror) {
                 return reject('ERR 404')
             }
@@ -55,7 +60,11 @@ export function getDownloadLink(epLink) {
             var epNumber = epLink.split("watch/")[1].split("/")[1]
             var corsageURL = `https://corsage-sayonara.herokuapp.com/masterani/api/video/?slug=${slug}&ep=${epNumber}`
             rp({ uri: corsageURL, json: true }).then(mirrorsArray => {
-                var workingMirror = mirrorsArray.find(mirror => mirror.id == 1)
+                if(global.estore.get('downloadHD')) {
+                    var workingMirror = mirrorsArray.reverse().find(mirror => mirror.id == 1)
+                } else {
+                    var workingMirror = mirrorsArray.find(mirror => mirror.id == 1)                    
+                }
                 if(workingMirror) {
                     var downloadURL = workingMirror.link
                     return resolve(downloadURL)
@@ -73,8 +82,13 @@ export function getDownloadLink(epLink) {
                 match[0].split("videos = ")[1]
             )
             var downloadURL
+            var getHD = global.estore.get('downloadHD')
             videosdata.some(el => {
-                if(el.label == "HD") {
+                if(el.label == "HD" && getHD) {
+                    downloadURL = el.src
+                    return true
+                }
+                if(el.label == "SD" && !getHD) {
                     downloadURL = el.src
                     return true
                 }
