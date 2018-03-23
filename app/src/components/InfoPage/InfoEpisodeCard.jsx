@@ -63,7 +63,7 @@ class InfoEpisodeCard extends Component {
         var epNumber = 'Episode '+episode
         var animeFilename = genFilename(animeName, episode)
         var posterImg = this.props.poster
-        this.props.playAnime(animeName, epNumber, posterImg, slug)
+        playAnime(animeName, epNumber, posterImg, slug)
       }
 }
 
@@ -78,9 +78,6 @@ const mapDispatchToProps = dispatch => { //create actions.js ! this is repeated 
     return {
       queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(
 		queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
-	  ),
-      playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
-		playAnime(videoFile, animeName, epNumber, posterImg, slug)
 	  )
     }
 }

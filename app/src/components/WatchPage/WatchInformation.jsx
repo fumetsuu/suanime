@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 const rp = require('request-promise')
 import screenfull from 'screenfull'
 import { browserLink } from '../../util/browserlink'
-import { fixURL } from '../../util/util'
+import { fixURL, fixFilename } from '../../util/util'
 const decodeHTML = require('ent/decode')
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
-import { updateAnime, launchInfo } from '../../actions/actions.js'
+import { updateAnime, launchInfo, playAnime } from '../../actions/actions.js'
 import { processExceptions } from '../InfoPage/processExceptions'
 
 class WatchInformation extends Component {
@@ -42,6 +42,11 @@ class WatchInformation extends Component {
             this.fixWidths()
         })
     }
+
+    componentWillReceiveProps(nextProps) {
+        this.checkEps(nextProps)
+    }
+    
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.fixWidths)
@@ -162,18 +167,22 @@ class WatchInformation extends Component {
         launchInfo(animeName, slug, animeID)
     }
 
-    checkEps() {
-        let { downloadsCompleted, animeName } = this.props
-        let epNumber = parseInt(this.props.epNumber.split("Episode ")[1])
-        var prevEp = downloadsCompleted.findIndex(el => parseInt(el.replace(".mp4", "").split(`${animeName} - `)[1]) == epNumber - 1)
+    checkEps(nextProps) {
+        var useprops = this.props
+        if(nextProps) {
+            useprops = nextProps
+        }
+        let { downloadsCompleted, animeName } = useprops
+        let epNumber = parseInt(useprops.epNumber.split("Episode ")[1])
+        console.log(downloadsCompleted, animeName, epNumber)
+        var prevEp = downloadsCompleted.findIndex(el => parseInt(el.replace(".mp4", "").split(`${fixFilename(animeName)} - `)[1]) == epNumber - 1)
         if(prevEp != -1) {
             var hasPrevEp = true
         } else { var hasPrevEp = false }
-        var nextEp = downloadsCompleted.findIndex(el => parseInt(el.replace(".mp4", "").split(`${animeName} - `)[1]) == epNumber + 1)
+        var nextEp = downloadsCompleted.findIndex(el => parseInt(el.replace(".mp4", "").split(`${fixFilename(animeName)} - `)[1]) == epNumber + 1)
         if(nextEp != -1) {
             var hasNextEp = true
         } else { var hasNextEp = false }
-        console.log(hasPrevEp, hasNextEp)
         this.setState({
             hasPrevEp,
             hasNextEp
@@ -181,11 +190,17 @@ class WatchInformation extends Component {
     }
 
     goPrevEp() {
-
+        let { animeName, slug } = this.props
+        let epNumber = 'Episode ' + (parseInt(this.props.epNumber.split("Episode ")[1]) - 1)
+        let posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
+        playAnime(animeName, epNumber, posterImg, slug)
     }
 
     goNextEp() {
-
+        let { animeName, slug } = this.props
+        let epNumber = 'Episode ' + (parseInt(this.props.epNumber.split("Episode ")[1]) + 1)
+        let posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
+        playAnime(animeName, epNumber, posterImg, slug)
     }
 
     getMALInfo() {

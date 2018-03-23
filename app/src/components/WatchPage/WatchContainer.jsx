@@ -1,10 +1,11 @@
 import React from 'react';
 import AnimeVideo from './AnimeVideo.jsx'
 import WatchInformation from './WatchInformation.jsx'
-import { genVideoPath, genFilename } from '../../util/util';
+import { genVideoPath, genFilename } from '../../util/util'
+import store from '../../store.js'
 
 const WatchContainer = (props) => {
-    console.log(props)
+    store.dispatch({ type: 'PLAY_ANIME' })
     let { animeName, epNumber, posterImg, slug } = props.match.params
     var videoFile = genVideoPath(animeName, genFilename(animeName, epNumber.split("Episode ")[1]))
     var posterLink = `https://cdn.masterani.me/poster/${posterImg}`

@@ -61,6 +61,11 @@ class AnimeVideo extends Component {
 		vidIdentifier = this.props.videoSrc
 	}
 
+	componentWillReceiveProps(nextProps) {
+		this.setState({ url: nextProps.videoSrc })
+	}
+	
+
 	render() {
 		let { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass, volSliderClass } = this.state
 		return (

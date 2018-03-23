@@ -242,7 +242,7 @@ class DownloadCard extends Component {
 		var epNumber = this.props.epTitle
 		var posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
 		var slug = this.props.epLink.split('watch/')[1].split('/')[0]
-		this.props.playAnime(animeName, epNumber, posterImg, slug)
+		playAnime(animeName, epNumber, posterImg, slug)
 	}
 
 	clearDownload() {
@@ -334,8 +334,7 @@ class DownloadCard extends Component {
 
 const mapDispatchToProps = dispatch => {
 	return {
-		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
-    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(playAnime(videoFile, animeName, epNumber, posterImg, slug)),
+	clearDL: animeFilename => dispatch(clearDL(animeFilename)),
     persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
 	}
 }

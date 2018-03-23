@@ -64,7 +64,7 @@ class AnimeCard extends Component {
     let { slug, title, poster } = this.props.animeDataRecent.anime
     let { episode } = this.props.animeDataRecent
     let { animeFilename, epTitle } = this
-    this.props.playAnime(title, epTitle, poster, slug)
+    playAnime(title, epTitle, poster, slug)
   }
 
   launchInfoPage() {
@@ -84,9 +84,6 @@ const mapDispatchToProps = dispatch => {
   return {
     queueDL: (epLink, animeFilename, posterImg, animeName, epTitle) => dispatch(
 		queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
-	),
-    playAnime: (videoFile, animeName, epNumber, posterImg, slug) => dispatch(
-		playAnime(videoFile, animeName, epNumber, posterImg, slug)
 	)
   }
 }
