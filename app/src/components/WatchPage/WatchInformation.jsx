@@ -7,7 +7,7 @@ const decodeHTML = require('ent/decode')
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
-import { updateAnime } from '../../actions/actions.js'
+import { updateAnime, launchInfo } from '../../actions/actions.js'
 import { processExceptions } from '../InfoPage/processExceptions'
 
 class WatchInformation extends Component {
@@ -21,6 +21,7 @@ class WatchInformation extends Component {
         }
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
+        this.launchInfoPage = this.launchInfoPage.bind(this)
         this.incEp = this.incEp.bind(this)
     }
 
@@ -140,8 +141,8 @@ class WatchInformation extends Component {
         var malstyle = this.state.MALlink ? "anime-out-link mal-circle" : "anime-out-link mal-circle disabled"
         return (
             <div className="watch-information" style={{width: this.state.reqWidth}}>
-                <div className="watch-image" style={{backgroundImage: `url('${this.props.posterImg}')`}}/>
-                <div className="watch-title">{this.props.animeName} 
+                <div className="watch-image" style={{backgroundImage: `url('${this.props.posterImg}')`}} onClick={this.launchInfoPage}/>
+                <div className="watch-title" onClick={this.launchInfoPage}>{this.props.animeName} 
                     <br></br> 
                     <div className="watch-episode">{this.props.epNumber}</div>
                 </div>
@@ -229,6 +230,12 @@ class WatchInformation extends Component {
             })
         })
         this.props.updateAnime(series_animedb_id, updatedObj)
+    }
+
+    launchInfoPage() {
+        let { animeName, slug } = this.props
+        var animeID = slug.split('-')[0]
+        launchInfo(animeName, slug, animeID)
     }
 }
 
