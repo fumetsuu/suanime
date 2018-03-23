@@ -12,7 +12,7 @@ Todo
 - [x] seasonal anime
 - [x] search page back button
 - [x] mal update history
-- [ ] next/previous ep button on watch page
+- [x] next/previous ep button on watch page
 - [x] update list on watch page
 - [x] sort downloads by title, date, size, etc
 - [x] mal list stats and info
