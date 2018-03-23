@@ -67,6 +67,10 @@ export function fixURL(url) {
     return encodeURIComponent(url.replace(/\//g, ""))
 }
 
+export function replaceSlash(url) {
+    return url.replace(/\//g, '\\/')
+}
+
 export function fixURLMA(url) {
     return encodeURIComponent(url.replace(/\//g, "").substr(0, 25))
 }

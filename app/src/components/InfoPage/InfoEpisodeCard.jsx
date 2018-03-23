@@ -62,10 +62,8 @@ class InfoEpisodeCard extends Component {
         var animeName = title
         var epNumber = 'Episode '+episode
         var animeFilename = genFilename(animeName, episode)
-        var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
-        var videoFile = genVideoPath(title, animeFilename)
-        this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
-        window.location.hash="#/watch"
+        var posterImg = this.props.poster
+        this.props.playAnime(animeName, epNumber, posterImg, slug)
       }
 }
 

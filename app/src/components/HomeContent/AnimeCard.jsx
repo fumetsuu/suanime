@@ -61,12 +61,10 @@ class AnimeCard extends Component {
 
   playEpComp(e) {
     e.stopPropagation()
-    let { slug, title } = this.props.animeDataRecent.anime
+    let { slug, title, poster } = this.props.animeDataRecent.anime
     let { episode } = this.props.animeDataRecent
-    let { animeFilename, epTitle, poster } = this
-    var videoFile = genVideoPath(title, animeFilename)
-    this.props.playAnime(videoFile, title, epTitle, poster, slug)
-    window.location.hash="#/watch"
+    let { animeFilename, epTitle } = this
+    this.props.playAnime(title, epTitle, poster, slug)
   }
 
   launchInfoPage() {

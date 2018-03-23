@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-import { fixFilename, fixURL } from '../util/util.js'
+import { fixFilename, fixURL, replaceSlash } from '../util/util.js'
 import { getDownloadLink } from '../util/getDownloadLink.js';
 
 const suDownloader = require('../suDownloader/suDownloader')
@@ -21,16 +21,10 @@ export function clearAllDownloads() {
 	}
 }
 
-export function playAnime(videoFile, animeName, epNumber, posterImg, slug) {
+export function playAnime(animeName, epNumber, posterImg, slug) {
+	window.location.hash = `#/watch/${animeName}/${epNumber}/${posterImg}/${slug}`
 	return {
-		type: 'PLAY_ANIME',
-		 payload: {
-			videoFile,
-			animeName,
-			epNumber,
-			posterImg,
-			slug
-		}
+		type: 'PLAY_ANIME'
 	}
 }
 

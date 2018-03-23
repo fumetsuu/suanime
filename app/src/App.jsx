@@ -31,7 +31,7 @@ export default class App extends Component {
 							<Route path="/downloads" component={DownloadsPage}/>
 							<Route path="/info/:animeName?/:slug?/:animeID?/:malID?" component={InfoPage}/>
 							<Route path="/integration" component={IntegrationPage}/>
-							<Route path="/watch" component={WatchPage}/>
+							<Route path="/watch/:animeName/:epNumber/:posterImg/:slug" component={WatchPage}/>
 							<Route path="/settings" component={SettingsPage}/>
 							<Route path="/about" component={AboutPage}/>
 						</Switch>

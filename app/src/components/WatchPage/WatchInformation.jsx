@@ -173,6 +173,7 @@ class WatchInformation extends Component {
         if(nextEp != -1) {
             var hasNextEp = true
         } else { var hasNextEp = false }
+        console.log(hasPrevEp, hasNextEp)
         this.setState({
             hasPrevEp,
             hasNextEp
@@ -184,7 +185,7 @@ class WatchInformation extends Component {
     }
 
     goNextEp() {
-        
+
     }
 
     getMALInfo() {

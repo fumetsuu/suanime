@@ -240,10 +240,9 @@ class DownloadCard extends Component {
 		let { animeName, animeFilename } = this.props
 		var videoFile = genVideoPath(animeName, animeFilename)
 		var epNumber = this.props.epTitle
-		var posterImg = this.props.posterImg
+		var posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
 		var slug = this.props.epLink.split('watch/')[1].split('/')[0]
-		this.props.playAnime(videoFile, animeName, epNumber, posterImg, slug)
-		window.location.hash = '#/watch'
+		this.props.playAnime(animeName, epNumber, posterImg, slug)
 	}
 
 	clearDownload() {
