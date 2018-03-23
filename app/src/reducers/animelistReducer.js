@@ -39,7 +39,7 @@ export default function reducer(state = defaultState, action) {
             var targetAnimeObj = storedlistdata.find(listDataNode => animeFinder(listDataNode, malID))
             if(updatedObj.my_last_updated) {
                 var newHistoryObj = createHistoryObject(updatedObj, targetAnimeObj)
-                storedmalhistory.push(newHistoryObj)
+                storedmalhistory.unshift(newHistoryObj)
             }
             var animeIndexInList = storedlistdata.indexOf(targetAnimeObj)
             var newAnimeObj = Object.assign({}, targetAnimeObj, updatedObj)
@@ -61,7 +61,7 @@ export default function reducer(state = defaultState, action) {
             var storedlistinfo = global.estore.get('listinfo')
             var malID = action.payload.malID
             var animeObj = action.payload.animeObj
-            storedlistdata.unshift(animeObj)
+            storedlistdata.push(animeObj)
             storedlistinfo[5] = storedlistinfo[5]+1
             global.estore.set({ 'listdata': storedlistdata, 'listinfo': storedlistinfo})
             return Object.assign({}, state, { listdata: storedlistdata, listinfo: storedlistinfo })
