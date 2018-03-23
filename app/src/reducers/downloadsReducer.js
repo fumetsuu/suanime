@@ -15,7 +15,8 @@ export default function reducer(state={
                     animeFilename: action.payload.animeFilename,
                     posterImg: action.payload.posterImg,
                     animeName: action.payload.animeName,
-                    epTitle: action.payload.epTitle
+                    epTitle: action.payload.epTitle,
+                    started: Date.now()
                 }
             }
             var newDL = action.payload.animeFilename
@@ -34,7 +35,8 @@ export default function reducer(state={
                         animeFilename: el.animeFilename,
                         posterImg: el.posterImg,
                         animeName: el.title,
-                        epTitle: el.epTitle
+                        epTitle: el.epTitle,
+                        started: Date.now()
                     }
                 }
             })

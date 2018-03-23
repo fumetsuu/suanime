@@ -51,23 +51,23 @@ class DownloadCard extends Component {
 	componentDidMount() {
 		if(!this.props.completed) {
 			this.checkPersisted()
+			suDownloader.on('error', x => {
+				if(x.key == this.props.animeFilename) {
+					console.log(x.err)
+					this.setState({ status: 'ERROR' })
+				}
+			})
 		}
-    if(!this.downloadItem && !this.props.completed) {
+    	if(!this.downloadItem && !this.props.completed) {
 			suDownloader.on('new_download_started', this.configureDownloadItem)
 			suDownloader.on('new_download_queued', this.configureDownloadItem)
 		}
-		suDownloader.on('error', x => {
-			if(x.key == this.props.animeFilename) {
-				console.log(x.err)
-				this.setState({ status: 'ERROR' })
-			}
-		})
 	}
 
 	componentWillUnmount() {
     this.removeStatusListeners()
     suDownloader.removeListener('new_download_started', this.configureDownloadItem)
-		suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
+	suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
 	if(this.downloadItem && this.state.status != 'FETCHING_URL') {
       this.props.persistDL(this.props.animeFilename, this.state)
     }
@@ -294,7 +294,8 @@ class DownloadCard extends Component {
   }
 
   addStatusListeners() {
-    if(!this.downloadItem) return false
+	if(!this.downloadItem) return false
+	this.removeStatusListeners()
     this.downloadItem
       .on('progress', x => {
         if(x.future.eta == 'Infinity' || isNaN(x.future.eta)) return false

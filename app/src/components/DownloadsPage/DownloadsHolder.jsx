@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DownloadCard from './DownloadCard.jsx'
+import DownloadsFolder from './DownloadsFolder.jsx'
 import { clearAllDownloads } from '../../actions/actions'
 
 const suDownloader = require('../../suDownloader/suDownloader')
@@ -40,7 +41,8 @@ class DownloadsHolder extends Component {
                 <div className="sort-by" onClick={this.clearAll.bind(this)}>Clear All</div>
                 <div className="spacer-horizontal"/>
                 <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
-                <div sortvalue="DATE" onClick={this.setListSort} className={`sort-by${/DATE/.test(listSort)?' sort-by-active':''}`}>Date</div> 
+                <div sortvalue="ADDED" onClick={this.setListSort} className={`sort-by${/ADDED/.test(listSort)?' sort-by-active':''}`}>Date Added</div> 
+                <div sortvalue="DATE" onClick={this.setListSort} className={`sort-by${/DATE/.test(listSort)?' sort-by-active':''}`}>Date Completed</div> 
                 <div sortvalue="SIZE" onClick={this.setListSort} className={`sort-by${/SIZE/.test(listSort)?' sort-by-active':''}`}>Size</div>
                 <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
                 <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
@@ -74,6 +76,7 @@ class DownloadsHolder extends Component {
         var unchangedPropsArray = [...props.downloadsArray, ...props.completedArray]
         if(!alldlPropsArray.length) {
             this.setState({ empty: true })
+            return false
         }
         let { listView, listSort } = this.state
         var orderA = -1, orderB = 1
@@ -90,6 +93,14 @@ class DownloadsHolder extends Component {
                         return a1ep <= a2ep ? orderA : orderB
                     }
                     return a1.props.animeName <= a2.props.animeName ? orderA : orderB
+                })
+                break
+            }
+            case 'ADDED': case 'vADDED': {
+                alldlPropsArray = alldlPropsArray.sort((a1, a2) => {
+                    var a1added = a1.props.started || 0
+                    var a2added = a2.props.started || 0
+                    return a1added <= a2added ? orderA : orderB
                 })
                 break
             }
@@ -126,6 +137,7 @@ class DownloadsHolder extends Component {
                 break
             }
         }
+        if(listView == 'ROWS') { this.updateDisplayRows(alldlPropsArray); return true }
         if(alldlPropsArray.length) {
             alldlPropsArray.forEach(el => {
                 if(props.completedArray.includes(el)) {
@@ -142,6 +154,31 @@ class DownloadsHolder extends Component {
                 }
             })
         }
+        this.setState({ cardsArray })
+    }
+
+    updateDisplayRows(allprops) {
+        var titlesDictionary = []
+        allprops.forEach(el => {
+            var dictionaryIdx = titlesDictionary.findIndex(el1 => el1.animeName == el.props.animeName)
+            if(dictionaryIdx == -1) {
+                titlesDictionary.push({ animeName: el.props.animeName, posterImg: el.props.posterImg, episodes: [el] })
+            } else {
+                titlesDictionary[dictionaryIdx].episodes.push(el)
+            }
+        })
+        var cardsArray = []
+        titlesDictionary.forEach(el => {
+            if(el.episodes.length > 1) {
+                el.episodes.sort((a, b) => {
+                    var aep = parseInt(a.props.epTitle.split('Episode ')[1])
+                    var bep = parseInt(b.props.epTitle.split('Episode ')[1])
+                    return aep <= bep ? -1 : 1
+                })
+            }
+            cardsArray.push(<DownloadsFolder key={el.animeName} data={el}/>)
+        })
+        console.log(titlesDictionary)
         this.setState({ cardsArray })
     }
 

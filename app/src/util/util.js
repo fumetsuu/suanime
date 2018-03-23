@@ -83,6 +83,10 @@ export function genFilename(animeName, episode) {
     return fixFilename(`${animeName} - ${episode}.mp4`)
 }
 
+export function genFolderPath(animeName) {
+    return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`)    
+}
+
 export function genVideoPath(animeName, animeFilename) {
     return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${animeFilename}`)
 }
