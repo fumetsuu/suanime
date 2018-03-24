@@ -18,9 +18,9 @@ Todo
 - [x] mal list stats and info
 - [x] related anime with links on info page
 - [x] open downloads folder from settings
-- [ ] have folders for downloads based on series
+- [x] have folders for downloads based on series
 - [x] select quality preference for downloads
-- [ ] sort downloads by date added
+- [x] sort downloads by date added
 
 ## development
 - [x] refactor home page code
@@ -36,3 +36,4 @@ Todo
 - [x] fix handling mismatch in masterani and mal titles for info and eps (didyoumean2)
 - [x] add added date to downloads (workaround using index of array (order added))
 - [ ] fix episode number/title mess
+- [ ] downloads persistent sort and view
