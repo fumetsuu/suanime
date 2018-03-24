@@ -140,12 +140,13 @@ class DownloadCard extends Component {
 		let speed = isPaused ? '' : this.state.speed
 		let statusColour = isCompleted ? '#51e373' : this.state.status == 'FETCHING_URL' ? '#dadada' : (this.state.status == 'QUEUED' || this.state.status == 'QUEUED_R') ? '#fec42f' :'#f55353'
 		statusColour = this.state.status == 'DOWNLOADING' ? 'transparent' : statusColour
+		let titleclick = isCompleted ? this.playDownload : () => {}		
 		if (viewType == 'ROWS') {
 			return (
 				<div className="download-card-container">
 					<div className="download-card-header">
 						<div className="status-circle" style={{ backgroundColor: statusColour }} />
-						<div className="download-title">
+						<div className={isCompleted ? "download-title hover-blue" : "download-title"} onClick={titleclick}>
 							{animeName} - {epTitle}
 						</div>
 						<div className="download-complete-date">{this.state.completeDate ? toWordDate(this.state.completeDate) : statusText}</div>
@@ -169,7 +170,6 @@ class DownloadCard extends Component {
 				</div>
 			)
 		} else if (viewType == 'COMPACT') {
-			let titleclick = isCompleted ? this.playDownload : () => {}
 			return (
 				<div className="download-card-container download-card-container-compact">
 					<div className="status-circle" style={{ backgroundColor: statusColour }} />

@@ -22,12 +22,11 @@ export default class DownloadsFolder extends Component {
                     </div>
                 </div>
                 <div className={open ? "folder-contents" : "closed"}>
-                    {cardsArray}
+                    {open ? cardsArray : null}
                 </div>
             </div>
         )
     }
-
 
     openFolder() {
         let seriesArray = this.props.data
@@ -46,6 +45,6 @@ export default class DownloadsFolder extends Component {
                 cardsArray.push(<DownloadCard epLink={el.props.epLink} animeFilename={el.props.animeFilename} posterImg={el.props.posterImg} animeName={el.props.animeName} epTitle={el.props.epTitle} key={el.props.animeFilename} persistedState={el.props.persistedState} viewType="ROWS"/>)
             }
         })
-        this.setState({ cardsArray, open: true })
+        this.setState({ cardsArray, open: !this.state.open })
     }
 }

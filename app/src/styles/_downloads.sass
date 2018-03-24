@@ -40,10 +40,6 @@
         .download-title, .download-complete-date, .download-network-data,.download-control-btn
             position: relative
             z-index: 10
-        .hover-blue
-            &:hover
-                cursor: pointer
-                color: $light-blue
         .download-progress-bar-container
             position: absolute
             z-index: 1
@@ -155,10 +151,8 @@
                 font-weight: 400
     .closed
         display: none
-        height: 0
-        padding: 0
     .folder-contents
-        animation: smoothOpen 0.3s
+        height: auto
         padding-bottom: 20px
         .download-card-container
             width: 96%
@@ -172,31 +166,35 @@
             &:nth-child(1)
                 border-top: 1px solid transparentize($light-grey, 0.6)
                 margin-top: 20px
+            &:hover
+                background-color: darken($grey, 2%)
             .download-card-header
                 display: grid
                 height: 38px
                 grid-template-columns: 30px unquote("calc(35% - 90px)") 16% 8% 12% 6% 10% 13% 30px 30px
                 grid-template-rows: 100%
-                padding: 10px 10px 10px 0
                 .status-circle
                     width: 10px
                     height: 10px
                     border-radius: 50%
-                    margin-top: 3px
+                    margin-top: 15px
                     justify-self: center
                 .download-title, .download-network-data, .download-complete-date
                     font-family: 'Lato'
                     font-weight: 400
                     font-size: 12px
+                    line-height: 40px
                 .download-control-btn
                     width: 30px
                     height: 30px
                     text-align: center
                     user-select: none
+                    margin-top: 5px
                     &:hover
                         cursor: pointer
                         background-color: lighten($grey, 5%)
                     .material-icons
+                        line-height: 30px
                         font-size: 16px
             .download-progress-bar-container
                 width: 100%
@@ -206,9 +204,3 @@
                 .download-progress-bar
                     height: 2px
                     background-color: $light-blue
-
-@keyframes smoothOpen
-    from
-        height: 0
-    to
-        height: 100%
