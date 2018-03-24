@@ -1,6 +1,7 @@
 import React from 'react'
 
 export default function reducer(state = {
+    videoParams: {},
     showSideNav: true,
     watching: false,
     fixWidth: 1,
@@ -9,7 +10,8 @@ export default function reducer(state = {
     switch(action.type) {
         case "PLAY_ANIME": {
             return Object.assign({}, state, {
-                watching: true
+                watching: true,
+                videoParams: action.payload
             })
         }
         case "TOGGLE_SIDENAV": {
