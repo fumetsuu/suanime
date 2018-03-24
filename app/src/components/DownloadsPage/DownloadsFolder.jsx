@@ -21,7 +21,7 @@ export default class DownloadsFolder extends Component {
                         <div className="folder-data">extra info</div>
                     </div>
                 </div>
-                <div className="folder-contents" style={{ height: open ? 'auto' : '0px' }}>
+                <div className={open ? "folder-contents" : "closed"}>
                     {cardsArray}
                 </div>
             </div>
