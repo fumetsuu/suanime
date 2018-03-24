@@ -21,6 +21,7 @@ Todo
 - [x] have folders for downloads based on series
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
+- [ ] scan downloads folder for files
 
 ## development
 - [x] refactor home page code
