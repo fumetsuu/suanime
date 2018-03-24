@@ -113,13 +113,18 @@
 .downloads-folder
     width: 100%
     height: auto
-    background: linear-gradient(165deg, $grey, $black)
+    background-color: $black
+    &:nth-child(odd)
+        background-color: lighten($black, 3%)
+    .active
+        background-color: lighten($dark-grey, 3%)
+        box-shadow: 1px 1px 10px 1px $black
+        &:hover
+            background-color: $dark-grey !important
     .folder-container
         width: 100%
         position: relative
         height: 100px
-        background-color: $black
-        margin-top: 15px
         display: grid
         grid-template-columns: 70px auto
         grid-template-rows: 100%
@@ -162,9 +167,9 @@
             display: grid
             grid-template-columns: 100%
             grid-template-rows: 38px 2px
-            border-bottom: 1px solid transparentize($light-grey, 0.6)
+            border-bottom: 1px solid transparentize($light-grey, 0.9)
             &:nth-child(1)
-                border-top: 1px solid transparentize($light-grey, 0.6)
+                border-top: 1px solid transparentize($light-grey, 0.9)
                 margin-top: 20px
             &:hover
                 background-color: darken($grey, 2%)

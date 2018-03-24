@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 
 export function convertMS(ms) {
     var d, h, m, s, Mo, y
@@ -89,6 +90,15 @@ export function genFolderPath(animeName) {
 
 export function genVideoPath(animeName, animeFilename) {
     return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${animeFilename}`)
+}
+
+export function promisefsStat(file) {
+    return new Promise((resolve, reject) => {
+        fs.stat(file, (err, stats) => {
+            if(err) return reject(err)
+            return resolve(stats)
+        })
+    })
 }
 
 export function toWordDate(date) {
