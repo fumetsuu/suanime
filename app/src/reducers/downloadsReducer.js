@@ -4,7 +4,11 @@ export default function reducer(state={
     downloadsArray: [],
     downloading: [],
     completed: [],
-    completedArray: []
+    completedArray: [],
+    persistedDLState: {
+        listView: 'COMPACT',
+        listSort: 'vADDED'
+    }
 }, action) {
     switch(action.type) {
         case "QUEUE_DOWNLOAD": {
@@ -91,6 +95,15 @@ export default function reducer(state={
             global.estore.set("storedDownloadsArray", newDownloadsArray)
             return Object.assign({}, state, {
                 downloadsArray: newDownloadsArray
+            })
+        }
+        case "PERSIST_DL_STATE": {
+            let { listView, listSort } = action.payload
+            return Object.assign({}, state, {
+                persistedDLState: {
+                    listView,
+                    listSort
+                }
             })
         }
         case "CLEAR_DOWNLOAD": {

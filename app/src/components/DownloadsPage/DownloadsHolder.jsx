@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DownloadCard from './DownloadCard.jsx'
 import DownloadsFolder from './DownloadsFolder.jsx'
-import { clearAllDownloads } from '../../actions/actions'
+import { clearAllDownloads, persistDLState } from '../../actions/actions'
 
 const suDownloader = require('../../suDownloader/suDownloader')
 
@@ -12,8 +12,8 @@ class DownloadsHolder extends Component {
         this.state = {
             cardsArray: [],
             empty: false,
-            listView: 'COMPACT',
-            listSort: 'DATE'
+            listView: props.listView,
+            listSort: props.listSort
         }
         this.setListView = this.setListView.bind(this)
         this.setListSort = this.setListSort.bind(this)
@@ -57,6 +57,7 @@ class DownloadsHolder extends Component {
         this.setState({ listView }, () => {
             this.updateDisplay()
         })
+        this.props.persistDLState(listView, this.state.listSort)
     }
 
     setListSort(e) {
@@ -67,6 +68,7 @@ class DownloadsHolder extends Component {
         this.setState({ listSort }, () => {
             this.updateDisplay()
         })
+        this.props.persistDLState(this.state.listView, listSort)
     }
 
     updateDisplay(passedProps) {
@@ -202,13 +204,16 @@ class DownloadsHolder extends Component {
 const mapStateToProps = state => {
   return {
     downloadsArray: state.downloadsReducer.downloadsArray,
-    completedArray: state.downloadsReducer.completedArray
+    completedArray: state.downloadsReducer.completedArray,
+    listView: state.downloadsReducer.persistedDLState.listView,
+    listSort: state.downloadsReducer.persistedDLState.listSort
   }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        clearAllDownloads: () => dispatch(clearAllDownloads())
+        clearAllDownloads: () => dispatch(clearAllDownloads()),
+        persistDLState: (listView, listSort) => dispatch(persistDLState(listView, listSort))
     }
 }
 

@@ -134,12 +134,16 @@ function suDownloadItem(options) {
         this.calculateStats()
         if(this.stats.present.deltaDownloaded == 0) {
             this.timesZero++
+            if(this.timesZero == 20) {
+                this.pause()
+                this.restartInterval = setInterval(() => {
+                    this.downloadFromExisting()
+                }, 5000)
+                return false
+            }
         } else {
             this.timesZero = 0
-        }
-        if(this.timesZero == 10) {
-            this.pause()
-            return false
+            if(this.restartInterval) clearInterval(this.restartInterval)
         }
         this.emit('progress', this.stats)
         if(this.stats.total.completed == 100) {

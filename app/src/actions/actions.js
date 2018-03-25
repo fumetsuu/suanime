@@ -174,6 +174,16 @@ export function persistMAL(listStatus, listSort, listView) {
 	}
 }
 
+export function persistDLState(listView, listSort) {
+	return {
+		type: "PERSIST_DL_STATE",
+		payload: {
+			listView,
+			listSort
+		}
+	}
+}
+
 export function savelist(listdata, listinfo) {
 	return {
 		type: "SAVE_LIST",
