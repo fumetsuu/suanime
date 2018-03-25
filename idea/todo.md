@@ -38,3 +38,4 @@ Todo
 - [x] add added date to downloads (workaround using index of array (order added))
 - [ ] fix episode number/title mess
 - [ ] downloads persistent sort and view
+- [ ] write new downloader to replace mtd
