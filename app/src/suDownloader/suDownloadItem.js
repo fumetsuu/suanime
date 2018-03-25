@@ -23,6 +23,7 @@ function suDownloadItem(options) {
     }
 
     this.retried = 0
+    this.timesZero = 0
 
     this.stats = {
         time: {
@@ -38,6 +39,7 @@ function suDownloadItem(options) {
             downloaded: 0
         },
         present: {
+            deltaDownloaded: 0,
             downloaded: 0,
             time: 0,
             speed: 0,
@@ -77,7 +79,9 @@ function suDownloadItem(options) {
         .take(1)
         .subscribe(
             x => {
+                this.retried = 0
                 this.emit('start', x)
+                this.updateInterval = setInterval(this.handleProgress, dlopts.throttleRate)
             },
             err => {
                 this.handleError(err)
@@ -88,9 +92,7 @@ function suDownloadItem(options) {
         .take(1)
         .subscribe(
             response => {
-                this.retried = 0
                 this.calculateInitialStats(response)
-                this.updateInterval = setInterval(this.handleProgress, dlopts.throttleRate)
             },
             err => { 
                 this.handleError(err)
@@ -111,7 +113,10 @@ function suDownloadItem(options) {
     }
 
     this.pause = () => {
-        clearInterval(this.updateInterval)
+        if(this.updateInterval) {
+            clearInterval(this.updateInterval)
+            this.updateInterval = null
+        }
         this.status = 'PAUSED'
         this.emit('pause')
         if(this.progressSubscription) {
@@ -120,12 +125,22 @@ function suDownloadItem(options) {
     }
 
     this.restart = () => {
+        console.log("restarting ===============")
         this.pause()
         this.downloadFromExisting()
     }
 
     this.handleProgress = () => {
         this.calculateStats()
+        if(this.stats.present.deltaDownloaded == 0) {
+            this.timesZero++
+        } else {
+            this.timesZero = 0
+        }
+        if(this.timesZero == 10) {
+            this.pause()
+            return false
+        }
         this.emit('progress', this.stats)
         if(this.stats.total.completed == 100) {
             if(this.progressSubscription) {
@@ -205,7 +220,13 @@ function suDownloadItem(options) {
     }
     
     this.calculateTotalDownloaded = () => {
+        if(!this.stats.total.downloaded) {
+            this.stats.present.deltaDownloaded = this.stats.past.downloaded
+        } else {
+            this.stats.present.deltaDownloaded = this.stats.total.downloaded
+        }
         this.stats.total.downloaded = this.calculateDownloaded()
+        this.stats.present.deltaDownloaded = this.stats.total.downloaded - this.stats.present.deltaDownloaded
     }
 
     this.calculateTotalCompleted = () => {

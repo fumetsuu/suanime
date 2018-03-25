@@ -16,7 +16,7 @@ export default class DownloadsFolder extends Component {
     }
 
     componentDidMount() {
-        this.infoTO = setTimeout(this.getExtraInfo.bind(this), 1000)
+        this.infoTO = setTimeout(this.getExtraInfo.bind(this), 1)  //faster load time
     }
 
     componentWillUnmount() {
