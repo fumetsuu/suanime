@@ -21,7 +21,6 @@ Todo
 - [x] have folders for downloads based on series
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
-- [ ] scan downloads folder for files
 - [x] add labels for download's fields
 
 ## development
