@@ -153,7 +153,7 @@ class DownloadCard extends Component {
 						<div className="download-network-data download-speed">{speed}</div>
 						<div className="download-network-data download-size">{downloadSize}</div>
 						<div className="download-network-data download-percentage">{percentage}</div>
-						<div className="download-network-data download-elapsed">{this.state.elapsed}</div>
+						<div className="download-network-data download-elapsed">{isCompleted ? '' : this.state.elapsed}</div>
 						<div className="download-network-data download-remaining">{remaining}</div>
 						<div className={controlClass} onClick={controlAction}>
 							<i className="material-icons">{controlIcon}</i>
@@ -183,7 +183,7 @@ class DownloadCard extends Component {
 					<div className="download-network-data download-speed">{speed}</div>
 					<div className="download-network-data download-size">{downloadSize}</div>
 					<div className="download-network-data download-percentage">{percentage}</div>
-					<div className="download-network-data download-elapsed">{this.state.elapsed}</div>
+					<div className="download-network-data download-elapsed">{isCompleted ? '' : this.state.elapsed}</div>
 					<div className="download-network-data download-remaining">{remaining}</div>
 					<div className={controlClass} onClick={controlAction}>
 						<i className="material-icons">{controlIcon}</i>

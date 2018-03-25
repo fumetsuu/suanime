@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DownloadCard from './DownloadCard.jsx'
 import DownloadsFolder from './DownloadsFolder.jsx'
+import DownloadLabels from './DownloadLabels.jsx'
 import { clearAllDownloads, persistDLState } from '../../actions/actions'
 
 const suDownloader = require('../../suDownloader/suDownloader')
@@ -47,7 +48,7 @@ class DownloadsHolder extends Component {
                 <div viewvalue="COMPACT" className={`view-mode square${listView == 'COMPACT'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_headline</i></div>
                 <div viewvalue="ROWS" className={`view-mode square${listView == 'ROWS'?' view-mode-active':''}`} onClick={this.setListView}><i className="material-icons">view_list</i></div>
             </div>
-            {cardsArray}
+            {listView == 'COMPACT' ? [<DownloadLabels/>, ...cardsArray] : cardsArray}
         </div>
         )
     }
