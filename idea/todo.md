@@ -22,7 +22,7 @@ Todo
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
 - [ ] scan downloads folder for files
-- [ ] add labels for download's fields
+- [x] add labels for download's fields
 
 ## development
 - [x] refactor home page code
