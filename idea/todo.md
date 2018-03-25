@@ -38,5 +38,5 @@ Todo
 - [x] fix handling mismatch in masterani and mal titles for info and eps (didyoumean2)
 - [x] add added date to downloads (workaround using index of array (order added))
 - [ ] fix episode number/title mess
-- [ ] downloads persistent sort and view
+- [x] downloads persistent sort and view
 - [ ] write new downloader to replace mtd
