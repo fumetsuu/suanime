@@ -21,6 +21,7 @@ Todo
 - [x] have folders for downloads based on series
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
+- [ ] scan downloads folder for files
 
 ## development
 - [x] refactor home page code
@@ -37,3 +38,4 @@ Todo
 - [x] add added date to downloads (workaround using index of array (order added))
 - [ ] fix episode number/title mess
 - [ ] downloads persistent sort and view
+- [ ] write new downloader to replace mtd
