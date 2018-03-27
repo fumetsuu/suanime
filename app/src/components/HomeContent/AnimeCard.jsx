@@ -26,7 +26,7 @@ class AnimeCard extends Component {
     let { title, link, poster, lastEp, timeago } = this
     var downloadClass = "dp-btn"
     var playClass = "none"
-    var fn = `${title} - ${lastEp}`.replace(/[\\/:"*?<>|]+/, '')+'.mp4'
+    var fn = genFilename(title, lastEp)
     if(this.props.downloading.includes(fn)) {
       downloadClass = "none"
       playClass = "dp-btn disabled"

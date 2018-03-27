@@ -131,7 +131,7 @@ class DownloadCard extends Component {
 				break
 			}
 		}
-		let { viewType, animeName, epTitle, posterImg } = this.props
+		let { viewType, animeName, epTitle } = this.props
 		let isCompleted = this.state.status == 'COMPLETED'
 		let isPaused = this.state.status == 'PAUSED' || this.state.status == 'QUEUED' || this.state.status == 'QUEUED_R'
 		let downloadSize = isCompleted ? this.state.progressSize : this.state.progressSize + '/' + this.state.totalSize

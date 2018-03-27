@@ -134,7 +134,7 @@ function suDownloadItem(options) {
         this.calculateStats()
         if(this.stats.present.deltaDownloaded == 0) {
             this.timesZero++
-            if(this.timesZero == 20) {
+            if(this.timesZero == 50) {
                 this.pause()
                 this.restartInterval = setInterval(() => {
                     this.downloadFromExisting()

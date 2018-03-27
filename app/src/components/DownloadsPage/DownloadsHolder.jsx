@@ -181,7 +181,6 @@ class DownloadsHolder extends Component {
             }
             cardsArray.push(<DownloadsFolder key={el.animeName} data={el} completedArray={this.props.completedArray}/>)
         })
-        console.log(titlesDictionary)
         this.setState({ cardsArray })
     }
 
