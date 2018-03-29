@@ -50,7 +50,8 @@ class SeasonalSchedule extends Component {
                 match[0]
                     .split('args = ')[1]
                     .replace(/schedules: \[/, '"schedules": [')
-                    .replace(/watching: \[/, '"watching": [')
+                    .split(', watching: [')[0]
+                    + '}'
             )
             this.cardsFromData(scheduledata)
         })
