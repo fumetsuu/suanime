@@ -22,6 +22,7 @@ Todo
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
 - [x] add labels for download's fields
+- [ ] automatically start downloading watching anime
 
 ## development
 - [x] refactor home page code
