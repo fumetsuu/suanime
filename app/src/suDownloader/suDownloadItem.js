@@ -1,274 +1,274 @@
-const fs = require('fs')
+const fs = require('graceful-fs')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
-const muxer = require('muxer')
-const mtd = require('mt-downloader')
+const suD = require('./su-downloader2')
 
 function suDownloadItem(options) {
-    util.inherits(suDownloadItem, EventEmitter)
+	util.inherits(suDownloadItem, EventEmitter)
 
-    this.meta = {}
+	this.meta = {}
 
-    this.status = 'NOT YET STARTED'
-    
-    this.options = {
-        key: options.key,
-        url: options.url,
-        path: options.path,
-        temppath: options.temppath,
-        mtdpath: mtd.MTDPath(options.path),
-        range: options.range || 1,
-        throttleRate: options.throttleRate || 501,
-        retry: options.retry || 5
-    }
+	this.status = 'NOT YET STARTED'
+	
+	this.options = {
+		key: options.key,
+		url: options.url,
+		path: options.path,
+		sudPath: suD.sudPath(options.path),
+		throttleRate: options.throttleRate || 500,
+		retry: options.retry || 5,
+		concurrent: options.concurrent || 4
+	}
 
-    this.retried = 0
-    this.timesZero = 0
+	this.retried = 0
 
-    this.stats = {
-        time: {
-            start: 0,
-            end: 0
-        },
-        total: {
-            size: 0,
-            downloaded: 0,
-            completed: 0
-        },
-        past: {
-            downloaded: 0
-        },
-        present: {
-            deltaDownloaded: 0,
-            downloaded: 0,
-            time: 0,
-            speed: 0,
-            averageSpeed: 0
-        },
-        future: {
-            remaining: 0,
-            eta: 0
-        }
-    }
+	this.retryTimeouts = []
 
-    this.start = () => {
-        this.status = 'DOWNLOADING'
-        let dlopts = this.options
-        fs.access(dlopts.mtdpath, err => {
-            if(!err) {
-                this.downloadFromExisting()
-            } else {
-                this.initDownloader = mtd.CreateMTDFile({ url: dlopts.url, path: dlopts.path, range: dlopts.range, metaWrite: dlopts.throttleRate }).subscribe(
-                    () => {},
-                    err => { if(err) throw err },
-                    () => { this.downloadFromExisting() }
-                )
-            }
+	this.started = false
 
-            this.calculateStartTime()
-        })
-    }
+	this.stats = {
+		time: {
+			start: 0,
+			end: 0
+		},
+		total: {
+			size: 0,
+			downloaded: 0,
+			completed: 0
+		},
+		past: {
+			downloaded: 0
+		},
+		present: {
+			deltaDownloaded: 0,
+			downloaded: 0,
+			time: 0,
+			speed: 0,
+			averageSpeed: 0
+		},
+		future: {
+			remaining: 0,
+			eta: 0
+		}
+	}
 
-    this.downloadFromExisting = () => {
-        this.status = 'DOWNLOADING'
-        let dlopts = this.options
-        this.mtDownloader = mtd.DownloadFromMTDFile(dlopts.mtdpath)
-        let [{response$, meta$}] = muxer.demux(this.mtDownloader, 'response$', 'meta$')
+	this.start = () => {
+		if(this.status == 'DOWNLOADING') return false
+		this.status = 'DOWNLOADING'
+		let { sudPath, url, throttleRate, concurrent } = this.options
+		let dlPath = this.options.path
+		fs.access(sudPath, err => {
+			if(!err) this.downloadFromExisting()
+			else { 
+				suD.initiateDownload({ url, path: dlPath, concurrent })
+					.subscribe(x => {
+						this.setMeta(x)
+						this.calculateInitialStats(x)
+						this.initialClock = setInterval(this.calculatePresentTime, throttleRate)
+						this.started = true
+						this.downloadFromExisting()
+					},
+					this.handleError
+					)
+			}
 
-        response$
-        .take(1)
-        .subscribe(
-            x => {
-                this.retried = 0
-                this.emit('start', x)
-                this.updateInterval = setInterval(this.handleProgress, dlopts.throttleRate)
-            },
-            err => {
-                this.handleError(err)
-            }
-        )
-        
-        meta$
-        .take(1)
-        .subscribe(
-            response => {
-                this.calculateInitialStats(response)
-            },
-            err => { 
-                this.handleError(err)
-            }
-        )
+			this.calculateStartTime()
+		})
+	}
 
-        this.progressSubscription = meta$
-        .subscribe(
-            response => {
-                this.setMeta(response)
-            },
-            err => { 
-                this.handleError(err)
-             },
-            () => console.log(dlopts.key, ' finished early ?')
-        )
+	this.downloadFromExisting = () => {
+		this.status = 'DOWNLOADING'
+		let { sudPath, throttleRate } = this.options
+		const meta$ = suD.startDownload(sudPath)
 
-    }
+		this.progressSubscription = meta$
+			.subscribe(
+				response => {
+					this.setMeta(response)
+					if(!this.updateInterval) {
+						if(this.initialClock) clearInterval(this.initialClock)
+						if(!this.started) {
+							this.calculateInitialStats(response)
+							this.started = true
+						}
+						this.updateInterval = setInterval(this.handleProgress, throttleRate)
+					}
+				},
+				this.handleError,
+				this.handleFinishDownload
+			)
 
-    this.pause = () => {
-        if(this.updateInterval) {
-            clearInterval(this.updateInterval)
-            this.updateInterval = null
-        }
-        this.status = 'PAUSED'
-        this.emit('pause')
-        if(this.progressSubscription) {
-            this.progressSubscription.dispose()
-        }
-    }
+	}
 
-    this.restart = () => {
-        console.log("restarting ===============")
-        this.pause()
-        this.downloadFromExisting()
-    }
+	this.pause = () => {
+		this.clearUpdateInterval()
+		this.status = 'PAUSED'
+		this.emit('pause')
+		if(this.progressSubscription) {
+			this.progressSubscription.unsubscribe()
+		}
+	}
 
-    this.handleProgress = () => {
-        this.calculateStats()
-        if(this.stats.present.deltaDownloaded == 0) {
-            this.timesZero++
-            if(this.timesZero == 50) {
-                this.pause()
-                this.restartInterval = setInterval(() => {
-                    this.downloadFromExisting()
-                }, 5000)
-                return false
-            }
-        } else {
-            this.timesZero = 0
-            if(this.restartInterval) clearInterval(this.restartInterval)
-        }
-        this.emit('progress', this.stats)
-        if(this.stats.total.completed == 100) {
-            if(this.progressSubscription) {
-                this.progressSubscription.dispose()
-            }
-            this.handleFinishDownload()
-        }
-    }
+	this.clearUpdateInterval = () => {
+		if(this.updateInterval) {
+			clearInterval(this.updateInterval)
+			this.updateInterval = null
+		}
+	}
 
-    //region STATS CALCULATION FUNCTIONS
-    this.setMeta = meta => {
-        let { range, totalBytes, threads, offsets } = meta
-        this.meta = { range, totalBytes, threads, offsets }
-    }
+	this.clearRetryTimeouts = () => {
+		this.retryTimeouts.forEach(clearTimeout)
+	}
 
-    this.calculateInitialStats = data => {
-        let { range, totalBytes, threads, offsets } = data
-        this.meta = { range, totalBytes, threads, offsets }
-        this.calculateStartTime()
-        this.calculatePastDownloaded()
-        this.calculateTotalSize()
-    }
+	this.clearAllFiles = () => {
+		let { threads } = this.meta
+		var unlinkPromise = threads.map((t, i) => suD.partialPath(this.meta.path, i))
+		return new Promise((resolve, reject) => {
+			Promise.all(unlinkPromise).then(() => {
+				fs.unlinkSync(this.meta.sudPath)
+				return resolve()
+			}).catch(err => { if(err) return reject(err) })
+		})
+	}
 
-    this.calculateStats = () => {
-        this.calculateTotalDownloaded()
-        this.calculateTotalCompleted()
-        this.calculatePresentDownloaded()
-        this.calculatePresentTime()
-        this.calculateSpeeds()
-        this.calculateFutureRemaining()
-        this.calculateFutureEta()
-    }
+	this.restart = () => {
+		this.pause()
+		this.downloadFromExisting()
+	}
 
-    this.handleFinishDownload = () => {
-        this.calculateTotalDownloaded()
-        this.calculateTotalCompleted()
-        this.calculatePresentDownloaded()
-        this.calculateEndTime()
-        this.calculateSpeeds()
-        this.calculateFutureRemaining()
-        this.calculateFutureEta()
-        fs.rename(this.options.mtdpath, this.options.path, () => { 
-            clearInterval(this.updateInterval)
-            this.emit('finish', this.stats)
-            })       
-    }
+	this.handleProgress = () => {
+		this.calculateStats()
+		this.clearRetryTimeouts()
+		if(this.stats.present.deltaDownloaded == 0) this.clearUpdateInterval()
+		else this.emit('progress', this.stats)
+	}
 
-    this.calculateDownloaded = () => {
-        let { threads, offsets } = this.meta
+	//region STATS CALCULATION FUNCTIONS
+	this.setMeta = meta => {
+		let { filesize, threads, positions } = meta
+		this.meta = { filesize, threads, positions }
+	}
 
-        if(!threads) { return 0 }
+	this.calculateInitialStats = data => {
+		let { filesize, threads, positions } = data
+		this.meta = { filesize, threads, positions }
+		this.calculateStartTime()
+		this.calculatePastDownloaded()
+		this.calculateTotalSize()
+	}
 
-        let downloaded = 0
-        threads.forEach((thread, idx) => {
-            downloaded += offsets[idx] - thread[0]
-        })
+	this.calculateStats = () => {
+		this.calculateTotalDownloaded()
+		this.calculateTotalCompleted()
+		this.calculatePresentDownloaded()
+		this.calculatePresentTime()
+		this.calculateSpeeds()
+		this.calculateFutureRemaining()
+		this.calculateFutureEta()
+	}
 
-        return downloaded
-    }
+	this.handleFinishDownload = () => {
+		this.calculateTotalDownloaded()
+		this.calculateTotalCompleted()
+		this.calculatePresentDownloaded()
+		this.calculateEndTime()
+		this.calculateSpeeds()
+		this.calculateFutureRemaining()
+		this.calculateFutureEta()
+		this.clearUpdateInterval()
+		this.emit('finish', this.stats)
+	}
 
-    this.calculateStartTime = () => {
-        if(!this.stats.time.start) {
-            this.stats.time.start = Math.floor(Date.now())
-        }
-    }
+	this.calculateDownloaded = () => {
+		let { threads, positions } = this.meta
 
-    this.calculateEndTime = () => {
-        this.stats.time.end = Math.floor(Date.now())
-    }
+		if(!threads || !positions) { return 0 }
 
-    this.calculatePastDownloaded = () => {
-        this.stats.past.downloaded = this.calculateDownloaded()
-    }
+		let downloaded = 0
+		threads.forEach((thread, idx) => {
+			downloaded += positions[idx] - thread[0]
+		})
 
-    this.calculateTotalSize = () => {
-        this.stats.total.size = this.meta.totalBytes
-    }
-    
-    this.calculateTotalDownloaded = () => {
-        if(!this.stats.total.downloaded) {
-            this.stats.present.deltaDownloaded = this.stats.past.downloaded
-        } else {
-            this.stats.present.deltaDownloaded = this.stats.total.downloaded
-        }
-        this.stats.total.downloaded = this.calculateDownloaded()
-        this.stats.present.deltaDownloaded = this.stats.total.downloaded - this.stats.present.deltaDownloaded
-    }
+		return downloaded
+	}
 
-    this.calculateTotalCompleted = () => {
-        let { downloaded, size } = this.stats.total
-        this.stats.total.completed = 100*downloaded / size
-    }
+	this.calculateStartTime = () => {
+		if(!this.stats.time.start) {
+			this.stats.time.start = Math.floor(Date.now())
+		}
+	}
 
-    this.calculatePresentDownloaded = () => {
-        this.stats.present.downloaded = this.stats.total.downloaded - this.stats.past.downloaded
-    }
+	this.calculateEndTime = () => {
+		this.stats.time.end = Math.floor(Date.now())
+	}
 
-    this.calculatePresentTime = () => {
-        this.stats.present.time += this.options.throttleRate
-    }
+	this.calculatePastDownloaded = () => {
+		this.stats.past.downloaded = this.calculateDownloaded()
+	}
 
-    this.calculateSpeeds = () => {
-        this.stats.present.averageSpeed = 1000*this.stats.present.downloaded / this.stats.present.time
-        this.stats.present.speed = this.stats.present.averageSpeed
-    }
+	this.calculateTotalSize = () => {
+		this.stats.total.size = this.meta.filesize
+	}
+	
+	this.calculateTotalDownloaded = () => {
+		if(!this.stats.total.downloaded) {
+			this.stats.present.deltaDownloaded = this.stats.past.downloaded
+		} else {
+			this.stats.present.deltaDownloaded = this.stats.total.downloaded
+		}
+		this.stats.total.downloaded = this.calculateDownloaded()
+		this.stats.present.deltaDownloaded = this.stats.total.downloaded - this.stats.present.deltaDownloaded
+	}
 
-    this.calculateFutureRemaining = () => {
-        this.stats.future.remaining = this.stats.total.size - this.stats.total.downloaded
-    }
+	this.calculateTotalCompleted = () => {
+		let { downloaded, size } = this.stats.total
+		this.stats.total.completed = 100*downloaded / size
+	}
 
-    this.calculateFutureEta = () => {
-        this.stats.future.eta = this.stats.future.remaining / this.stats.present.averageSpeed
-    }
-    //endregion
+	this.calculatePresentDownloaded = () => {
+		this.stats.present.downloaded = this.stats.total.downloaded - this.stats.past.downloaded
+	}
 
-    this.handleError = err => {
-        this.emit('error', err)
-        if(this.retried < this.options.retry) {
-            this.restart()
-            this.retried++
-        } else {
-            this.pause()
-        }
-    }
+	this.calculatePresentTime = () => {
+		this.stats.present.time += this.options.throttleRate / 1000
+	}
+
+	this.calculateSpeeds = () => {
+		this.stats.present.averageSpeed = this.stats.present.downloaded / this.stats.present.time
+		this.stats.present.speed = this.stats.present.averageSpeed
+	}
+
+	this.calculateFutureRemaining = () => {
+		this.stats.future.remaining = this.stats.total.size - this.stats.total.downloaded
+	}
+
+	this.calculateFutureEta = () => {
+		this.stats.future.eta = this.stats.future.remaining / this.stats.present.averageSpeed
+	}
+	//endregion
+
+	this.handleError = err => {
+		if(this.retried == this.options.retry) {
+			this.emit('error', err)
+			return false
+		}
+		if(err.code == 'ENOTFOUND' || err.code == 'ECONNRESET') {
+			var retryTimeout = setTimeout(this.restart, 5000 * (1 + this.retried))
+			this.retryTimeouts.push(retryTimeout)
+			this.retried++
+		} else {
+			this.pause()
+		}
+	}
+}
+
+function fsUnlink(file) {
+	return new Promise((resolve, reject) => {
+		fs.unlink(file, err => {
+			if(err) return reject(err)
+			return resolve(true)
+		})
+	})
 }
 
 module.exports = suDownloadItem

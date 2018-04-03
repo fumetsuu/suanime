@@ -30,11 +30,12 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
 	getDownloadLink(epLink).then(downloadURL => {
+		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 		const dlOptions = {
 			key: animeFilename,
-			temppath: path.join(global.tempDLPath, fixFilename(animeFilename)),
 			path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
-			url: downloadURL
+			url: downloadURL,
+			concurrent
 		}
 		console.log(suDownloader)
 		suDownloader.QueueDownload(dlOptions)

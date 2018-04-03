@@ -68,7 +68,7 @@ export default class DownloadsFolder extends Component {
         fs.readdir(folder, (err, files) => {
             if(err) { console.log(err); return false }
             files.forEach(file => {
-                if(!file.endsWith('.mtd')) {
+                if(file.endsWith('.mp4')) {
                     fileCount++
                     availableEps.push(parseInt(file.split(`${fixFilename(animeName)} - `)[1]))
                 }

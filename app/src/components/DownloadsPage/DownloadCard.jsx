@@ -104,12 +104,6 @@ class DownloadCard extends Component {
 				controlAction = this.continueDownload
 				break
 			}
-			case 'ERROR': {
-				controlIcon = 'play_arrow'
-				statusText = 'Error - 404'
-				controlAction = this.startDownload
-				break
-			}
 			case 'FETCHING_URL': {
 				controlIcon = 'pause'
 				controlClass = 'download-control-btn disabled'
@@ -201,10 +195,12 @@ class DownloadCard extends Component {
 			this.setState({ status: 'FETCHING_URL' })
 			let { animeFilename, animeName, epLink } = this.props
 			getDownloadLink(epLink).then(downloadURL => {
+			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18				
 				const dlOptions = {
 					key: animeFilename,
 					path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
-					url: downloadURL
+					url: downloadURL,
+					concurrent
 				}
 				console.log(suDownloader)
 				suDownloader.QueueDownload(dlOptions)
@@ -253,8 +249,8 @@ class DownloadCard extends Component {
 		
 	checkPersisted() {
 		let downloadItem = suDownloader.getActiveDownload(this.props.animeFilename)
-		var mtdpath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.mtd`)
-		if(downloadItem && fs.existsSync(mtdpath)) {
+		var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
+		if(downloadItem && fs.existsSync(sudPath)) {
 			if(downloadItem.status != 'DOWNLOADING') {
 				this.setState({ status: 'QUEUED_R' })
 			}
@@ -296,13 +292,12 @@ class DownloadCard extends Component {
 	this.removeStatusListeners()
     this.downloadItem
       .on('progress', x => {
-        if(x.future.eta == 'Infinity' || isNaN(x.future.eta)) return false
         var status = 'DOWNLOADING'
         var speed = bytes(x.present.speed) + '/s'
         var progressSize = bytes(x.total.downloaded)
         var totalSize = bytes(x.total.size)
         var percentage = (x.total.completed).toFixed(2)
-        var elapsed = convertSec(Math.round((x.present.time / 1000)))
+        var elapsed = convertSec(Math.round(x.present.time))
         var remaining = convertSec(Math.round(x.future.eta))
         this.setState({
           status,
@@ -314,20 +309,20 @@ class DownloadCard extends Component {
           remaining
         })
       })
-			.on('error', err => console.log('err: ', err))
-			.on('pause', () => this.setState({ status: 'PAUSED' }))
-			.on('finish', x => { 
-				this.setState({
-					status: 'COMPLETED',
-					speed: '',
-					progressSize: bytes(x.total.size),
-					percentage: '100',
-					remaining: '0',
-					elapsed: convertSec(Math.round(x.present.time / 1000)),
-					completeDate: Date.now()
-				})
-				this.removeStatusListeners()
+		.on('error', err => console.log('err: ', err))
+		.on('pause', () => this.setState({ status: 'PAUSED' }))
+		.on('finish', x => { 
+			this.setState({
+				status: 'COMPLETED',
+				speed: '',
+				progressSize: bytes(x.total.size),
+				percentage: '100',
+				remaining: '0',
+				elapsed: convertSec(Math.round(x.present.time)),
+				completeDate: Date.now()
 			})
+			this.removeStatusListeners()
+		})
   }
 }
 

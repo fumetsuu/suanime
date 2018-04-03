@@ -7,7 +7,7 @@ export default function reducer(state={
     completedArray: [],
     persistedDLState: {
         listView: 'COMPACT',
-        listSort: 'vADDED'
+        listSort: 'v`ADDED'
     }
 }, action) {
     switch(action.type) {
