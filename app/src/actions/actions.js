@@ -31,7 +31,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
-	getDownloadLink(epLink).then(downloadURL => {
+	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 		const dlOptions = {
 			key: animeFilename,

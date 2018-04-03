@@ -194,7 +194,7 @@ class DownloadCard extends Component {
 		if(this.state.status == 'ERROR') {
 			this.setState({ status: 'FETCHING_URL' })
 			let { animeFilename, animeName, epLink } = this.props
-			getDownloadLink(epLink).then(downloadURL => {
+			getDownloadLink(epLink, global.estoree.get('downloadHD')).then(downloadURL => {
 			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18				
 				const dlOptions = {
 					key: animeFilename,
