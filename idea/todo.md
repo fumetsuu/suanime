@@ -23,6 +23,7 @@ Todo
 - [x] sort downloads by date added
 - [x] add labels for download's fields
 - [ ] automatically start downloading watching anime
+- [ ] scan files in downloads folder and add to library
 
 ## development
 - [x] refactor home page code
