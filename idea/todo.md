@@ -41,3 +41,4 @@ Todo
 - [ ] fix episode number/title mess
 - [x] downloads persistent sort and view
 - [x] write new downloader to replace mtd (much better, still needs to be tested however)
+- [ ] scrape mp4upload instead of using api
