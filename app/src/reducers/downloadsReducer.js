@@ -32,7 +32,7 @@ export default function reducer(state={
             })
         }
         case "QUEUE_ALL": {
-            var newDLProps = action.payload.map(el => {
+            var newDLProps = action.payload.map((el, i) => {
                 return {
                     props: {
                         epLink: el.epLink,
@@ -40,7 +40,7 @@ export default function reducer(state={
                         posterImg: el.posterImg,
                         animeName: el.title,
                         epTitle: el.epTitle,
-                        started: Date.now()
+                        started: Date.now() + 10*i
                     }
                 }
             })

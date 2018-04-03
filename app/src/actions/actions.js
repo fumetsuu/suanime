@@ -1,7 +1,9 @@
 const path = require('path')
 const fs = require('fs')
 import { fixFilename, fixURL, replaceSlash } from '../util/util.js'
-import { getDownloadLink } from '../util/getDownloadLink.js';
+import { getDownloadLink } from '../util/getDownloadLink.js'
+const PQueue = require('p-queue')
+const pqueue = new PQueue({ concurrency: 1 })
 
 const suDownloader = require('../suDownloader/suDownloader')
 console.log(suDownloader)
@@ -37,6 +39,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 			url: downloadURL,
 			concurrent
 		}
+		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
 		console.log(suDownloader)
 		suDownloader.QueueDownload(dlOptions)
 	}).catch(err => {
@@ -60,15 +63,18 @@ export function queueDLAll(paramsArray, animeName) {
 	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
-	var linkPromises = paramsArray.map(el => getDownloadLink(el.epLink))
-	Promise.all(linkPromises).then(downloadURLs => {
+	var linkPromises = paramsArray.map(el => () => getDownloadLink(el.epLink))
+	pqueue.addAll(linkPromises).then(downloadURLs => {
+		console.log(downloadURLs)
 		downloadURLs.forEach((downloadURL, i) => {
+			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 			const dlOptions = {
 				key: paramsArray[i].animeFilename,
-				temppath: path.join(global.tempDLPath, fixFilename(paramsArray[i].animeFilename)),
 				path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(paramsArray[i].animeFilename)}`),
-				url: downloadURL
+				url: downloadURL,
+				concurrent
 			}
+			if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')
 			console.log(suDownloader)
 			suDownloader.QueueDownload(dlOptions)
 		})

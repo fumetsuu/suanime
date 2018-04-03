@@ -70,6 +70,9 @@ export function getDownloadLink(epLink) {
                     return resolve(downloadURL)
                 }
                 return reject('ERR 404')
+            }).catch(err => {
+                console.log('corsage-sayonara api error', err)
+                return reject(err)
             })
         })
     }
@@ -78,8 +81,9 @@ export function getDownloadLink(epLink) {
         return new Promise((resolve, reject) => {
             var videosformat = /var videos = \[(.*)\]/g
             var match = videosformat.exec(pagehtml)
+            if(!match) return reject('ERR 404')
             var videosdata = JSON.parse( //array
-                match[0].split("videos = ")[1]
+                '['+match[1]+']'
             )
             var downloadURL
             var getHD = global.estore.get('downloadHD')
