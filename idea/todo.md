@@ -22,8 +22,12 @@ Todo
 - [x] select quality preference for downloads
 - [x] sort downloads by date added
 - [x] add labels for download's fields
-- [ ] automatically start downloading watching anime
 - [ ] scan files in downloads folder and add to library
+- [ ] clicking on links such as genres within su anime links to search tab/poup with filtered tags (not browser)
+- [ ] add related anime to watch page
+- [ ] show on homepage colour indication of status in list
+- [ ] hover over/click small icon on home page cards shows more info (?)
+
 
 ## development
 - [x] refactor home page code
