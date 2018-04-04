@@ -9,7 +9,7 @@ import { getDownloadLink } from '../../util/getDownloadLink'
 import { toWordDate, fixFilename, convertSec, genVideoPath } from '../../util/util'
 
 const suDownloader = require('../../suDownloader/suDownloader')
-//status can be 'QUEUED', 'QUEUED_R', 'PAUSED', 'DOWNLOADING', 'COMPLETED', 'FETCHING_URL'
+//status can be 'QUEUED', 'QUEUED_R', 'PAUSED', 'STARTING', 'DOWNLOADING', 'COMPLETED', 'FETCHING_URL'
 class DownloadCard extends Component {
 	constructor(props) {
 		super(props)
@@ -21,9 +21,9 @@ class DownloadCard extends Component {
 		this.configureDownloadItem = this.configureDownloadItem.bind(this)
 		this.addStatusListeners = this.addStatusListeners.bind(this)
 		this.removeStatusListeners = this.removeStatusListeners.bind(this)
-		this.checkPersisted = this.checkPersisted.bind(this)
+		this.handlesuDError = this.handlesuDError.bind(this)
 
-		if (this.props.completed) {
+		if(this.props.completed) {
 			let { progressSize, elapsed, completeDate, totalSize } = this.props.persistedState
 			this.state = {
 				status: 'COMPLETED',
@@ -37,12 +37,12 @@ class DownloadCard extends Component {
 		} else {
 			this.state = this.props.persistedState || {
 				status: 'FETCHING_URL',
-				speed: '0 B/s',
-				progressSize: '0MB',
-				totalSize: '0MB',
+				speed: '',
+				progressSize: 0,
+				totalSize: '',
 				percentage: 0,
-				elapsed: 0,
-				remaining: 0
+				elapsed: '',
+				remaining: ''
 			}
 		}
 	}
@@ -50,24 +50,13 @@ class DownloadCard extends Component {
 	componentDidMount() {
 		if(!this.props.completed) {
 			this.configureDownloadItem(this.props.animeFilename)
-			this.checkPersisted()
-			suDownloader.on('error', x => {
-				if(x.key == this.props.animeFilename) {
-					console.log(x.err)
-					this.setState({ status: 'ERROR' })
-				}
-			})
-		}
-    	if(!this.downloadItem && !this.props.completed) {
-			suDownloader.on('new_download_started', this.configureDownloadItem)
-			suDownloader.on('new_download_queued', this.configureDownloadItem)
+			this.addsuDListeners()
 		}
 	}
 
 	componentWillUnmount() {
     this.removeStatusListeners()
-    suDownloader.removeListener('new_download_started', this.configureDownloadItem)
-	suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
+	this.removesuDListeners()
 	if(this.downloadItem && this.state.status != 'FETCHING_URL') {
       this.props.persistDL(this.props.animeFilename, this.state)
     }
@@ -95,6 +84,12 @@ class DownloadCard extends Component {
 			case 'DOWNLOADING': {
 				controlIcon = 'pause'
 				statusText = 'Downloading'
+				controlAction = this.pauseDownload
+				break
+			}
+			case 'STARTING': {
+				controlIcon = 'pause'
+				statusText = 'Starting'
 				controlAction = this.pauseDownload
 				break
 			}
@@ -127,13 +122,22 @@ class DownloadCard extends Component {
 		}
 		let { viewType, animeName, epTitle } = this.props
 		let isCompleted = this.state.status == 'COMPLETED'
-		let isPaused = this.state.status == 'PAUSED' || this.state.status == 'QUEUED' || this.state.status == 'QUEUED_R'
-		let downloadSize = isCompleted ? this.state.progressSize : this.state.progressSize + '/' + this.state.totalSize
-		let percentage = isCompleted ? '' : `${this.state.percentage}%`
-		let remaining = (isCompleted || isPaused) ? '' : this.state.remaining
-		let speed = isPaused ? '' : this.state.speed
-		let statusColour = isCompleted ? '#51e373' : this.state.status == 'FETCHING_URL' ? '#dadada' : (this.state.status == 'QUEUED' || this.state.status == 'QUEUED_R') ? '#fec42f' :'#f55353'
-		statusColour = this.state.status == 'DOWNLOADING' ? 'transparent' : statusColour
+		let isHide = ['COMPLETED', 'FETCHING_URL', 'ERROR'].includes(this.state.status)
+		let isPaused = ['PAUSED', 'QUEUED', 'QUEUED_R', 'STARTING'].includes(this.state.status)
+		let downloadSize = isCompleted ? this.state.progressSize : (this.state.progressSize == 0 ? '' : this.state.progressSize + '/' + this.state.totalSize)
+		let percentage = (isHide || this.state.percentage == 0) ? '' : `${this.state.percentage}%`
+		let remaining = (isHide || isPaused) ? '' : this.state.remaining
+		let speed = (isHide || isPaused) ? '' : this.state.speed
+		var statusColour
+		switch(this.state.status) {
+			case 'COMPLETED': statusColour = '#51e373'; break
+			case 'DOWNLOADING': statusColour = '#7cebff'; break
+			case 'FETCHING_URL': statusColour = '#dadada'; break
+			case 'QUEUED': case 'QUEUED_R': statusColour = '#fec42f'; break
+			case 'PAUSED': statusColour = '#fec42f'; break
+			case 'STARTING': statusColour = '#2e55a1'; break
+			default: statusColour = '#f55353'
+		}
 		let titleclick = isCompleted ? this.playDownload : () => {}		
 		if (viewType == 'ROWS') {
 			return (
@@ -194,7 +198,7 @@ class DownloadCard extends Component {
 		if(this.state.status == 'ERROR') {
 			this.setState({ status: 'FETCHING_URL' })
 			let { animeFilename, animeName, epLink } = this.props
-			getDownloadLink(epLink, global.estoree.get('downloadHD')).then(downloadURL => {
+			getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
 			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18				
 				const dlOptions = {
 					key: animeFilename,
@@ -210,24 +214,16 @@ class DownloadCard extends Component {
 			})
 		} else {
 			suDownloader.startDownload(this.props.animeFilename)
-			this.setState({
-				status: 'FETCHING_URL'
-			})
 		}
 	}
 
 	pauseDownload() {
 		suDownloader.pauseDownload(this.props.animeFilename)
-		this.setState({
-		status: 'PAUSED'
-		})
+		this.setState({ status: 'PAUSED' })
 	}
 
 	continueDownload() {
 		suDownloader.resumeDownload(this.props.animeFilename)
-		this.setState({
-		status: 'DOWNLOADING'
-		})
 	}
 
 	playDownload() {
@@ -246,38 +242,56 @@ class DownloadCard extends Component {
 		this.removeStatusListeners()
 		this.props.clearDL(this.props.animeFilename)
 	}
-		
-	checkPersisted() {
-		let downloadItem = suDownloader.getActiveDownload(this.props.animeFilename)
-		var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
-		if(downloadItem && fs.existsSync(sudPath)) {
-			if(downloadItem.status != 'DOWNLOADING') {
-				this.setState({ status: 'QUEUED_R' })
-			}
-			this.downloadItem = downloadItem
-			this.addStatusListeners()
-		} else {
-			let downloadOptions = suDownloader.getQueuedDownload(this.props.animeFilename)
-			if(downloadOptions) {
-				this.setState({ status: 'QUEUED' })
+
+	configureDownloadItem(key) {
+		if(key == this.props.animeFilename) {
+			let downloadItem = suDownloader.getActiveDownload(key)
+			if(downloadItem) {
+				this.clearFetchUrlErrorTimeout()
+				var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
+				if(fs.existsSync(sudPath)) this.setState({ status: 'QUEUED_R' })
+				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING'})
+				this.downloadItem = downloadItem
+				this.addStatusListeners()
+				return true
+			} else {
+				let downloadOptions = suDownloader.getQueuedDownload(key)
+				if(downloadOptions) {
+					this.clearFetchUrlErrorTimeout()
+					this.setState({ status: 'QUEUED' })
+				}
+				//the download is neither downloading, starting, or waiting in queue. it is therefore fetching the url or has encountered an error
+				//wait 10 seconds before deciding an error has occured
+				this.fetchurlerrortimeout = setTimeout(() => this.setState({ status: 'ERROR' }), 20000)
+				//the only event that is able to stop this timeout from starting is the one emitted by suDownloader: new_download_queued
+				//this event will call configureDownloadItem and will set the status to something else, and also clear the timeout
+				return false
 			}
 		}
 	}
+	
+	clearFetchUrlErrorTimeout() {
+		if(this.fetchurlerrortimeout)
+		clearTimeout(this.fetchurlerrortimeout)
+	}
 
-  configureDownloadItem(key) {
-		if(key == this.props.animeFilename) {
-			let downloadItem = suDownloader.getActiveDownload(this.props.animeFilename)
-			if(downloadItem) {
-				this.downloadItem = downloadItem
-				this.addStatusListeners()
-			}
-			 else {
-				let downloadOptions = suDownloader.getQueuedDownload(this.props.animeFilename)
-				if(downloadOptions) {
-					this.setState({ status: 'QUEUED' })
-				}
-			}
+	handlesuDError(x) {
+		if(x.key == this.props.animeFilename) {
+			console.log(x.err)
+			this.setState({ status: 'ERROR' })
 		}
+	}
+
+	removesuDListeners() {
+		suDownloader.removeListener('new_download_started', this.configureDownloadItem)
+		suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
+		suDownloader.removeListener('error', this.handlesuDError)
+	}
+
+	addsuDListeners() {
+		suDownloader.on('new_download_started', this.configureDownloadItem)
+		suDownloader.on('new_download_queued', this.configureDownloadItem)
+		suDownloader.on('error', this.handlesuDError)
 	}
 
   removeStatusListeners() {

@@ -53,14 +53,14 @@ function suDownloadItem(options) {
 	}
 
 	this.start = () => {
-		if(this.status == 'DOWNLOADING') return false
-		this.status = 'DOWNLOADING'
+		if(['DOWNLOADING', 'STARTING'].includes(this.status)) return false
+		this.status = 'STARTING'
 		let { sudPath, url, throttleRate, concurrent } = this.options
 		let dlPath = this.options.path
 		fs.access(sudPath, err => {
 			if(!err) this.downloadFromExisting()
 			else { 
-				suD.initiateDownload({ url, path: dlPath, concurrent })
+				this.initialSubscription = suD.initiateDownload({ url, path: dlPath, concurrent })
 					.subscribe(x => {
 						this.setMeta(x)
 						this.calculateInitialStats(x)
@@ -77,7 +77,6 @@ function suDownloadItem(options) {
 	}
 
 	this.downloadFromExisting = () => {
-		this.status = 'DOWNLOADING'
 		let { sudPath, throttleRate } = this.options
 		const meta$ = suD.startDownload(sudPath)
 
@@ -85,6 +84,7 @@ function suDownloadItem(options) {
 			.subscribe(
 				response => {
 					this.setMeta(response)
+					this.status = 'DOWNLOADING'
 					if(!this.updateInterval) {
 						if(this.initialClock) clearInterval(this.initialClock)
 						if(!this.started) {
@@ -104,9 +104,8 @@ function suDownloadItem(options) {
 		this.clearUpdateInterval()
 		this.status = 'PAUSED'
 		this.emit('pause')
-		if(this.progressSubscription) {
-			this.progressSubscription.unsubscribe()
-		}
+		if(this.progressSubscription) this.progressSubscription.unsubscribe()
+		if(this.initialSubscription) this.initialSubscription.unsubscribe()
 	}
 
 	this.clearUpdateInterval = () => {
@@ -118,6 +117,7 @@ function suDownloadItem(options) {
 
 	this.clearRetryTimeouts = () => {
 		this.retryTimeouts.forEach(clearTimeout)
+		this.retryTimeouts = []
 	}
 
 	this.clearAllFiles = () => {

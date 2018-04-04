@@ -41,9 +41,9 @@ function suDownloader() {
 						downloadItem.on('finish', data => internals.handleDownloadFinished(el.options.key, data))
 						return downloadItem
 					})
-					this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => el.status == 'DOWNLOADING').length
+					this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => ['DOWNLOADING', 'STARTING'].includes(el.status)).length
 					if(this.settings.autoStart) {
-						this .startQueue()
+						this.startQueue()
 					}
 				}
 			}
@@ -67,7 +67,7 @@ function suDownloader() {
 
 		calculateCurrentDownloads: () => {
 			this.downloads.activeNumberOfDownloads = this.downloads.activeDownloads.length
-			this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => el.status == 'DOWNLOADING').length
+			this.downloads.downloadingNumberOfDownloads = this.downloads.activeDownloads.filter(el => ['DOWNLOADING', 'STARTING'].includes(el.status)).length
 			this.downloads.queuedNumberOfDownloads = this.downloads.queuedDownloads.length
 			this.persistToDisk()
 		},
@@ -104,7 +104,7 @@ function suDownloader() {
 
 		downloadNext: () => {
 			this.downloads.activeDownloads.some(downloadItem => {
-				if(downloadItem.status != 'DOWNLOADING' && this.downloads.downloadingNumberOfDownloads < this.settings.maxConcurrentDownloads) {
+				if(!['DOWNLOADING', 'STARTING'].includes(downloadItem.status) && this.downloads.downloadingNumberOfDownloads < this.settings.maxConcurrentDownloads) {
 					this.resumeDownload(downloadItem.options.key)
 					return true
 				}
@@ -187,7 +187,7 @@ function suDownloader() {
 
 		if(downloadQueueIndex == -1) {
 			let predownloadItem = internals.getActiveDownload(key)
-			if(predownloadItem && predownloadItem.status != 'DOWNLOADING') {
+			if(predownloadItem && !['DOWNLOADING', 'STARTING'].includes(predownloadItem.status)) {
 				this.resumeDownload(key)
 				return true
 			}
@@ -200,9 +200,9 @@ function suDownloader() {
 		this.downloads.queuedDownloads.splice(downloadQueueIndex, 1)
 		this.downloads.activeDownloads.push(downloadItem)
 		
-		this.emit('new_download_started', key)
 		
 		downloadItem.start()
+		this.emit('new_download_started', key)
 		downloadItem.on('finish', data => internals.handleDownloadFinished(key, data))
 		
 		
@@ -228,7 +228,7 @@ function suDownloader() {
 	this.stopQueue = () => {
 		this.downloads.queueIsRunning = false
 		this.downloads.activeDownloads.forEach(downloadItem => {
-			if(downloadItem.status == 'DOWNLOADING') {
+			if(['DOWNLOADING', 'STARTING'].includes(downloadItem.status)) {
 				this.pauseDownload(downloadItem.options.key)
 			}
 		})
@@ -253,6 +253,7 @@ function suDownloader() {
 	this.resumeDownload = key => {
 		let downloadItem = internals.getActiveDownload(key)
 		downloadItem.start()
+		this.emit('new_download_started', key)		
 		internals.calculateCurrentDownloads()
 	}
 
@@ -303,8 +304,8 @@ function suDownloader() {
 		if(this.downloads.activeDownloads.length) {
 			bareDLs = this.downloads.activeDownloads.map(el => {
 				return {
-					options: Object.assign({}, el.options, { status: 'PAUSED' }),
-					stats: el.stats
+					options: Object.assign({}, el.options, { status: 'PAUSED' })
+					// stats: el.stats
 				}
 			})
 		}
