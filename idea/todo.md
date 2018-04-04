@@ -47,4 +47,5 @@ Todo
 - [x] write new downloader to replace mtd (much better, still needs to be tested however)
 - [ ] scrape mp4upload instead of using api
 - [x] fix download status feedback (errors, fetching url and starting download)
-- [ ] downloading more than once glitch when using download all (i.e. by clicking download all twice)
+- [x] downloading more than once glitch when using download all (i.e. by clicking download all twice)
+- [x] fix download finish event when not actually finished (returns error)

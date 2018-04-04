@@ -18,7 +18,7 @@ class InfoEpisodeCard extends Component {
 
         var downloadClass = "dp-btn"
         var playClass = "none"
-        var fn = `${broadTitle} - ${episode}`.replace(/[\\/:"*?<>|]+/, '')+'.mp4'
+        var fn = genFilename(broadTitle, episode)
         if(downloading.includes(fn)) {
           downloadClass = "none"
           playClass = "dp-btn disabled"
