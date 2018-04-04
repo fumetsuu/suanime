@@ -3,7 +3,7 @@ const suDownloadItem = require('./suDownloadItem')
 const util = require('util')
 const EventEmitter = require('events').EventEmitter
 import store from '../store.js'
-import { convertSec, genVideoPath } from '../util/util.js'
+import { convertSec } from '../util/util.js'
 const bytes = require('bytes')
 
 /**
@@ -113,8 +113,7 @@ function suDownloader() {
 		},
 
 		handleDownloadFinished: (key, x) => {
-			var videopath = genVideoPath(key.split(/ - \d+.mp4/)[0], key)
-			if(!fs.existsSync(videopath)) {
+			if(x.total.completed < 99) {
 				this.emit('error', key)
 				return false
 			}
