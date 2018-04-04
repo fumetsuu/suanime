@@ -35,7 +35,6 @@ class DownloadCard extends Component {
 				completeDate: completeDate
 			}
 		} else {
-      this.configureDownloadItem()
 			this.state = this.props.persistedState || {
 				status: 'FETCHING_URL',
 				speed: '0 B/s',
@@ -50,6 +49,7 @@ class DownloadCard extends Component {
 
 	componentDidMount() {
 		if(!this.props.completed) {
+			this.configureDownloadItem(this.props.animeFilename)
 			this.checkPersisted()
 			suDownloader.on('error', x => {
 				if(x.key == this.props.animeFilename) {
