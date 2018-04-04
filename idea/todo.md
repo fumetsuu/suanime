@@ -46,4 +46,5 @@ Todo
 - [x] downloads persistent sort and view
 - [x] write new downloader to replace mtd (much better, still needs to be tested however)
 - [ ] scrape mp4upload instead of using api
-- [ ] fix download status feedback (errors, fetching url and starting download)
+- [x] fix download status feedback (errors, fetching url and starting download)
+- [ ] downloading more than once glitch when using download all (i.e. by clicking download all twice)
