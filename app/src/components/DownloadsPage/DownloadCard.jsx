@@ -86,12 +86,12 @@ class DownloadCard extends Component {
 				controlAction = this.startDownload
 				break
 			}
-				case 'QUEUED_R': {
-					controlIcon = 'play_arrow'
-					statusText = 'Queued (Resumable)'
-					controlAction = this.startDownload
-					break
-				}
+			case 'QUEUED_R': {
+				controlIcon = 'play_arrow'
+				statusText = 'Queued (Resumable)'
+				controlAction = this.startDownload
+				break
+			}
 			case 'DOWNLOADING': {
 				controlIcon = 'pause'
 				statusText = 'Downloading'
@@ -217,17 +217,17 @@ class DownloadCard extends Component {
 	}
 
 	pauseDownload() {
-    suDownloader.pauseDownload(this.props.animeFilename)
-    this.setState({
-      status: 'PAUSED'
-    })
+		suDownloader.pauseDownload(this.props.animeFilename)
+		this.setState({
+		status: 'PAUSED'
+		})
 	}
 
 	continueDownload() {
-    suDownloader.resumeDownload(this.props.animeFilename)
-    this.setState({
-      status: 'DOWNLOADING'
-    })
+		suDownloader.resumeDownload(this.props.animeFilename)
+		this.setState({
+		status: 'DOWNLOADING'
+		})
 	}
 
 	playDownload() {
@@ -245,7 +245,7 @@ class DownloadCard extends Component {
 		}
 		this.removeStatusListeners()
 		this.props.clearDL(this.props.animeFilename)
-  }
+	}
 		
 	checkPersisted() {
 		let downloadItem = suDownloader.getActiveDownload(this.props.animeFilename)
@@ -278,7 +278,7 @@ class DownloadCard extends Component {
 				}
 			}
 		}
-  }
+	}
 
   removeStatusListeners() {
     if(!this.downloadItem) return false

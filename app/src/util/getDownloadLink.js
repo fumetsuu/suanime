@@ -144,7 +144,8 @@ function pAny(promiseArray) {
 		var cn = 0
 		var errors = []
 		const exec = index => {
-			if(index == len) reject(new AggregateError(errors))
+			console.log('????????????', len, index, cn)
+			if(index == len-1) return reject(new AggregateError(errors))
 			promiseArray[index]().then(
 				resolve,
 				err => { 

@@ -11,8 +11,10 @@ class SearchResults extends Component {
             resultCards: [],
             nullSearch: false,
             pagePrev: null,
-            pageNext: null
+            pageNext: null,
+            isLoading: true
         }
+        this.allowInitial = true
         this.stateFromURL = this.stateFromURL.bind(this)
         this.addSpacerCards = this.addSpacerCards.bind(this)
         this.onscroll = this.onscroll.bind(this)
@@ -55,10 +57,10 @@ class SearchResults extends Component {
         if(this.props) {
             let { searchValue, searchSort, searchType, searchStatus, searchGenre } = this.props
             const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
-            this.stateFromURL(searchURL)
+            this.stateFromURL(searchURL, true)
         } else {
             const defaultURL = "https://www.masterani.me/api/anime/filter?order=score_desc"
-            this.stateFromURL(defaultURL)
+            this.stateFromURL(defaultURL, true)
         }
     }
     
@@ -66,19 +68,21 @@ class SearchResults extends Component {
     componentWillReceiveProps(nextProps) {
         if(!global.estore.get('usepaginationsearch')) {
             window.addEventListener('scroll', this.onscroll, true)
-            this.setState({ resultCards: [] })
+            this.setState({ resultCards: [], isLoading: true })
         }        
         let { searchValue, searchSort, searchType, searchStatus, searchGenre } = nextProps
         const searchURL = this.generateSearchLink(searchValue, searchSort, searchType, searchStatus, searchGenre)
         this.stateFromURL(searchURL)
     }
 
-    stateFromURL(url) {
+    stateFromURL(url, isInitial) {
+        if(!isInitial) { this.allowInitial = false }
         this.setState({ nullSearch: false })
         if(global.estore.get('usepaginationsearch')) { 
-            this.setState({ resultCards: [] })
+            this.setState({ resultCards: [], isLoading: true })
         }
         rp({uri: url, json: true}).then(response => {
+            if(!this.allowInitial && isInitial) return false
             if(response.data && !response.data.length && !Array.isArray(response) || (Array.isArray(response) && !response.length)) {
                 this.setState({ nullSearch: true })
             } else {
@@ -97,7 +101,7 @@ class SearchResults extends Component {
                     pagePrev = response.prev_page_url ? url+'&page='+(response.current_page-1) : null
                     pageNext = response.next_page_url ? url+'&page='+(response.current_page+1) : null
                 }
-                this.setState({ resultCards, pagePrev, pageNext }, () => { 
+                this.setState({ resultCards, pagePrev, pageNext, isLoading: false }, () => {
                     this.addSpacerCards()
                     if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)
                  })
@@ -112,7 +116,7 @@ class SearchResults extends Component {
         if(this.state.nullSearch) {
             return <div className="null-search">No Results!</div>
         }
-        if(!this.state.resultCards.length) {
+        if(this.state.isLoading) {
             return <Loader loaderClass="central-loader"/>
         }
         let { pagePrev, pageNext } = this.state
@@ -134,6 +138,7 @@ class SearchResults extends Component {
     }
 
     addSpacerCards() {
+        if(!document.querySelector('.result-card-container')) return false
         this.setState({
             resultCards: this.state.resultCards.filter(el => el.props.className!="invisible result-card-container"
             )

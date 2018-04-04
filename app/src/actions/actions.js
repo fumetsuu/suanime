@@ -2,8 +2,7 @@ const path = require('path')
 const fs = require('fs')
 import { fixFilename, fixURL, replaceSlash } from '../util/util.js'
 import { getDownloadLink } from '../util/getDownloadLink.js'
-const PQueue = require('p-queue')
-const pqueue = new PQueue({ concurrency: 1 })
+const pqueueAll = require('../util/pqueueAll')
 
 const suDownloader = require('../suDownloader/suDownloader')
 console.log(suDownloader)
@@ -64,9 +63,14 @@ export function queueDLAll(paramsArray, animeName) {
 		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
 	}
 	var linkPromises = paramsArray.map(el => () => getDownloadLink(el.epLink))
-	pqueue.addAll(linkPromises).then(downloadURLs => {
+	pqueueAll(linkPromises).then(downloadURLs => {
 		console.log(downloadURLs)
-		downloadURLs.forEach((downloadURL, i) => {
+		downloadURLs.forEach((res, i) => {
+			if(res.status == 'rejected') {
+				suDownloader.emit('error', paramsArray[i].animeFilename)
+				return false
+			}
+			var downloadURL = res.value
 			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 			const dlOptions = {
 				key: paramsArray[i].animeFilename,
