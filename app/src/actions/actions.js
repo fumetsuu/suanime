@@ -67,7 +67,7 @@ export function queueDLAll(paramsArray, animeName) {
 		console.log(downloadURLs)
 		downloadURLs.forEach((res, i) => {
 			if(res.status == 'rejected') {
-				suDownloader.emit('error', paramsArray[i].animeFilename)
+				suDownloader.emit('error', { key: paramsArray[i].animeFilename, err: res.error })
 				return false
 			}
 			var downloadURL = res.value

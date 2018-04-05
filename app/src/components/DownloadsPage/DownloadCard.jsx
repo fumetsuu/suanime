@@ -247,7 +247,7 @@ class DownloadCard extends Component {
 		if(key == this.props.animeFilename) {
 			let downloadItem = suDownloader.getActiveDownload(key)
 			if(downloadItem) {
-				this.clearFetchUrlErrorTimeout()
+				// this.clearFetchUrlErrorTimeout()
 				var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
 				if(fs.existsSync(sudPath)) this.setState({ status: 'QUEUED_R' })
 				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING'})
@@ -257,12 +257,15 @@ class DownloadCard extends Component {
 			} else {
 				let downloadOptions = suDownloader.getQueuedDownload(key)
 				if(downloadOptions) {
-					this.clearFetchUrlErrorTimeout()
+					// this.clearFetchUrlErrorTimeout()
 					this.setState({ status: 'QUEUED' })
 				}
 				//the download is neither downloading, starting, or waiting in queue. it is therefore fetching the url or has encountered an error
 				//wait 10 seconds before deciding an error has occured
-				this.fetchurlerrortimeout = setTimeout(() => this.setState({ status: 'ERROR' }), 20000)
+				//the conditional checks to make sure that we aren't just waiting for the promises to resolve (this timeout is really only necessary for when suanime is trying to start a download
+				//after being reopened and the download link wasn't found before suanime was closed)
+				//this.fetchurlerrortimeout = setTimeout(() => this.setState({ status: 'ERROR' }), 10000) waiting isn't necessary?
+				if(!this.props.gettingLinks.includes(key)) this.setState({ status: 'ERROR' })
 				//the only event that is able to stop this timeout from starting is the one emitted by suDownloader: new_download_queued
 				//this event will call configureDownloadItem and will set the status to something else, and also clear the timeout
 				return false
@@ -340,12 +343,18 @@ class DownloadCard extends Component {
   }
 }
 
+const mapStateToProps = state => {
+	return {
+		gettingLinks: state.downloadsReducer.gettingLinks
+	}
+}
+
 const mapDispatchToProps = dispatch => {
 	return {
-	clearDL: animeFilename => dispatch(clearDL(animeFilename)),
-    persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
+		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
+		persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
 	}
 }
 
 
-export default connect(null, mapDispatchToProps)(DownloadCard)
+export default connect(mapStateToProps, mapDispatchToProps)(DownloadCard)

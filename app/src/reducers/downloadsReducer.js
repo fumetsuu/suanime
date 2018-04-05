@@ -5,6 +5,7 @@ export default function reducer(state={
     downloading: [],
     completed: [],
     completedArray: [],
+    gettingLinks: [],
     persistedDLState: {
         listView: 'COMPACT',
         listSort: 'v`ADDED'
@@ -48,6 +49,7 @@ export default function reducer(state={
             global.estore.set("storedDownloadsArray", [...newDLProps, ...global.estore.get("storedDownloadsArray")])
             global.estore.set("storedDownloading", [...newDL, ...global.estore.get("storedDownloading")])
             return Object.assign({}, state, {
+                gettingLinks: [...newDL, ...state.gettingLinks],
                 downloadsArray: [...newDLProps, ...state.downloadsArray],
                 downloading: [...newDL, ...state.downloading]
             })
