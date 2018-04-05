@@ -279,12 +279,14 @@ function suDownloader() {
 				downloadItem.removeAllListeners('error')
 				downloadItem.removeAllListeners('finish')
 				downloadItem.pause()
-			}
-			if(deleteFile && downloadItem) {
-				downloadItem.clearAllFiles().then(() => internals.removeFromActive(key))
-			} else {
+				if(deleteFile) downloadItem.clearAllFiles()
 				internals.removeFromActive(key)
+				internals.calculateCurrentDownloads()
+				console.log('CLEARED FROM SUDOWNLOADER ' + key)
 			}
+		} else {
+			internals.calculateCurrentDownloads()
+			console.log('CLEARED FROM SUDOWNLOADER QUEUE ' + key)			
 		}
 		console.log(this)
 	}

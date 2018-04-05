@@ -6,17 +6,16 @@ module.exports = function pqueueAll(promisesArray) {
 		var lastIndex = promisesArray.length - 1
 		var cn = 0
 		const exec = index => {
+			if(typeof promisesArray[index] !== 'function') return resolve(results)
 			promisesArray[index]().then(
 				value => {
 					results.push({ status: 'resolved', value })
 					cn++
-					if(cn >= lastIndex) return resolve(results)
 					exec(cn)
 				},
 				error => {
 					results.push({ status: 'rejected', error })
-					cn++
-					if(cn >= lastIndex) return resolve(results)					
+					cn++				
 					exec(cn)
 				}
 			)

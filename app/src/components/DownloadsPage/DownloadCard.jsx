@@ -236,9 +236,7 @@ class DownloadCard extends Component {
 	}
 
 	clearDownload() {
-		if(this.downloadItem) {
-			suDownloader.clearDownload(this.props.animeFilename, true)
-		}
+		suDownloader.clearDownload(this.props.animeFilename, true)
 		this.removeStatusListeners()
 		this.props.clearDL(this.props.animeFilename)
 	}
@@ -259,6 +257,7 @@ class DownloadCard extends Component {
 				if(downloadOptions) {
 					// this.clearFetchUrlErrorTimeout()
 					this.setState({ status: 'QUEUED' })
+					return true
 				}
 				//the download is neither downloading, starting, or waiting in queue. it is therefore fetching the url or has encountered an error
 				//wait 10 seconds before deciding an error has occured
