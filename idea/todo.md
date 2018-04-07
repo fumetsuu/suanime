@@ -27,6 +27,7 @@ Todo
 - [ ] add related anime to watch page
 - [ ] show on homepage colour indication of status in list
 - [ ] hover over/click small icon on home page cards shows more info (?)
+- [ ] allow update details for MAL integration (start/finish date etc)
 
 
 ## development
