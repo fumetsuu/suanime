@@ -28,6 +28,7 @@ Todo
 - [ ] show on homepage colour indication of status in list
 - [ ] hover over/click small icon on home page cards shows more info (?)
 - [ ] allow update details for MAL integration (start/finish date etc)
+- [ ] download all only adds to queue but does not initiate download (fetch URL) for every episode, only number of max concurrent (otherwise it gets glitch and downloads 537B, especially for anime with lots of episodes)
 
 
 ## development
