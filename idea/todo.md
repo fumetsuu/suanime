@@ -27,7 +27,7 @@ Todo
 - [ ] add related anime to watch page
 - [ ] show on homepage colour indication of status in list
 - [ ] hover over/click small icon on home page cards shows more info (?)
-
+- [ ] allow update details for MAL integration (start/finish date etc)
 
 ## development
 - [x] refactor home page code
@@ -46,6 +46,6 @@ Todo
 - [x] downloads persistent sort and view
 - [x] write new downloader to replace mtd (much better, still needs to be tested however)
 - [ ] scrape mp4upload instead of using api
-- [x] fix download status feedback (errors, fetching url and starting download)
+- [ ] fix download status feedback (errors, fetching url and starting download)
 - [x] downloading more than once glitch when using download all (i.e. by clicking download all twice)
 - [x] fix download finish event when not actually finished (returns error)
