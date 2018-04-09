@@ -24,7 +24,7 @@ Todo
 - [x] add labels for download's fields
 - [ ] scan files in downloads folder and add to library
 - [ ] clicking on links such as genres within su anime links to search tab/poup with filtered tags (not browser)
-- [ ] add related anime to watch page
+- [x] add related anime to watch page
 - [ ] show on homepage colour indication of status in list
 - [ ] hover over/click small icon on home page cards shows more info (?)
 - [ ] allow update details for MAL integration (start/finish date etc)
