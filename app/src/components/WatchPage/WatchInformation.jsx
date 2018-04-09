@@ -292,10 +292,30 @@ class WatchInformation extends Component {
                                 </tr>
                             </tbody>
                         </table>
+                        <table className="related-anime">
+                        <tbody>
+                          {this.relatedList(data.related)}
+                        </tbody>
+                      </table>
                     </div>
                 })
             })
         })
+    }
+
+    relatedList(data) {
+        let relations = Object.keys(data)
+        if(!relations.length) return null
+        let tablerows = []
+        relations.forEach(relation => {
+          tablerows.push(
+            <tr key={relation}>
+              <td className="data-label">{relation}</td>
+              <td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?"related-link disabled":"related-link"} onClick={() => {launchInfo(decodeHTML(el.title), null, null, el.mal_id)}}>{decodeHTML(el.title)}</span></span>)}</td>
+            </tr>
+          )
+        })
+        return tablerows
     }
 }
 
