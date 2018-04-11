@@ -204,7 +204,7 @@ class WatchInformation extends Component {
     }
 
     getMALInfo() {
-        var jikanBase = 'http://api.jikan.me'
+        var jikanBase = 'http://api.jikan.moe'
         rp({uri: `${jikanBase}/search/anime/`+fixURL(this.props.animeName), json: true }).then(data => {
             var first = processExceptions(data, this.props.animeName)
             this.setState({

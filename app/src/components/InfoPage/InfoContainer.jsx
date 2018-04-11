@@ -57,12 +57,12 @@ export default class InfoContainer extends Component {
 
     stateFromMAL(animeName) {
         this.setState({ isLoading: true })
-        const searchURL = `http://api.jikan.me/search/anime/${fixURL(animeName)}`
+        const searchURL = `http://api.jikan.moe/search/anime/${fixURL(animeName)}`
         console.log(searchURL)
         rp({ uri: searchURL, json: true }).then(results => {
             console.log(results, animeName)
             var first = processExceptions(results, animeName)
-            const infoURL = `http://api.jikan.me/anime/${first.id}`
+            const infoURL = `http://api.jikan.moe/anime/${first.id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
             })
@@ -71,7 +71,7 @@ export default class InfoContainer extends Component {
 
     stateFromMALID(malID) {
         this.setState({ isLoading: true })
-        const infoURL = `http://api.jikan.me/anime/${malID}`
+        const infoURL = `http://api.jikan.moe/anime/${malID}`
         rp({ uri: infoURL, json: true }).then(MALData => {
             this.setState({ MALData, isLoading: false })
         })
