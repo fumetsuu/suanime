@@ -49,3 +49,4 @@ Todo
 - [ ] fix download status feedback (errors, fetching url and starting download)
 - [x] downloading more than once glitch when using download all (i.e. by clicking download all twice)
 - [x] fix download finish event when not actually finished (returns error)
+- [ ] fix mal integration when updating new series (ep 1 doesn't update properly)
