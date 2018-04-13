@@ -67,6 +67,17 @@ export function initialiseDB() {
                 pclient: pclient
             }
         })
+        pclient.getAnimeList()
+            .then(res => {
+                let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
+                var listInfo = [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch]
+                var listData = res.list
+                store.dispatch({
+                    type: 'SAVE_LIST',
+                    payload: { listdata: listData, listinfo: listInfo }
+                })
+            })
+            .catch(err => console.log(err))
     }
     if(!fs.existsSync(global.estore.get('downloadsPath'))) {
         fs.mkdirSync(global.estore.get('downloadsPath'))

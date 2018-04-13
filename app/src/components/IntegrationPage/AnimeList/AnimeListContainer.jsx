@@ -14,11 +14,11 @@ class AnimeListContainer extends Component {
         this.state = {
             isLoading: true,
             listCards: [],
-            listData: props.listdata,
+            listData: props.listdata || [],
             listStatus: 1,
             listSort: 'TITLE',
             listView: 'COMPACT',
-            listInfo: props.listinfo,
+            listInfo: props.listinfo || [],
             sortFilteredData: []
         }
 
@@ -32,22 +32,30 @@ class AnimeListContainer extends Component {
         this.setListView = this.setListView.bind(this)
         this.syncList = this.syncList.bind(this)
         this.onscroll = this.onscroll.bind(this)
+
+        this.firstLoad = true
     }
 
     componentDidMount() {
         let { listStatus, listSort, listView } = this.props.persistedMAL
         this.setState({ listStatus, listSort, listView })
-        if(this.props.listdata) {
-            this.updateDisplay()
-        } else {
-            this.getList()
+        if(!this.firstLoad) {
+            if(this.props.listdata || this.state.listData.length) {
+                this.updateDisplay()
+            } else {
+                this.getList()
+            }
+            this.firstLoad = false
         }
         window.addEventListener('scroll', this.onscroll , true)
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.listdata && nextProps.listinfo) {
-            this.updateDisplay(nextProps.listdata, nextProps.listinfo)
+        let { listdata, listinfo } = nextProps
+        console.log(nextProps)
+        if(listdata && listinfo) {
+            this.setState({ listInfo: listinfo, listData: listdata })
+            this.updateDisplay(listdata, listinfo)
         }
     }
 
@@ -57,10 +65,10 @@ class AnimeListContainer extends Component {
 
     render() {
         let [user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch] = this.state.listInfo
-        let { listStatus, listSort, listView, isLoading } = this.state
+        let { listStatus, listSort, listView, listData, listCards, isLoading } = this.state
         return (
         <div className="animelist-wrapper">
-            <div className="tabs-area">
+            <div className={isLoading ? 'tabs-area disabled' : 'tabs-area'}>
                 <div className={`status-tab${listStatus == 1?' status-tab-active':''}`} statusvalue={1} onClick={this.setListStatus}>Currently Watching {user_watching?`(${user_watching})`:''}</div>
                 <div className={`status-tab${listStatus == 2?' status-tab-active':''}`} statusvalue={2} onClick={this.setListStatus}>Completed {user_completed?`(${user_completed})`:''}</div>
                 <div className={`status-tab${listStatus == 3?' status-tab-active':''}`} statusvalue={3} onClick={this.setListStatus}>On Hold {user_onhold?`(${user_onhold})`:''}</div>
@@ -78,7 +86,7 @@ class AnimeListContainer extends Component {
                     ? <ListStats/>
                     : 
                 <div className="animelist-container"> 
-                    <div className="sort-area"> 
+                    <div className={isLoading ? 'sort-area disabled' : 'sort-area'}> 
                         <div className="sort-by-text">Sort by: </div> 
                         <div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
                         <div sortvalue="PROGRESS" onClick={this.setListSort} className={`sort-by${/PROGRESS/.test(listSort)?' sort-by-active':''}`}>Progress</div> 
@@ -92,7 +100,7 @@ class AnimeListContainer extends Component {
                     </div>
                     {isLoading ? <Loader loaderClass="central-loader"/>  :
                     <div className="animelist-display">
-                        {this.state.listCards}
+                        {listCards}
                     </div>
                     }
                 </div>
@@ -112,6 +120,7 @@ class AnimeListContainer extends Component {
     }
 
     getList() {
+        console.log('getting list')
         this.pclient.getAnimeList()
             .then(res => {
                 let { user_name, user_watching, user_completed, user_onhold, user_dropped, user_plantowatch } = res.myinfo
@@ -169,7 +178,7 @@ class AnimeListContainer extends Component {
             this.setState({ listInfo: listinfo })
         }
         let { listStatus, listSort, listView } = this.state
-        let listData = listdata || this.props.listdata
+        let listData = listdata || this.props.listdata || this.state.listData
         if(listData) {
             var listCards = []
             var statusFilteredData = listData.filter(anime => anime.my_status==listStatus)
@@ -233,10 +242,6 @@ class AnimeListContainer extends Component {
             }
             this.setState({ listCards, sortFilteredData, isLoading: false })
         }
-    }
-
-    updateDisplayHistory(listdata) {
-        
     }
 
     onscroll(e) {
