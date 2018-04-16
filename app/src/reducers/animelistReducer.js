@@ -36,6 +36,7 @@ export default function reducer(state = defaultState, action) {
             var storedmalhistory = global.estore.get('malhistory')
             var malID = action.payload.malID
             var updatedObj = action.payload.updatedObj
+            console.log(action)
             var targetAnimeObj = storedlistdata.find(listDataNode => animeFinder(listDataNode, malID))
             if(updatedObj.my_last_updated) {
                 var newHistoryObj = createHistoryObject(updatedObj, targetAnimeObj)

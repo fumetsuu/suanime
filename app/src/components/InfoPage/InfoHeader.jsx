@@ -22,6 +22,9 @@ class InfoHeader extends React.Component {
 
     render() {
         let { title, title_english, title_japanese, link, masteraniLink } = this.props
+        if(this.state.animeListObject) {
+            let { my_watched_episodes, series_episodes, my_score, my_status } = this.state.animeListObject
+        }
         return (
             <div className="info-header">
             <div className="back-button" onClick={() => {this.props.history.goBack()}}><i className="material-icons">chevron_left</i></div>
@@ -31,11 +34,11 @@ class InfoHeader extends React.Component {
                 </div>
                 {this.props.listdata?(!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
                     <div className="list-update">
-                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
-                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
-                        <div className={this.state.animeListObject.my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
-                        <div className={this.state.animeListObject.my_watched_episodes==this.state.animeListObject.series_episodes?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
-                        <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
+                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == my_score)} key="scores" onChange={this.updateScore}/>
+                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == my_status)}  key="statuses" onChange={this.updateStatus}/>
+                        <div className={my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
+                        <div className={(my_watched_episodes==series_episodes && series_episodes!=0)?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
+                        <div className="progress-text">{my_watched_episodes}/{series_episodes==0?'?':series_episodes}</div>
                     </div>
         )):<div className="empty"/>}    
                 <div className="anime-out-link masterani-circle" onClick={() => browserLink(masteraniLink)}/>

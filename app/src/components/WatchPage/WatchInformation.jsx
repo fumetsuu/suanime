@@ -7,7 +7,8 @@ const decodeHTML = require('ent/decode')
 import Dropdown from 'react-dropdown'
 import { scoresData, statusData } from '../IntegrationPage/AnimeList/maldata.js'
 import { connect } from 'react-redux'
-import { updateAnime, launchInfo, playAnime } from '../../actions/actions.js'
+import { statusToCode, typeToCode, updateScore } from '../../util/animelist.js'
+import { updateAnime, launchInfo, playAnime, addAnime } from '../../actions/actions.js'
 import { processExceptions } from '../InfoPage/processExceptions'
 
 class WatchInformation extends Component {
@@ -16,10 +17,12 @@ class WatchInformation extends Component {
         this.state = {
             reqWidth: '100%',
             MALlink: null,
+            malData: null,
             animeInfo: '',
             animeListObject: null,
             hasPrevEp: false,
-            hasNextEp: false
+            hasNextEp: false,
+            loadingALO: true
         }
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
@@ -27,6 +30,7 @@ class WatchInformation extends Component {
         this.getMALInfo = this.getMALInfo.bind(this)
         this.checkEps = this.checkEps.bind(this)
         this.incEp = this.incEp.bind(this)
+        this.addToList = this.addToList.bind(this)
     }
 
     componentDidMount() {
@@ -62,10 +66,13 @@ class WatchInformation extends Component {
     }
 
     render() {
-        let { hasPrevEp, hasNextEp } = this.state
+        let { hasPrevEp, hasNextEp, loadingALO } = this.state
         let prevEpClass = hasPrevEp ? 'ep-btn' : 'ep-btn disabled'
         let nextEpClass = hasNextEp ? 'ep-btn' : 'ep-btn disabled'
         var malstyle = this.state.MALlink ? "anime-out-link mal-circle" : "anime-out-link mal-circle disabled"
+        if(this.state.animeListObject) {
+            var { my_watched_episodes, series_episodes, my_score, my_status } = this.state.animeListObject
+        }
         return (
             <div className="watch-information" style={{width: this.state.reqWidth}}>
                 <div className="watch-image" style={{backgroundImage: `url('${this.props.posterImg}')`}} onClick={this.launchInfoPage}/>
@@ -75,13 +82,13 @@ class WatchInformation extends Component {
                     <div className={prevEpClass} onClick={this.goPrevEp.bind(this)}><i className="material-icons">chevron_left</i></div>
                     <div className={nextEpClass} onClick={this.goNextEp.bind(this)}><i className="material-icons">chevron_right</i></div>
                 </div>
-                {this.props.listdata?(!this.state.animeListObject?<div className="empty"/>:(
+                {(this.props.listdata && !loadingALO)?(!this.state.animeListObject?<div className="add-to-list" onClick={this.addToList}>Add To List</div>:(
                     <div className="list-update">
-                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == this.state.animeListObject.my_score)} key="scores" onChange={this.updateScore}/>
-                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == this.state.animeListObject.my_status)}  key="statuses" onChange={this.updateStatus}/>
-                        <div className="prog-btn" onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
-                        <div className="prog-btn" onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
-                        <div className="progress-text">{this.state.animeListObject.my_watched_episodes}/{this.state.animeListObject.series_episodes==0?'?':this.state.animeListObject.series_episodes}</div>
+                        <Dropdown className="scores-dropdown" options={scoresData} value={scoresData.find(el => el.value == my_score)} key="scores" onChange={this.updateScore}/>
+                        <Dropdown className="status-dropdown" options={statusData} value={statusData.find(el => el.value == my_status)}  key="statuses" onChange={this.updateStatus}/>
+                        <div className={my_watched_episodes==0?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(-1)}><i className="material-icons">remove</i></div>
+                        <div className={(my_watched_episodes==series_episodes && series_episodes!=0)?'prog-btn disabled':'prog-btn'} onClick={() => this.incEp(1)}><i className="material-icons">add</i></div>
+                        <div className="progress-text">{my_watched_episodes}/{series_episodes==0?'?':series_episodes}</div>
                     </div>
         )):<div className="empty"/>}    
                 <div className="anime-out-link masterani-circle" onClick={() => browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
@@ -107,6 +114,38 @@ class WatchInformation extends Component {
         } else {
             return null
         }
+    }
+
+    addToList() {
+        let { mal_id, title, status, aired, image_url, episodes, type } = this.state.malData
+        var typeAsCode = typeToCode(type)
+        var statusAsCode = statusToCode(status)
+        var newAnimeListObject = {
+            "series_animedb_id": mal_id,
+            "series_title": title,
+            "series_type": typeAsCode,
+            "series_episodes": episodes,
+            "series_status": statusAsCode,
+            "series_start": aired.from,
+            "series_end": aired.to,
+            "series_image": image_url,
+            "my_watched_episodes": 0,
+            "my_start_date": "0000-00-00",
+            "my_finish_date": "0000-00-00",
+            "my_score": 0,
+            "my_status": 6,
+            "my_rewatching": 0,
+            "my_rewatching_ep": 0,
+            "my_last_updated": Date.now() / 1000,
+            "my_tags": []
+        }
+        this.props.pclient.addAnime(mal_id, {
+            status: 6
+        })
+        this.props.addAnime(mal_id, newAnimeListObject)
+        this.setState({
+            animeListObject: newAnimeListObject
+        })
     }
 
     updateScore(selected) {
@@ -174,7 +213,6 @@ class WatchInformation extends Component {
         }
         let { downloadsCompleted, animeName } = useprops
         let epNumber = parseInt(useprops.epNumber.split("Episode ")[1])
-        console.log(downloadsCompleted, animeName, epNumber)
         var prevEp = downloadsCompleted.findIndex(el => parseInt(el.replace(".mp4", "").split(`${fixFilename(animeName)} - `)[1]) == epNumber - 1)
         if(prevEp != -1) {
             var hasPrevEp = true
@@ -215,6 +253,8 @@ class WatchInformation extends Component {
             rp({uri: `${jikanBase}/anime/${malid}`, json: true }).then(data => {
                 let seasonLink = data.premiered ? `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}` : 'https://myanimelist.net/anime/season'
                 this.setState({
+                    malData: data,
+                    loadingALO: false,
                     animeInfo: 
                     <div className="anime-information">
                         <div className="tiny-header">Alt. Titles</div>
@@ -329,7 +369,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj))
+        updateAnime: (malID, updatedObj) => dispatch(updateAnime(malID, updatedObj)),
+        addAnime: (malID, animeObj) => dispatch(addAnime(malID, animeObj))
     }
 }
 
