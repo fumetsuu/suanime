@@ -28,6 +28,7 @@ Todo
 - [ ] show on homepage colour indication of status in list
 - [ ] hover over/click small icon on home page cards shows more info (?)
 - [ ] allow update details for MAL integration (start/finish date etc)
+- [x] sync list on startup
 
 ## development
 - [x] refactor home page code
