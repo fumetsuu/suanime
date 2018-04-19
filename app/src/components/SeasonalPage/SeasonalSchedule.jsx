@@ -63,7 +63,7 @@ class SeasonalSchedule extends Component {
         scheduledata.schedules.forEach(el => {
             const card = <ScheduleCard key={el.anime_id || el.id} cardData={el}/>
             var fixedDay = dayofweekFromDayandTime(el.day_of_week, el.release_time || '?')
-            schedulecards[fixedDay].push(card)
+            if (schedulecards[fixedDay]) schedulecards[fixedDay].push(card)
         })
         let today = new Date().getDay()
         let sortedschedulecards = schedulecards.slice(today).concat(schedulecards.slice(0, today))

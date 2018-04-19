@@ -248,7 +248,7 @@ class WatchInformation extends Component {
             this.setState({
                 MALlink: first.url
             })
-            const malid = first.id
+            const malid = first.mal_id
             this.setState({ animeListObject: this.getAnimeListObject(malid) })
             rp({uri: `${jikanBase}/anime/${malid}`, json: true }).then(data => {
                 let seasonLink = data.premiered ? `https://myanimelist.net/anime/season/${data.premiered.split(" ")[1]}/${data.premiered.split(" ")[0]}` : 'https://myanimelist.net/anime/season'

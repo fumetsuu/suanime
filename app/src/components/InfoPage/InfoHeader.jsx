@@ -18,12 +18,11 @@ class InfoHeader extends React.Component {
         this.incEp = this.incEp.bind(this)
         this.addToList = this.addToList.bind(this)
     }
-    
 
     render() {
         let { title, title_english, title_japanese, link, masteraniLink } = this.props
         if(this.state.animeListObject) {
-            let { my_watched_episodes, series_episodes, my_score, my_status } = this.state.animeListObject
+            var { my_watched_episodes, series_episodes, my_score, my_status } = this.state.animeListObject
         }
         return (
             <div className="info-header">

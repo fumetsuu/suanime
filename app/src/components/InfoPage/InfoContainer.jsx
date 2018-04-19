@@ -62,7 +62,7 @@ export default class InfoContainer extends Component {
         rp({ uri: searchURL, json: true }).then(results => {
             console.log(results, animeName)
             var first = processExceptions(results, animeName)
-            const infoURL = `http://api.jikan.moe/anime/${first.id}`
+            const infoURL = `http://api.jikan.moe/anime/${first.mal_id}`
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
             })
