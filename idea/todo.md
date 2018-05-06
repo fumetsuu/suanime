@@ -52,3 +52,4 @@ Todo
 - [x] downloading more than once glitch when using download all (i.e. by clicking download all twice)
 - [x] fix download finish event when not actually finished (returns error)
 - [ ] fix mal integration when updating new series (ep 1 doesn't update properly)
+- [ ] test link fetchers and add support for openload
