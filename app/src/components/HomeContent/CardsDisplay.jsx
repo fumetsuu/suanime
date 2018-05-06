@@ -29,6 +29,8 @@ export default class CardsDisplay extends Component {
             }
             this.maxPage = Math.floor(releases.length / this.NUM_OF_CARDS)
             this.addSpacerCards()
+        }).catch(err => {
+            console.log('bad internet connection')
         })
     }
 

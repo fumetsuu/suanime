@@ -106,6 +106,7 @@ export function getDownloadLink(epLink, getHD) {
             rp(embedURL).then(body => {
                 var linkRegex = /<a href="(.*)" id="button-download"/g
                 var links = []
+                var res = ''
                 while((res = linkRegex.exec(body)) !== null) {
                     links.push(res[1])
                 }

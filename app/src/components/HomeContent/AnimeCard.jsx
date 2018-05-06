@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { convertMS, fixFilename, genFilename, genVideoPath } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
-const rp = require('request-promise')
 
 class AnimeCard extends Component {
   constructor(props) {
