@@ -11,7 +11,7 @@
 
 #### Methods
 ##### releases: `https://www.masterani.me/api/releases`
->returns an array of anime info pertaining to the recemt releases of up to 7 days ago
+>returns an array of anime info pertaining to the recent releases of up to 7 days ago
 ```json
 [
 	{
