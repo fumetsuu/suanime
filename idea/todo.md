@@ -30,6 +30,7 @@ Todo
 - [ ] allow update details for MAL integration (start/finish date etc)
 - [x] sync list on startup
 - [x] allow add to list on watch page
+- [ ] use jikan api for seasonal page
 
 ## development
 - [x] refactor home page code
