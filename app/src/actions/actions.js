@@ -23,7 +23,7 @@ export function clearAllDownloads() {
 }
 
 export function playAnime(animeName, epNumber, posterImg, slug) {
-	window.location.hash = `#/watch/${animeName}/${epNumber}/${posterImg}/${slug}`
+	window.location.hash = `#/watch/${fixFilename(animeName)}/${epNumber}/${posterImg}/${slug}`
 }
 
 export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {

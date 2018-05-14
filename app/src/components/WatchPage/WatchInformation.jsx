@@ -77,8 +77,10 @@ class WatchInformation extends Component {
             <div className="watch-information" style={{width: this.state.reqWidth}}>
                 <div className="watch-image" style={{backgroundImage: `url('${this.props.posterImg}')`}} onClick={this.launchInfoPage}/>
                 <div className="watch-title-container">
-                    <div className="watch-title" onClick={this.launchInfoPage}>{this.props.animeName}</div>
-                    <div className="watch-episode">{this.props.epNumber}</div>
+                    <div className="watch-title" onClick={this.launchInfoPage}>
+                        {this.props.animeName}
+                        <div className="watch-episode">{this.props.epNumber}</div>
+                    </div>
                     <div className={prevEpClass} onClick={this.goPrevEp.bind(this)}><i className="material-icons">chevron_left</i></div>
                     <div className={nextEpClass} onClick={this.goNextEp.bind(this)}><i className="material-icons">chevron_right</i></div>
                 </div>

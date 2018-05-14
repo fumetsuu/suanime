@@ -81,7 +81,7 @@ export function fixFilename(filename) {
 }
 
 export function genFilename(animeName, episode) {
-    return fixFilename(`${animeName} - ${episode}.mp4`)
+    return fixFilename(`${fixFilename(animeName)} - ${episode}.mp4`)
 }
 
 export function genFolderPath(animeName) {
