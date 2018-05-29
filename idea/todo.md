@@ -54,3 +54,4 @@ Todo
 - [x] fix download finish event when not actually finished (returns error)
 - [ ] fix mal integration when updating new series (ep 1 doesn't update properly)
 - [ ] test link fetchers and add support for openload
+- [ ] let info page load even without mal info
