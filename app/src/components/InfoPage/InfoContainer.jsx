@@ -16,6 +16,18 @@ export default class InfoContainer extends Component {
             MALData: null,
         }
         this.stateFromMAL = this.stateFromMAL.bind(this)
+        this.notFoundMALData = {
+            title: this.props.match.params.animeName,
+            title_english: '',
+            title_japanese: '',
+            link_canonical: '',
+            mal_id: null,
+            status: null,
+            aired: null,
+            image_url: null,
+            episodse: null,
+            type: null
+        }
     }
 
     componentDidMount() {
@@ -42,7 +54,7 @@ export default class InfoContainer extends Component {
         }
         let { slug, animeID, animeName } = this.props.match.params
         let { MALData } = this.state
-        let { title, title_english, title_japanese, link_canonical, mal_id, status, aired, image_url, episodes, type } = MALData
+        let { title, title_english, title_japanese, link_canonical, mal_id, status, aired, image_url, episodes, type } = MALData || this.notFoundMALData
         var masteraniLink = `https://www.masterani.me/anime/info/${slug}`
         return (
         <div className="info-wrapper">
@@ -66,6 +78,8 @@ export default class InfoContainer extends Component {
             rp({ uri: infoURL, json: true }).then(MALData => {
                 this.setState({ MALData, isLoading: false })
             })
+        }).catch(err => {
+            this.setState({isLoading: false })
         })
     }
 

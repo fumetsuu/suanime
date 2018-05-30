@@ -9,6 +9,9 @@ export default class InfoMain extends Component {
   }
   
   render() {
+    if(!this.props.MALData) {
+      return <div className="info-main">MAL info not available.</div>
+    }
     let { score, rank, premiered, image_url, type, episodes, status, broadcast, studio, source, duration, rating, synopsis, genre, related } = this.props.MALData
     return (
       <div className="info-main">
