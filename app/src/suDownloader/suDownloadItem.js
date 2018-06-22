@@ -16,7 +16,7 @@ function suDownloadItem(options) {
 		path: options.path,
 		sudPath: suD.sudPath(options.path),
 		throttleRate: options.throttleRate || 500,
-		retry: options.retry || 5,
+		retry: options.retry || 20,
 		concurrent: options.concurrent || 4
 	}
 
@@ -259,11 +259,15 @@ function suDownloadItem(options) {
 		}
 		if((err.code == 'ENOTFOUND' || err.code == 'ECONNRESET') && fs.existsSync(this.options.sudPath)) {
 			var retryTimeout = setTimeout(this.restart, 5000 * (1 + this.retried))
+			console.log(err, this.options.path, 'retrying...')
 			this.retryTimeouts.push(retryTimeout)
 			this.retried++
 		} else {
 			console.log('err probably no internet or blocked access from download server', err)
-			this.pause()
+			var retryTimeout = setTimeout(this.restart, 5000 * (1 + this.retried))
+			console.log(err, this.options.path, 'retrying...')
+			this.retryTimeouts.push(retryTimeout)
+			this.retried++
 		}
 	}
 }

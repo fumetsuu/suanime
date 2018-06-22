@@ -214,6 +214,7 @@ class DownloadCard extends Component {
 			})
 		} else {
 			suDownloader.startDownload(this.props.animeFilename)
+			this.setState({ status: 'STARTING'})
 		}
 	}
 
@@ -224,6 +225,7 @@ class DownloadCard extends Component {
 
 	continueDownload() {
 		suDownloader.resumeDownload(this.props.animeFilename)
+		this.setState({ status: 'STARTING'})
 	}
 
 	playDownload() {

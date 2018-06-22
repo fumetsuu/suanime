@@ -15,20 +15,21 @@ class SeasonalCard extends Component {
         this.launchInfoPage = this.launchInfoPage.bind(this)
     }
     
+    // <div className="stat-data middle">{average_episode_duration && average_episode_duration < 900 ? 'Short' : (type.length < 4 ? type.toUpperCase() : type[0].toUpperCase()+type.substr(1))}</div>
+    
     render() {
-        let { title, main_picture, media_type, num_episodes, source, mean, synopsis, average_episode_duration, id, start_date, end_date, broadcast } = this.props.animeData
+        let { title, image_url, type, episodes, source, score, synopsis, mal_id, airing_start } = this.props.animeData
         let animelistObj = this.props.listdata ? this.props.listdata.find(el => el.series_animedb_id == id) : null
         return (
         <div className="seasonal-card">
-            <div className="bg-img" style={{ backgroundImage: `url('${(main_picture ? main_picture.medium : 'http://sweettutos.com/wp-content/uploads/2015/12/placeholder.png')}')` }}/>
+            <div className="bg-img" style={{ backgroundImage: `url('${(image_url || 'http://sweettutos.com/wp-content/uploads/2015/12/placeholder.png')}')` }}/>
             <div className="left-data">
                 <div className="anime-title" onClick={this.launchInfoPage}>{title}</div>
             </div>
             <div className="right-data">
                 <div className="stats-data anime-meta">
-                    <div className="stat-data">{mean?mean:'-'}</div>
-                    <div className="stat-data middle">{average_episode_duration && average_episode_duration < 900 ? 'Short' : (media_type.length < 4 ? media_type.toUpperCase() : media_type[0].toUpperCase()+media_type.substr(1))}</div>
-                    <div className="stat-data">{num_episodes==0?'?':num_episodes} eps</div>
+                    <div className="stat-data">{score?score:'-'}</div>
+                    <div className="stat-data">{!episodes?'?':episodes} eps</div>
                 </div>
                 {this.props.listdata ? (animelistObj ?
                     <div className="list-edit">
@@ -38,10 +39,10 @@ class SeasonalCard extends Component {
                     : <div className="list-edit"><div className="add-to-list" onClick={this.addToList}>Add To List</div></div>) : <div className="empty"/>
                 }
                 <div className="anime-synopsis">{synopsis}</div>
-                <div className="broadcast-data">{broadcast ? broadcast.day_of_the_week+' - '+broadcast.start_time+' (JST)' : ''}</div>
+                <div className="broadcast-data">{airing_start}</div>
                 <div className="bottom">
                     <div className="stat-data first-bottom">{source ? source.replace(/_/g, ' ') : ''}</div>
-                    <div className="stat-data">{convertSec(average_episode_duration) || '?'}</div>
+                    <div className="stat-data">-</div>
                 </div>
             </div>
         </div>
@@ -73,33 +74,32 @@ class SeasonalCard extends Component {
     }
 
     addToList() {
-        let { id, title, status, start_date, end_date, main_picture, num_episodes, media_type } = this.props.animeData
-        var image_url = main_picture.medium || ''
-        var typeAsCode = typeToCode(media_type)
-        var statusAsCode = statusToCode(status)
-        var newAnimeListObject = {
-            "series_animedb_id": id,
-            "series_title": title,
-            "series_type": typeAsCode,
-            "series_episodes": num_episodes,
-            "series_status": statusAsCode,
-            "series_start": start_date,
-            "series_end": end_date,
-            "series_image": image_url,
-            "my_watched_episodes": 0,
-            "my_start_date": "0000-00-00",
-            "my_finish_date": "0000-00-00",
-            "my_score": 0,
-            "my_status": 6,
-            "my_rewatching": 0,
-            "my_rewatching_ep": 0,
-            "my_last_updated": Date.now() / 1000,
-            "my_tags": []
-        }
-        this.props.pclient.addAnime(id, {
-            status: 6
-        })
-        this.props.addAnime(id, newAnimeListObject)
+        // let { id, title, status, start_date, end_date, image_url, episodes, type } = this.props.animeData
+        // var typeAsCode = typeToCode(type)
+        // var statusAsCode = statusToCode(status)
+        // var newAnimeListObject = {
+        //     "series_animedb_id": id,
+        //     "series_title": title,
+        //     "series_type": typeAsCode,
+        //     "series_episodes": episodes,
+        //     "series_status": statusAsCode,
+        //     "series_start": start_date,
+        //     "series_end": end_date,
+        //     "series_image": image_url,
+        //     "my_watched_episodes": 0,
+        //     "my_start_date": "0000-00-00",
+        //     "my_finish_date": "0000-00-00",
+        //     "my_score": 0,
+        //     "my_status": 6,
+        //     "my_rewatching": 0,
+        //     "my_rewatching_ep": 0,
+        //     "my_last_updated": Date.now() / 1000,
+        //     "my_tags": []
+        // }
+        // this.props.pclient.addAnime(id, {
+        //     status: 6
+        // })
+        // this.props.addAnime(id, newAnimeListObject)
     }
 
     launchInfoPage() {

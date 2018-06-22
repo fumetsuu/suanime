@@ -1,3 +1,4 @@
+// require('https').globalAgent.options.ca = require('ssl-root-cas').create()
 const fs = require('fs')
 const suDownloadItem = require('./suDownloadItem')
 const util = require('util')
