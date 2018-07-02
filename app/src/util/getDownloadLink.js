@@ -102,16 +102,17 @@ export function getDownloadLink(epLink, getHD) {
         return new Promise((resolve, reject) => {
             var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 21)
             if(!workingMirror) return reject('ERR 404')
-            var embedURL = 'https://www.rapidvideo.com/d/' + workingMirror.embed_id
+            var embedURL = 'https://www.rapidvideo.com/e/' + workingMirror.embed_id
             rp(embedURL).then(body => {
-                var linkRegex = /<a href="(.*)" id="button-download"/g
-                var links = []
-                var res = ''
-                while((res = linkRegex.exec(body)) !== null) {
-                    links.push(res[1])
-                }
-                if(getHD) return resolve(links[links.length-1])
-				return resolve(links[0])
+				var linkRegex = /<source src="(.*)\.mp4"/
+				var link = linkRegex.exec(body)[1] + '.mp4'
+                // var linkRegex = /<a href="(.*)" id="button-download"/g
+                // var links = []
+                // while((res = linkRegex.exec(body)) !== null) {
+                //     links.push(res[1])
+                // }
+                // if(getHD) return resolve(links[links.length-1])
+				return resolve(link)
             })
         })
     }
