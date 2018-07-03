@@ -105,7 +105,14 @@ export function getDownloadLink(epLink, getHD) {
             var embedURL = 'https://www.rapidvideo.com/e/' + workingMirror.embed_id
             rp(embedURL).then(body => {
 				var linkRegex = /<source src="(.*)\.mp4"/
-				var link = linkRegex.exec(body)[1] + '.mp4'
+				var linkRegex2 = /src: "(.*)\.mp4"/
+				if(!linkRegex.test(body) && !linkRegex2.test(body)) return reject('ERR 404')
+				var link = ''
+				if(linkRegex.test(body)) {
+					link = linkRegex.exec(body)[1] + '.mp4'
+				} else {
+					link = linkRegex2.exec(body)[1] + '.mp4'
+				}
                 // var linkRegex = /<a href="(.*)" id="button-download"/g
                 // var links = []
                 // while((res = linkRegex.exec(body)) !== null) {
