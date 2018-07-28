@@ -250,7 +250,8 @@ class DownloadCard extends Component {
 				// this.clearFetchUrlErrorTimeout()
 				var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
 				if(fs.existsSync(sudPath)) this.setState({ status: 'QUEUED_R' })
-				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING'})
+				if(downloadItem.status == 'DOWNLOADING') this.setState({ status: 'DOWNLOADING' })
+				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING' })
 				this.downloadItem = downloadItem
 				this.addStatusListeners()
 				return true

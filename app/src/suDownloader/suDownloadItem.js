@@ -22,6 +22,8 @@ function suDownloadItem(options) {
 
 	this.retried = 0
 
+	this.deltaDownloadedZeroCount = 0
+
 	this.retryTimeouts = []
 
 	this.started = false
@@ -144,8 +146,16 @@ function suDownloadItem(options) {
 	this.handleProgress = () => {
 		this.calculateStats()
 		this.clearRetryTimeouts()
-		if(this.stats.present.deltaDownloaded == 0) this.clearUpdateInterval()
-		else this.emit('progress', this.stats)
+		if(this.stats.present.deltaDownloaded == 0) {
+			this.deltaDownloadedZeroCount += 1
+		}
+		if(this.deltaDownloadedZeroCount == 5) {
+			this.restart()
+			this.emit('progress', this.stats)
+			this.deltaDownloadedZeroCount = 0
+		} else {
+			this.emit('progress', this.stats)
+		}
 	}
 
 	//region STATS CALCULATION FUNCTIONS
@@ -175,13 +185,17 @@ function suDownloadItem(options) {
 	this.handleFinishDownload = () => {
 		this.calculateTotalDownloaded()
 		this.calculateTotalCompleted()
-		this.calculatePresentDownloaded()
-		this.calculateEndTime()
-		this.calculateSpeeds()
-		this.calculateFutureRemaining()
-		this.calculateFutureEta()
-		this.clearUpdateInterval()
-		this.emit('finish', this.stats)
+		if (this.stats.total.completed == 100) {
+			this.calculatePresentDownloaded()
+			this.calculateEndTime()
+			this.calculateSpeeds()
+			this.calculateFutureRemaining()
+			this.calculateFutureEta()
+			this.clearUpdateInterval()
+			this.emit('finish', this.stats)
+		} else {
+			this.restart()
+		}
 	}
 
 	this.calculateDownloaded = () => {
