@@ -202,7 +202,7 @@ class DownloadCard extends Component {
 			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18				
 				const dlOptions = {
 					key: animeFilename,
-					path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
+					path: genVideoPath(animeName, animeFilename),
 					url: downloadURL,
 					concurrent
 				}
@@ -248,7 +248,7 @@ class DownloadCard extends Component {
 			let downloadItem = suDownloader.getActiveDownload(key)
 			if(downloadItem) {
 				// this.clearFetchUrlErrorTimeout()
-				var sudPath =  path.join(global.estore.get('downloadsPath'), `${fixFilename(this.props.animeName)}/${fixFilename(this.props.animeFilename)}.sud`)
+				var sudPath =  `${genVideoPath(this.props.animeName, this.props.animeFilename)}.sud`
 				if(fs.existsSync(sudPath)) this.setState({ status: 'QUEUED_R' })
 				if(downloadItem.status == 'DOWNLOADING') this.setState({ status: 'DOWNLOADING' })
 				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING' })

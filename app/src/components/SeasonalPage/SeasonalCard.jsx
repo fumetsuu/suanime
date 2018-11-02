@@ -103,14 +103,14 @@ class SeasonalCard extends Component {
     }
 
     launchInfoPage() {
-        let { id, title } = this.props.animeData     
-        launchInfo(title, null, null, id)
+        let { mal_id, title } = this.props.animeData
+        launchInfo(title, null, null, mal_id)
       }
 }
 
 const mapStateToProps = state => {
     return {
-        pclient: state.animelistReducer.pclient,
+        // pclient: state.animelistReducer.pclient,
         listdata: state.animelistReducer.listdata
     }
 }

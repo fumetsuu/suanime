@@ -2,7 +2,7 @@ export function yearOptions() {
     let today = new Date()
     let yearOptions = []
     let thisyear = today.getUTCFullYear()
-    for(var i = thisyear; i >= 1990; i--) {
+    for(var i = thisyear + 1; i >= 1990; i--) {
         yearOptions.push({ value: i, label: i })
     }
     return yearOptions

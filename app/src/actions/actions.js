@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-import { fixFilename, fixURL, replaceSlash } from '../util/util.js'
+import { fixFilename, fixURL, genFolderPath, genVideoPath } from '../util/util.js'
 import { getDownloadLink } from '../util/getDownloadLink.js'
 const pqueueAll = require('../util/pqueueAll')
 
@@ -27,14 +27,14 @@ export function playAnime(animeName, epNumber, posterImg, slug) {
 }
 
 export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
-	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
-		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
+	if(!fs.existsSync(genFolderPath(animeName))) {
+		fs.mkdirSync(genFolderPath(animeName))
 	}
 	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 		const dlOptions = {
 			key: animeFilename,
-			path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(animeFilename)}`),
+			path: genVideoPath(animeName, animeFilename),
 			url: downloadURL,
 			concurrent
 		}

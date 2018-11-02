@@ -68,10 +68,6 @@ export function fixURL(url) {
     return encodeURIComponent(url.replace(/\//g, ""))
 }
 
-export function replaceSlash(url) {
-    return url.replace(/\//g, '\\/')
-}
-
 export function fixURLMA(url) {
     return encodeURIComponent(url.replace(/\//g, "").substr(0, 25))
 }
@@ -84,12 +80,14 @@ export function genFilename(animeName, episode) {
     return fixFilename(`${fixFilename(animeName)} - ${episode}.mp4`)
 }
 
+const trimDot = folderName => folderName[folderName.length - 1] == '.' ? folderName.substr(0, folderName.length - 1) : folderName
+
 export function genFolderPath(animeName) {
-    return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`)    
+    return path.join(global.estore.get('downloadsPath'), `${trimDot(fixFilename(animeName))}`)    
 }
 
 export function genVideoPath(animeName, animeFilename) {
-    return path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${animeFilename}`)
+    return path.join(global.estore.get('downloadsPath'), `${trimDot(fixFilename(animeName))}/${fixFilename(animeFilename)}`)
 }
 
 export function promisefsStat(file) {
