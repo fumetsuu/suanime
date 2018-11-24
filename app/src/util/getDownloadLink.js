@@ -15,10 +15,10 @@ export function getDownloadLink(epLink, getHD) {
 				)
 			}
             var mirrorsPromises = [
+                () => getmp4UploadURL(streamdata),
 				() => getStreamMoeURL(streamdata),
                 () => getRapidvideoURL(streamdata),
 				() => getStreamangoURL(streamdata),
-                () => getmp4UploadURL(streamdata),
                 () => getAikaURL(body)
             ]
 
@@ -57,10 +57,18 @@ export function getDownloadLink(epLink, getHD) {
 			var embedURL = 'https://mp4upload.com/embed-' + workingMirror.embed_id + '.html'
 			rp(embedURL).then(body => {
 				var evalPackedFunctionRegex = /eval\((.*)\)/g
-				var evalPackedFunction = evalPackedFunctionRegex.exec(body)[0]
-				eval(evalPackedFunction)
-				if(player.info.file) {
-					return resolve(player.info.file)
+                var evalPackedFunction = evalPackedFunctionRegex.exec(body)[0]
+
+                var mp4uploadLINK = '';
+
+                /* mp4upload stuff, the mp4upload eval js will put the info into a variable named player, the data will be available through player.info */
+                function jwplayer(a) {
+                    return {  setup: function(info) { mp4uploadLINK = info.file;  }, addButton: function() {}, on: function() {} }
+                }
+                eval(evalPackedFunction)
+                
+				if(mp4uploadLINK) {
+					return resolve(mp4uploadLINK)
 				} else {
 					return reject('ERR 404 MP4UPLOAD')
 				}
@@ -137,21 +145,16 @@ function pAny(promiseArray) {
 		var errors = []
 		const exec = index => {
 			if(index == len) reject(new AggregateError(errors))
-			promiseArray[index]().then(
+			else {
+				promiseArray[index]().then(
 				resolve,
 				err => { 
 					cn++
 					errors.push(err)
 					exec(cn)
-				}
-			)
+				})
+			}
 		}
 		exec(cn)
 	})
-}
-
-/* mp4upload stuff, the mp4upload eval js will put the info into a variable named player, the data will be available through player.info */
-var jwplayer = function(a) {
-	this.info = {}
-	return { setup: function(info) { this.info = info }, addButton: function() {}, on: function() {} }
 }
