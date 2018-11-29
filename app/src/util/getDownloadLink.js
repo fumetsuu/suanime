@@ -15,10 +15,11 @@ export function getDownloadLink(epLink, getHD) {
 				)
 			}
             var mirrorsPromises = [
-                () => getmp4UploadURL(streamdata),
-				() => getStreamMoeURL(streamdata),
+                // () => getTiwikiwiURL(streamdata),
+                () => getStreamMoeURL(streamdata),
                 () => getRapidvideoURL(streamdata),
 				() => getStreamangoURL(streamdata),
+                () => getmp4UploadURL(streamdata),
                 () => getAikaURL(body)
             ]
 
@@ -112,6 +113,21 @@ export function getDownloadLink(epLink, getHD) {
 				var linkRegex = /<source src="(.*)\.mp4"/
 				var link = linkRegex.exec(body)[0].split('<source src="')[1].split('"')[0]
 				return resolve(link)
+            })
+        })
+    }
+
+    function getTiwikiwiURL(streamdata) {
+        return new Promise((resolve, reject) => {
+            var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 20)
+            if(!workingMirror) return reject('ERR 404 Tiwikiwi')
+            var embedURL = 'https://tiwi.kiwi/embed-' + workingMirror.embed_id + '.html'
+            rp(embedURL).then(body => {
+                var linkRegex = /src:"(.*)\.mp4"/
+                var rawRes = linkRegex.exec(body)[1]
+                var downloadURL = rawRes + '.mp4'
+                console.log(downloadURL)
+                return resolve(downloadURL)
             })
         })
     }
