@@ -103,6 +103,8 @@
   },
   "dependencies": {
     "aggregate-error": "^1.0.0",
+    "cloudscraper": "^1.5.1",
+    "electron-cookies": "github:heap/electron-cookies",
     "electron-debug": "^1.5.0",
     "electron-store": "^1.3.0",
     "electron-updater": "^2.21.5"

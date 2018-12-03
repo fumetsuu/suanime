@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import rp from 'request-promise'
+// import rp from 'request-promise'
+const cloudscraper = require('cloudscraper')
 import { connect } from 'react-redux'
 import Loader from '../Loader/Loader.jsx'
 import ResultCard from './ResultCard.jsx'
@@ -81,7 +82,10 @@ class SearchResults extends Component {
         if(global.estore.get('usepaginationsearch')) { 
             this.setState({ resultCards: [], isLoading: true })
         }
-        rp({uri: url, json: true}).then(response => {
+
+        cloudscraper.request({ method: 'GET', url}, (err, res, body) => {
+            if(err) throw err
+            var response = JSON.parse(body)
             if(!this.allowInitial && isInitial) return false
             if(response.data && !response.data.length && !Array.isArray(response) || (Array.isArray(response) && !response.length)) {
                 this.setState({ nullSearch: true })
@@ -106,10 +110,8 @@ class SearchResults extends Component {
                     if(!global.estore.get('usepaginationsearch')) window.addEventListener('scroll', this.onscroll, true)
                  })
             }
-        }).catch(err => {
-            console.log(err)
-            //network error
         })
+
     }
 
     render() {

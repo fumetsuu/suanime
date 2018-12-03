@@ -1,10 +1,11 @@
 const rp = require('request-promise')
+const cloudscraper = require('cloudscraper')
 const unpackStreamango = require('./unpackSM')
 
 export function getDownloadLink(epLink, getHD) {
     return new Promise((resolve, reject) => {
-        rp(epLink)
-        .then(body => {
+        cloudscraper.request({ method: 'GET', url: epLink}, (err, res, body) => {
+            if(err) throw err
             var streamdataformat = /:mirrors='(.*)/g
 			var match = streamdataformat.exec(body)
 			var streamdata = { mirrors: 
@@ -26,7 +27,6 @@ export function getDownloadLink(epLink, getHD) {
             pAny(mirrorsPromises).then(link => {
                 return resolve(link)
             }).catch(err => reject(err))
-
         })
     })
     

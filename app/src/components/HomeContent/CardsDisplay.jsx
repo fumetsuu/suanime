@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-const rp = require('request-promise')
+// const rp = require('request-promise')
+const cloudscraper = require('cloudscraper')
 import AnimeCard from './AnimeCard.jsx'
 import Loader from '../Loader/Loader.jsx'
 
@@ -17,10 +18,10 @@ export default class CardsDisplay extends Component {
     }
 
     componentWillMount() {
-        rp({
-            uri: masteraniReleases,
-            json: true
-        }).then(releases => {
+        cloudscraper.request({ method: 'GET', url: masteraniReleases }, (err, res, body) => {
+            if(err) throw err
+            console.log(body)
+            var releases = JSON.parse(body)
             this.releasesData = releases
             for(var i = 0 ; i < this.NUM_OF_CARDS; i++) {
                 this.setState({
@@ -29,8 +30,6 @@ export default class CardsDisplay extends Component {
             }
             this.maxPage = Math.floor(releases.length / this.NUM_OF_CARDS)
             this.addSpacerCards()
-        }).catch(err => {
-            console.log('bad internet connection')
         })
     }
 

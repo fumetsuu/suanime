@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 const rp = require('request-promise')
+const cloudscraper = require('cloudscraper')
 import { dayToString, dayofweekFromDayandTime } from '../../util/util.js'
 import Loader from '../Loader/Loader.jsx'
 import ScheduleCard from './ScheduleCard.jsx'
@@ -43,7 +44,8 @@ class SeasonalSchedule extends Component {
 
     getScheduleData() {
         const scheduleURL = 'https://www.masterani.me/anime/schedule'
-        rp.get(scheduleURL).then(body => {
+        cloudscraper.request({ method: 'GET', url: scheduleURL}, (err, response, body) => {
+            if(err) throw err
             var scheduledataformat = /var args = {(.*)}/g
             var match = scheduledataformat.exec(body)
             var scheduledata = JSON.parse(
@@ -55,7 +57,6 @@ class SeasonalSchedule extends Component {
             )
             this.cardsFromData(scheduledata)
         })
-        .catch(err => console.log(err))
     }
 
     cardsFromData(scheduledata) {

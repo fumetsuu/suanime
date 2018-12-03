@@ -1,9 +1,17 @@
 const fs = require('fs')
 const path = require('path')
+const cloudscraper = require('cloudscraper')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { convertMS, fixFilename, genFilename, genVideoPath } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
+
+const imageCache = require('image-cache')
+const tempcwd = require('electron').remote.app.getPath('userData')
+imageCache.setOptions({
+    dir: path.join(tempcwd, '/mal-cache/'),
+    compressed: false
+})
 
 class AnimeCard extends Component {
   constructor(props) {
@@ -19,6 +27,11 @@ class AnimeCard extends Component {
     this.timeago = convertMS(Date.now()-Date.parse(created_at)-tzOffset)
     this.animeFilename = genFilename(title, episode)    
     this.epTitle = 'Episode '+episode
+    this.state = { cposter: '' }
+  }
+
+  componentWillMount() {
+    //write image to cache or fetch image from case (base 64 data)
   }
 
   render() {
@@ -38,7 +51,7 @@ class AnimeCard extends Component {
     }
     this.content = 
       <div className="card-container" onClick={this.launchInfoPage.bind(this)}>
-        <div className="card-bg" style={{ backgroundImage: `url('${poster}')`}}></div>
+        <div className="card-bg" style={{ backgroundImage: `url('${this.poster}')`}}></div>
         <div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
         <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
         <div className="card-header">
