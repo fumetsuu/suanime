@@ -6,12 +6,9 @@ import { connect } from 'react-redux'
 import { convertMS, fixFilename, genFilename, genVideoPath } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
 
-const imageCache = require('image-cache')
+const SuSimpleCache = require('su-simple-cache')
 const tempcwd = require('electron').remote.app.getPath('userData')
-imageCache.setOptions({
-    dir: path.join(tempcwd, '/mal-cache/'),
-    compressed: false
-})
+const suSimpleCache = new SuSimpleCache().init(path.join(tempcwd, '/ma-img-cache/'))
 
 class AnimeCard extends Component {
   constructor(props) {
@@ -31,6 +28,17 @@ class AnimeCard extends Component {
   }
 
   componentWillMount() {
+    if(suSimpleCache.isCachedSync(this.poster)) {
+      suSimpleCache.get(this.poster).then(cachedFile => {
+        this.setState({ cposter: cachedFile.data })
+      })
+    } else {
+      cloudscraper.request({ method: 'GET', url: this.poster, encoding: 'base64' }, (err, res, body) => {
+        if(err) throw err
+        suSimpleCache.set(this.poster, body)
+        this.setState({ cposter: body })
+      })
+    }
     //write image to cache or fetch image from case (base 64 data)
   }
 
@@ -51,7 +59,7 @@ class AnimeCard extends Component {
     }
     this.content = 
       <div className="card-container" onClick={this.launchInfoPage.bind(this)}>
-        <div className="card-bg" style={{ backgroundImage: `url('${this.poster}')`}}></div>
+        <div className="card-bg" style={{ backgroundImage: `url('data:image/jpeg;base64,${this.state.cposter}')`}}></div>
         <div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
         <div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
         <div className="card-header">
