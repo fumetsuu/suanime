@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import { statusToCode, typeToCode, updateScore } from '../../util/animelist.js'
 import { updateAnime, launchInfo, playAnime, addAnime } from '../../actions/actions.js'
 import { processExceptions } from '../InfoPage/processExceptions'
+import { loadMAImage } from '../../util/maImageLoader';
 
 class WatchInformation extends Component {
     constructor(props) {
@@ -22,7 +23,8 @@ class WatchInformation extends Component {
             animeListObject: null,
             hasPrevEp: false,
             hasNextEp: false,
-            loadingALO: true
+            loadingALO: true,
+            cposter: ''
         }
         this.updateScore = this.updateScore.bind(this)
         this.updateStatus = this.updateStatus.bind(this)
@@ -51,6 +53,11 @@ class WatchInformation extends Component {
         this.checkEps(nextProps)
     }
     
+    componentWillMount() {
+        loadMAImage(this.props.posterImg).then(imgData => {
+            this.setState({ cposter: imgData })
+        }).catch(console.log)
+    }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.fixWidths)
@@ -75,7 +82,7 @@ class WatchInformation extends Component {
         }
         return (
             <div className="watch-information" style={{width: this.state.reqWidth}}>
-                <div className="watch-image" style={{backgroundImage: `url('${this.props.posterImg}')`}} onClick={this.launchInfoPage}/>
+                <div className="watch-image" style={{backgroundImage: `url('data:image/jpeg;base64,${this.state.cposter}')`}} onClick={this.launchInfoPage}/>
                 <div className="watch-title-container">
                     <div className="watch-title" onClick={this.launchInfoPage}>
                         {this.props.animeName}

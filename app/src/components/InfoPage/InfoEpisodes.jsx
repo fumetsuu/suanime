@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import InfoEpisodeCard from './InfoEpisodeCard.jsx'
-const rp = require('request-promise')
+// const rp = require('request-promise')
+const cloudscraper = require('cloudscraper')
 import Loader from '../Loader/Loader.jsx'
 import { fixURLMA, fixURL, genFilename } from '../../util/util.js'
 import { connect } from 'react-redux'
@@ -34,7 +35,9 @@ class InfoEpisodes extends Component {
 	stateFromID(id) {
 		const reqURL = `https://www.masterani.me/api/anime/${id}/detailed`
 		var epCards = []
-		rp({ uri: reqURL, json: true }).then(data => {
+		cloudscraper.request({ method: 'GET', url: reqURL }, (err, res, body) => {
+			if(err) throw err
+			var data = JSON.parse(body)
 			data.episodes.forEach(ep => {
 				epCards.push(<InfoEpisodeCard key={ep.info.id} epData={ep.info} broadData={data.info} poster={data.poster}/>)
 			})
@@ -42,13 +45,15 @@ class InfoEpisodes extends Component {
 				isLoading: false,
 				epCards
 			}, this.checkDownloaded)
-		}).catch(err => { console.log(err) })
+		})
 	}
 
 	stateFromName(animeName) {
 		const searchURL = `https://www.masterani.me/api/anime/search?search=${fixURLMA(animeName)}&sb=1`
 		console.log(fixURLMA(animeName), animeName, searchURL)
-		rp({ uri: searchURL, json: true }).then(searchResults => {
+		cloudscraper.request({ method: 'GET', url: searchURL }, (err, res, body) => {
+			if(err) throw err
+			var searchResults = JSON.parse(body)
 			let searchHit = processExceptions(searchResults, animeName, true)
 			if(!searchHit) {
 				this.setState({
@@ -60,7 +65,7 @@ class InfoEpisodes extends Component {
 			}
 			let id = searchHit.id
 		 this.stateFromID(id)
-		}).catch(err => console.log(err))
+		})
 	}
 
 	render() {

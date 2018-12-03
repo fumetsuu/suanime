@@ -46,7 +46,7 @@ class SearchResults extends Component {
 
     onscroll(e) {
         var srcontainer = document.querySelector('.search-results-wrapper')
-        if(srcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 800) {
+        if(srcontainer.scrollHeight - e.target.scrollTop <= window.innerHeight + 1000) {
             if(this.state.pageNext) {
                 window.removeEventListener('scroll', this.onscroll, true)
                 this.stateFromURL(this.state.pageNext)

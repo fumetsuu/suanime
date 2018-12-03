@@ -4,6 +4,7 @@ const path = require('path')
 const bytes = require('bytes')
 import DownloadCard from './DownloadCard.jsx'
 import { genFolderPath, promisefsStat, fixFilename } from '../../util/util';
+import { loadMAImage } from '../../util/maImageLoader.js';
 
 export default class DownloadsFolder extends Component {
     constructor(props) {
@@ -11,8 +12,15 @@ export default class DownloadsFolder extends Component {
         this.state = {
             cardsArray: [],
             extraInfo: 'Calculating Local Stats...',
-            open: false
+            open: false,
+            cposter: ''
         }
+    }
+
+    componentWillMount() {
+        loadMAImage(this.props.data.posterImg).then(imgData => {
+            this.setState({ cposter: imgData })
+        }).catch(console.log)
     }
 
     componentDidMount() {
@@ -28,7 +36,7 @@ export default class DownloadsFolder extends Component {
         return (
             <div className="downloads-folder">
                 <div className={open ? "folder-container active" : "folder-container"} onClick={this.openFolder.bind(this)}>
-                    <div className="folder-img" style={{ backgroundImage: `url('${this.props.data.posterImg}')` }} />
+                    <div className="folder-img" style={{ backgroundImage: `url('data:image/jpeg;base64,${this.state.cposter}')` }} />
                     <div className="folder-info">
                         <div className="folder-title">{this.props.data.animeName}</div>
                         <div className="folder-data">{this.state.extraInfo}</div>

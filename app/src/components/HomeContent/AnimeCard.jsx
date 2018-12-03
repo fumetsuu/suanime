@@ -1,14 +1,11 @@
-const fs = require('fs')
-const path = require('path')
-const cloudscraper = require('cloudscraper')
+// const fs = require('fs')
+// const path = require('path')
+// const cloudscraper = require('cloudscraper')
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { convertMS, fixFilename, genFilename, genVideoPath } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
-
-const SuSimpleCache = require('su-simple-cache')
-const tempcwd = require('electron').remote.app.getPath('userData')
-const suSimpleCache = new SuSimpleCache().init(path.join(tempcwd, '/ma-img-cache/'))
+import { loadMAImage } from '../../util/maImageLoader'
 
 class AnimeCard extends Component {
   constructor(props) {
@@ -28,18 +25,9 @@ class AnimeCard extends Component {
   }
 
   componentWillMount() {
-    if(suSimpleCache.isCachedSync(this.poster)) {
-      suSimpleCache.get(this.poster).then(cachedFile => {
-        this.setState({ cposter: cachedFile.data })
-      })
-    } else {
-      cloudscraper.request({ method: 'GET', url: this.poster, encoding: 'base64' }, (err, res, body) => {
-        if(err) throw err
-        suSimpleCache.set(this.poster, body)
-        this.setState({ cposter: body })
-      })
-    }
-    //write image to cache or fetch image from case (base 64 data)
+    loadMAImage(this.poster).then(imgData => {
+      this.setState({ cposter: imgData })
+    }).catch(console.log)
   }
 
   render() {
