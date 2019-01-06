@@ -1,7 +1,9 @@
 const path = require('path')
 const fs = require('fs')
-import { fixFilename, fixURL, genFolderPath, genVideoPath } from '../util/util.js'
+const bytes = require('bytes')
+import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec } from '../util/util.js'
 import { getDownloadLink } from '../util/getDownloadLink.js'
+import store from '../store.js';
 const pqueueAll = require('../util/pqueueAll')
 
 const suDownloader = require('../suDownloader/suDownloader')
@@ -27,6 +29,29 @@ export function playAnime(animeName, epNumber, posterImg, slug) {
 }
 
 export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
+	var vidPath = genVideoPath(animeName, animeFilename)
+	//check if file already exists
+	if(fs.existsSync(vidPath)) {
+			store.dispatch({
+				type: 'QUEUE_DOWNLOAD',
+				payload: {
+					epLink,
+					animeFilename,
+					posterImg,
+					animeName,
+					epTitle
+				}
+			})
+			return completeDL(animeFilename, {
+				status: 'COMPLETED',
+				speed: '',
+				progressSize: bytes(fs.statSync(vidPath).size),
+				percentage: '100',
+				remaining: '0',
+				elapsed: convertSec(0),
+				completeDate: Date.now()
+			})
+	}
 	if(!fs.existsSync(genFolderPath(animeName))) {
 		fs.mkdirSync(genFolderPath(animeName))
 	}
@@ -34,7 +59,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 		const dlOptions = {
 			key: animeFilename,
-			path: genVideoPath(animeName, animeFilename),
+			path: vidPath,
 			url: downloadURL,
 			concurrent
 		}

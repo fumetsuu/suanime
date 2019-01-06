@@ -193,8 +193,10 @@ class DownloadsHolder extends Component {
     }
 
     clearAll() {
-        suDownloader.clearAll()
-        this.props.clearAllDownloads()
+        if(confirm('Delete all downloads from suanime? (This will not delete the actual video files in your library)')) {
+            suDownloader.clearAll()
+            this.props.clearAllDownloads()
+        }
     }
 }
 

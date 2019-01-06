@@ -4,7 +4,7 @@ import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
 const fs = require('fs')
 const path = require('path')
 const bytes = require('bytes')
-import { createdlObj, clearDL, playAnime, completeDL, persistDL } from '../../actions/actions.js'
+import { clearDL, playAnime, persistDL } from '../../actions/actions.js'
 import { getDownloadLink } from '../../util/getDownloadLink'
 import { toWordDate, fixFilename, convertSec, genVideoPath } from '../../util/util'
 

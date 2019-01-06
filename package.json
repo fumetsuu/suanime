@@ -11,6 +11,7 @@
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
     "publish": "build --win -p always",
+    "pack-linux": "build --linux --dir",
     "build-pack": "npm run build-prod && npm run pack"
   },
   "build": {
