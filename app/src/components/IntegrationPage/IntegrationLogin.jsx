@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { browserLink } from '../../util/util';
+import { browserLink } from '../../util/util'
 import { connect } from 'react-redux'
 
 class IntegrationLogin extends Component {
