@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { streamMoe } from '../../util/animedownloaders/streamMoe.js'
-const fs = require('fs')
-const path = require('path')
-const bytes = require('bytes')
-import { clearDL, playAnime, persistDL } from '../../actions/actions.js'
-import { getDownloadLink } from '../../util/getDownloadLink'
-import { toWordDate, fixFilename, convertSec, genVideoPath } from '../../util/util'
+import fs from 'fs'
+import bytes from 'bytes'
 
-const suDownloader = require('../../suDownloader/suDownloader')
+import { clearDL, playAnime, persistDL, startDownload } from '../../actions/actions'
+import { toWordDate, convertSec, genVideoPath } from '../../util/util'
+
+import suDownloader from '../../suDownloader/suDownloader'
 //status can be 'QUEUED', 'QUEUED_R', 'PAUSED', 'STARTING', 'DOWNLOADING', 'COMPLETED', 'FETCHING_URL'
 class DownloadCard extends Component {
 	constructor(props) {
@@ -30,9 +28,9 @@ class DownloadCard extends Component {
 				speed: '',
 				progressSize: progressSize || totalSize,
 				percentage: '100',
-				elapsed: elapsed,
+				elapsed,
 				remaining: '0',
-				completeDate: completeDate
+				completeDate
 			}
 		} else {
 			this.state = this.props.persistedState || {
@@ -55,17 +53,17 @@ class DownloadCard extends Component {
 	}
 
 	componentWillUnmount() {
-    this.removeStatusListeners()
-	this.removesuDListeners()
-	if(this.downloadItem && this.state.status != 'FETCHING_URL') {
-      this.props.persistDL(this.props.animeFilename, this.state)
-    }
-  }
+		this.removeStatusListeners()
+		this.removesuDListeners()
+		if(this.downloadItem && this.state.status != 'FETCHING_URL') {
+			this.props.persistDL(this.props.animeFilename, this.state)
+		}
+  	}
 
 	render() {
 		var controlIcon
 		var controlAction
-		var controlClass = 'download-control-btn'
+		var controlClass = 'download-control-btn bluebghover'
 		var statusText
 		var clearClass = 'download-control-btn redbghover'
 		switch (this.state.status) {
@@ -109,7 +107,7 @@ class DownloadCard extends Component {
 			}
 			case 'COMPLETED': {
 				controlIcon = 'live_tv'
-				statusText = `Completed`
+				statusText = 'Completed'
 				controlAction = this.playDownload
 				break
 			}
@@ -144,7 +142,7 @@ class DownloadCard extends Component {
 				<div className="download-card-container">
 					<div className="download-card-header">
 						<div className="status-circle" style={{ backgroundColor: statusColour }} />
-						<div className={isCompleted ? "download-title hover-blue" : "download-title"} onClick={titleclick}>
+						<div className={isCompleted ? 'download-title hover-blue' : 'download-title'} onClick={titleclick}>
 							{animeName} - {epTitle}
 						</div>
 						<div className="download-complete-date">{this.state.completeDate ? toWordDate(this.state.completeDate) : statusText}</div>
@@ -161,9 +159,9 @@ class DownloadCard extends Component {
 						</div>
 					</div>
 					{isCompleted ? null :
-					<div className="download-progress-bar-container">
-						<div className="download-progress-bar" style={{ width: this.state.percentage + '%' }} />
-					</div>
+						<div className="download-progress-bar-container">
+							<div className="download-progress-bar" style={{ width: this.state.percentage + '%' }} />
+						</div>
 					}
 				</div>
 			)
@@ -171,7 +169,7 @@ class DownloadCard extends Component {
 			return (
 				<div className="download-card-container download-card-container-compact">
 					<div className="status-circle" style={{ backgroundColor: statusColour }} />
-					<div className={isCompleted ? "download-title hover-blue" : "download-title"} onClick={titleclick}>
+					<div className={isCompleted ? 'download-title hover-blue' : 'download-title'} onClick={titleclick}>
 						{animeName} - {epTitle}
 					</div>
 					<div className="download-complete-date">{this.state.completeDate ? toWordDate(this.state.completeDate) : statusText}</div>
@@ -198,20 +196,7 @@ class DownloadCard extends Component {
 		if(this.state.status == 'ERROR') {
 			this.setState({ status: 'FETCHING_URL' })
 			let { animeFilename, animeName, epLink } = this.props
-			getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
-			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18				
-				const dlOptions = {
-					key: animeFilename,
-					path: genVideoPath(animeName, animeFilename),
-					url: downloadURL,
-					concurrent
-				}
-				console.log(suDownloader)
-				suDownloader.QueueDownload(dlOptions)
-			}).catch(err => {
-				console.log(err)
-				this.setState({ status: 'ERROR' })
-			})
+			startDownload(epLink, animeFilename, animeName)
 		} else {
 			suDownloader.startDownload(this.props.animeFilename)
 			this.setState({ status: 'STARTING'})
@@ -229,8 +214,7 @@ class DownloadCard extends Component {
 	}
 
 	playDownload() {
-		let { animeName, animeFilename } = this.props
-		var videoFile = genVideoPath(animeName, animeFilename)
+		let { animeName } = this.props
 		var epNumber = this.props.epTitle
 		var posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
 		var slug = this.props.epLink.split('watch/')[1].split('/')[0]
@@ -276,8 +260,7 @@ class DownloadCard extends Component {
 	}
 	
 	clearFetchUrlErrorTimeout() {
-		if(this.fetchurlerrortimeout)
-		clearTimeout(this.fetchurlerrortimeout)
+		if(this.fetchurlerrortimeout) clearTimeout(this.fetchurlerrortimeout)
 	}
 
 	handlesuDError(x) {
@@ -299,50 +282,50 @@ class DownloadCard extends Component {
 		suDownloader.on('error', this.handlesuDError)
 	}
 
-  removeStatusListeners() {
-    if(!this.downloadItem) return false
-    this.downloadItem.removeAllListeners('progress')
-    this.downloadItem.removeAllListeners('error')
-    this.downloadItem.removeAllListeners('pause')
-  }
+	removeStatusListeners() {
+		if(!this.downloadItem) return false
+		this.downloadItem.removeAllListeners('progress')
+		this.downloadItem.removeAllListeners('error')
+		this.downloadItem.removeAllListeners('pause')
+	}
 
-  addStatusListeners() {
-	if(!this.downloadItem) return false
-	this.removeStatusListeners()
-    this.downloadItem
-      .on('progress', x => {
-        var status = 'DOWNLOADING'
-        var speed = bytes(x.present.speed) + '/s'
-        var progressSize = bytes(x.total.downloaded)
-        var totalSize = bytes(x.total.size)
-        var percentage = (x.total.completed).toFixed(2)
-        var elapsed = convertSec(Math.round(x.present.time))
-        var remaining = convertSec(Math.round(x.future.eta))
-        this.setState({
-          status,
-          speed,
-          progressSize,
-          totalSize,
-          percentage,
-          elapsed,
-          remaining
-        })
-      })
-		.on('error', err => console.log('err: ', err))
-		.on('pause', () => this.setState({ status: 'PAUSED' }))
-		.on('finish', x => { 
-			this.setState({
-				status: 'COMPLETED',
-				speed: '',
-				progressSize: bytes(x.total.size),
-				percentage: '100',
-				remaining: '0',
-				elapsed: convertSec(Math.round(x.present.time)),
-				completeDate: Date.now()
+	addStatusListeners() {
+		if(!this.downloadItem) return false
+		this.removeStatusListeners()
+		this.downloadItem
+			.on('progress', x => {
+				var status = 'DOWNLOADING'
+				var speed = bytes(x.present.speed) + '/s'
+				var progressSize = bytes(x.total.downloaded)
+				var totalSize = bytes(x.total.size)
+				var percentage = (x.total.completed).toFixed(2)
+				var elapsed = convertSec(Math.round(x.present.time))
+				var remaining = convertSec(Math.round(x.future.eta))
+				this.setState({
+					status,
+					speed,
+					progressSize,
+					totalSize,
+					percentage,
+					elapsed,
+					remaining
+				})
 			})
-			this.removeStatusListeners()
-		})
-  }
+			.on('error', err => console.log('err: ', err))
+			.on('pause', () => this.setState({ status: 'PAUSED' }))
+			.on('finish', x => { 
+				this.setState({
+					status: 'COMPLETED',
+					speed: '',
+					progressSize: bytes(x.total.size),
+					percentage: '100',
+					remaining: '0',
+					elapsed: convertSec(Math.round(x.present.time)),
+					completeDate: Date.now()
+				})
+				this.removeStatusListeners()
+			})
+	}
 }
 
 const mapStateToProps = state => {

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
 import { momentDuration } from '../../util/util'
+
 let playbackRate = 1
 let volume = 1
 let resumeFrom = false
@@ -25,8 +25,8 @@ class AnimeVideo extends Component {
 			played: 0,
 			seeking: false,
 			fullscreen: false,
-			controlsClass: "anime-video-controls",
-			volSliderClass: "volume-slider none"
+			controlsClass: 'anime-video-controls',
+			volSliderClass: 'volume-slider none'
 		}
 		this.hotkeyEvents = this.hotkeyEvents.bind(this)
 		this.fullscreenEvent = this.fullscreenEvent.bind(this)
@@ -34,7 +34,7 @@ class AnimeVideo extends Component {
 
 	componentDidMount() {
 		this.fixWidths()
-        window.addEventListener('resize', () => {
+        	window.addEventListener('resize', () => {
 			this.fixWidths()
 		})
 		window.addEventListener('keypress', this.hotkeyEvents, true)
@@ -69,46 +69,46 @@ class AnimeVideo extends Component {
 	render() {
 		let { url, playing, volume, muted, played, duration, playbackRate, fullscreen, controlsClass, volSliderClass } = this.state
 		return (
-			<div className={fullscreen?'player-wrapper video-fullscreen':'player-wrapper'}
-			onMouseEnter={this.showControls.bind(this)}
-			onMouseMove={this.showControls.bind(this)}
-			onMouseLeave={this.hideControls.bind(this)}>
+			<div className={fullscreen ? 'player-wrapper video-fullscreen' : 'player-wrapper'}
+				onMouseEnter={this.showControls.bind(this)}
+				onMouseMove={this.showControls.bind(this)}
+				onMouseLeave={this.hideControls.bind(this)}>
 				<ReactPlayer
-				ref={player => { this.player = player }} 
-				url={url} 
-				className="anime-player"
-				width='100%'
-				height='100%'
-				playing={playing}
-				playbackRate={playbackRate}
-				volume={volume}
-				muted={muted}
-				onProgress={this.onProgress.bind(this)}
-				onDuration={this.onDuration.bind(this)}
-				onClick={this.playPause.bind(this)}
-				onDoubleClick={this.goFullscreen.bind(this)}
-				onReady={this.readyVideo.bind(this)}/>
+					ref={player => { this.player = player }} 
+					url={url} 
+					className="anime-player"
+					width='100%'
+					height='100%'
+					playing={playing}
+					playbackRate={playbackRate}
+					volume={volume}
+					muted={muted}
+					onProgress={this.onProgress.bind(this)}
+					onDuration={this.onDuration.bind(this)}
+					onClick={this.playPause.bind(this)}
+					onDoubleClick={this.goFullscreen.bind(this)}
+					onReady={this.readyVideo.bind(this)}/>
 				<div className={controlsClass} style={{width: this.state.controlsWidth}}>
 					<div className="video-control-button" onClick={this.playPause.bind(this)}><i className="material-icons">{playing?'pause':'play_arrow'}</i></div>
 					<div className="video-control-button" onClick={this.toggleMuted.bind(this)} onMouseEnter={this.showVolSlider.bind(this)}><i className="material-icons">{(muted || volume == 0) ? 'volume_off' : (volume < 0.5 ?'volume_down':'volume_up')}</i></div>
 					<input className={volSliderClass}
-					type='range' min={0} max={1} step='any'
-					value={volume}
-					onChange={this.setVolume.bind(this)}
-					onMouseLeave={this.hideVolSlider.bind(this)}
+						type='range' min={0} max={1} step='any'
+						value={volume}
+						onChange={this.setVolume.bind(this)}
+						onMouseLeave={this.hideVolSlider.bind(this)}
 					/>
 					<div className="progress-text">{momentDuration(duration*played)} / {momentDuration(duration)}</div>
 					<input className="progress-slider"
-					type='range' min={0} max={1} step='any'
-					value={played}
-					onMouseDown={this.onSeekMouseDown.bind(this)}
-					onChange={this.onSeekChange.bind(this)}
-					onMouseUp={this.onSeekMouseUp.bind(this)}
+						type='range' min={0} max={1} step='any'
+						value={played}
+						onMouseDown={this.onSeekMouseDown.bind(this)}
+						onChange={this.onSeekChange.bind(this)}
+						onMouseUp={this.onSeekMouseUp.bind(this)}
 					/>
 					<div className="speed-text">{playbackRate}</div>  
 					<div className="video-control-button" onClick={this.incPlaybackRate.bind(this)}><i className="material-icons">add_box</i></div>
 					<div className="video-control-button" onClick={this.decPlaybackRate.bind(this)}><i className="material-icons">indeterminate_check_box</i></div>
-					<div className="video-control-button fullscreen-btn" onClick={this.goFullscreen.bind(this)}><i className="material-icons">{fullscreen?'fullscreen_exit':'fullscreen'}</i></div>
+					<div className="video-control-button fullscreen-btn" onClick={this.goFullscreen.bind(this)}><i className="material-icons">{fullscreen ? 'fullscreen_exit' : 'fullscreen'}</i></div>
 					
 				</div>
 			</div>
@@ -128,11 +128,11 @@ class AnimeVideo extends Component {
 	}
 
 	onProgress(state) {
-	if (!this.state.seeking) {
-		this.setState(state, () => {
-			playedSeconds = this.state.playedSeconds
-			resumeFrom = true
-		})
+		if(!this.state.seeking) {
+			this.setState(state, () => {
+				playedSeconds = this.state.playedSeconds
+				resumeFrom = true
+			})
 		}
 	}
 
@@ -181,7 +181,7 @@ class AnimeVideo extends Component {
 
 	showControls() {
 		this.setState({
-			controlsClass: "anime-video-controls"
+			controlsClass: 'anime-video-controls'
 		})
 		if(this.hideControlsTimeout) {
 			window.clearTimeout(this.hideControlsTimeout)
@@ -191,20 +191,20 @@ class AnimeVideo extends Component {
 
 	hideControls() {
 		this.setState({
-			controlsClass: "anime-video-controls none",
-			volSliderClass: "volume-slider none"
+			controlsClass: 'anime-video-controls none',
+			volSliderClass: 'volume-slider none'
 		})
 	}
 
 	showVolSlider() {
 		this.setState({
-			volSliderClass: "volume-slider"
+			volSliderClass: 'volume-slider'
 		})
 	}
 
 	hideVolSlider() {
 		this.setState({
-			volSliderClass: "volume-slider none"
+			volSliderClass: 'volume-slider none'
 		})
 	}
 

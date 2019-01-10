@@ -1,7 +1,7 @@
-const path = require('path')
-const cloudscraper = require('cloudscraper')
+import path from 'path'
+import cloudscraper from 'cloudscraper'
 
-const SuSimpleCache = require('su-simple-cache')
+import SuSimpleCache from 'su-simple-cache'
 const tempcwd = require('electron').remote.app.getPath('userData')
 const suSimpleCache = new SuSimpleCache().init(path.join(tempcwd, '/ma-img-cache/'))
 
@@ -12,7 +12,7 @@ export function loadMAImage(imageURL) {
 				return resolve(cachedFile.data)
 			})
 		  } else {
-			cloudscraper.request({ method: 'GET', url: imageURL, encoding: 'base64' }, (err, res, body) => {
+			cloudscraper.request({ method: 'GET', url: imageURL, encoding: 'base64' }, (err, _, body) => {
 			  if(err) return reject(err)
 			  suSimpleCache.set(imageURL, body)
 			  return resolve(body)

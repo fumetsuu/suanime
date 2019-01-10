@@ -1,4 +1,3 @@
-const path = require('path')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 // const HtmlWebpackPlugin = require('html-webpack-plugin')
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
@@ -45,7 +44,7 @@ module.exports = {
 			},
 			{
 				test: /\.(png|jpg|gif|svg|eot|svg|ttf|woff|woff2)$/,
-				loader: "file-loader",
+				loader: 'file-loader',
 				options: {
 					name: 'assets/[name].[ext]'
 				}

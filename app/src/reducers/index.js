@@ -6,8 +6,8 @@ import searchReducer from './searchReducer.js'
 import animelistReducer from './animelistReducer.js'
 
 export default combineReducers({
-    downloadsReducer,
-    animeVideoReducer,
-    searchReducer,
-    animelistReducer
+	downloadsReducer,
+	animeVideoReducer,
+	searchReducer,
+	animelistReducer
 })

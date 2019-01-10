@@ -28,9 +28,9 @@ class MALHistory extends Component {
 		if(this.state.isLoading) return <div style={{ minHeight: '400px' }}><Loader loaderClass="central-loader"/></div>
 		if(this.state.isEmpty) return <div style={{ minHeight: '400px' }} className="history-empty">No History!</div>
 		return (
-		<div className="history-container">
-			{this.state.historyCards}
-		</div>
+			<div className="history-container">
+				{this.state.historyCards}
+			</div>
 		)
 	}
 

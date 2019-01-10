@@ -1,131 +1,131 @@
 import { convertMS } from './util.js'
 
 export function statusToCode(airingString) {
-    switch(airingString) {
-        case 'Currently Airing': case 'currently_airing': return 1; break
-        case 'Finished Airing': case 'finished_airing': return 2; break
-        case 'Not yet aired': case 'not_yet_aired': return 3; break
-    }
+	switch(airingString) {
+		case 'Currently Airing': case 'currently_airing': return 1
+		case 'Finished Airing': case 'finished_airing': return 2
+		case 'Not yet aired': case 'not_yet_aired': return 3
+	}
 }
 
 export function typeToCode(typeString) {
-    switch(typeString.toUpperCase()) {
-        case 'TV': return 1; break
-        case 'OVA': return 2; break
-        case 'Movie': return 3; break
-        case 'Special': return 4; break
-        case 'ONA': return 5; break
-        case 'Music': return 6; break
-        default: return 1; break
-    }
+	switch(typeString.toUpperCase()) {
+		case 'TV': return 1
+		case 'OVA': return 2
+		case 'Movie': return 3
+		case 'Special': return 4
+		case 'ONA': return 5
+		case 'Music': return 6
+		default: return 1
+	}
 }
 
 export function typeCodeToText(typeCode) {
-    switch(typeCode) {
-        case 1: return 'TV'; break
-        case 2: return 'OVA'; break
-        case 3: return 'Movie'; break
-        case 4: return 'Special'; break
-        case 5: return 'ONA'; break
-        case 6: return 'Music'; break
-    }
+	switch(typeCode) {
+		case 1: return 'TV'
+		case 2: return 'OVA'
+		case 3: return 'Movie'
+		case 4: return 'Special'
+		case 5: return 'ONA'
+		case 6: return 'Music'
+	}
 }
 
 export function progressPercent(watched, total) {
-    if(total) {
-        return Math.ceil(100 * (watched / total)) >= 100 ? 100 : Math.ceil(100 * (watched / total))
-    } else if(watched < 12) {
-        return Math.ceil(100 * (watched / 13))
-    } else return 50
+	if(total) {
+		return Math.ceil(100 * (watched / total)) >= 100 ? 100 : Math.ceil(100 * (watched / total))
+	} else if(watched < 12) {
+		return Math.ceil(100 * (watched / 13))
+	} else return 50
 }
 
 export function statusCodeToText(statusCode) {
-    switch(statusCode) {
-        case 1: return 'Currently Watching'; break
-        case 2: return 'Completed'; break
-        case 3: return 'On Hold'; break
-        case 4: return 'Dropped'; break
-        case 6: return 'Plan to watch'; break
-    }
+	switch(statusCode) {
+		case 1: return 'Currently Watching'
+		case 2: return 'Completed'
+		case 3: return 'On Hold'
+		case 4: return 'Dropped'
+		case 6: return 'Plan to watch'
+	}
 }
 
 
 export function statusColour(statusCode) {
-    switch(statusCode) {
-        case 1: return '#51e373'; break
-        case 2: return '#53b4ff'; break
-        case 3: return '#f55353'; break
-    }
+	switch(statusCode) {
+		case 1: return '#51e373'
+		case 2: return '#53b4ff'
+		case 3: return '#f55353'
+	}
 }
 
 export function makeLastUpdated(lastUpdated) {
-    return convertMS((Date.now() - (1000 * lastUpdated)))
+	return convertMS((Date.now() - (1000 * lastUpdated)))
 }
 
 export function guessAired(startDate, seriesEps) {
-    var startDate = Date.parse(startDate)
+	var startDate = Date.parse(startDate)
 
-    var japanDate = new Date().getTime()+9*60*60*1000 //add 9 hours, getTime() is GMT
+	var japanDate = new Date().getTime()+9*60*60*1000 //add 9 hours, getTime() is GMT
 
-    var deltaMS = japanDate-startDate
+	var deltaMS = japanDate-startDate
 
-    var daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
-    
-    var guessEps = Math.ceil(daysSinceStart / 7)
+	var daysSinceStart = deltaMS/(1000*60*60*24) //divide by 1 day in milliseconds
+	
+	var guessEps = Math.ceil(daysSinceStart / 7)
 
-    var percentAired = 100*(guessEps / seriesEps)
+	var percentAired = 100*(guessEps / seriesEps)
 
-    percentAired = percentAired == 'Infinity' ? 0 : percentAired
-    percentAired = percentAired > 100 ? 100 : percentAired
+	percentAired = percentAired == 'Infinity' ? 0 : percentAired
+	percentAired = percentAired > 100 ? 100 : percentAired
 
-    return percentAired
+	return percentAired
 }
 
 export function calcUpdateInterval(lastUpdated) {
-    var secondsAgo = (Date.now() / 1000) - lastUpdated
-    if(secondsAgo < 3600) { //less than an hour
-        return 50000
-    }
-    if(secondsAgo >= 3600 && secondsAgo < 86400) {
-        return 3000000
-    }
-    return null
+	var secondsAgo = (Date.now() / 1000) - lastUpdated
+	if(secondsAgo < 3600) { //less than an hour
+		return 50000
+	}
+	if(secondsAgo >= 3600 && secondsAgo < 86400) {
+		return 3000000
+	}
+	return null
 }
 
 export function dateToSeason(date) {
-    var year = parseInt(date.split('-')[0]),
-        month = parseInt(date.split('-')[1]),
-        day = parseInt(date.split('-')[2])
-    //winter 1,2,3 | spring 4,5,6 | summer 7,8,9 | fall 10, 11, 12
-    var midMonths = [2, 5, 8, 11]
-    var lastMonths = [3, 6, 9, 12]
-    var seasonMonth = month
-    var seasonMonth = midMonths.includes(month) && day > 15 ? month+1 : month
-    seasonMonth = lastMonths.includes(month) ? month+1 : month
-    if(seasonMonth > 12) {
-        seasonMonth = 1
-        year++
-    }
-    if(seasonMonth > 0 && seasonMonth <= 3) {
-        return `Winter ${year}`
-    }
-    if(seasonMonth > 3 && seasonMonth <= 6) {
-        return `Spring ${year}`
-    }
-    if(seasonMonth > 6 && seasonMonth <= 9) {
-        return `Summer ${year}`
-    }
-    if(seasonMonth > 9 && seasonMonth <= 12) {
-        return `Fall ${year}`
-    }
+	var year = parseInt(date.split('-')[0]),
+		month = parseInt(date.split('-')[1]),
+		day = parseInt(date.split('-')[2])
+	//winter 1,2,3 | spring 4,5,6 | summer 7,8,9 | fall 10, 11, 12
+	var midMonths = [2, 5, 8, 11]
+	var lastMonths = [3, 6, 9, 12]
+	var seasonMonth = month
+	var seasonMonth = midMonths.includes(month) && day > 15 ? month+1 : month
+	seasonMonth = lastMonths.includes(month) ? month+1 : month
+	if(seasonMonth > 12) {
+		seasonMonth = 1
+		year++
+	}
+	if(seasonMonth > 0 && seasonMonth <= 3) {
+		return `Winter ${year}`
+	}
+	if(seasonMonth > 3 && seasonMonth <= 6) {
+		return `Spring ${year}`
+	}
+	if(seasonMonth > 6 && seasonMonth <= 9) {
+		return `Summer ${year}`
+	}
+	if(seasonMonth > 9 && seasonMonth <= 12) {
+		return `Fall ${year}`
+	}
 }
 
 export function myStatusToColour(myStatus) {
-    switch(myStatus) {
-        case 1: case 'Currently Watching': return 'blue-bg'; break
-        case 2: case 'Completed': return 'green-bg'; break
-        case 3: case 'On Hold': return 'yellow-bg'; break
-        case 4: case 'Dropped': return 'red-bg'; break
-        case 6: case 'Plan to watch': return 'grey-bg'; break
-    }
+	switch(myStatus) {
+		case 1: case 'Currently Watching': return 'blue-bg'
+		case 2: case 'Completed': return 'green-bg'
+		case 3: case 'On Hold': return 'yellow-bg'
+		case 4: case 'Dropped': return 'red-bg'
+		case 6: case 'Plan to watch': return 'grey-bg'
+	}
 }

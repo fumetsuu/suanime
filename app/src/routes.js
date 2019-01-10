@@ -1,6 +1,4 @@
-import loadable from 'loadable-components';
-import Loader from './components/Loader/Loader.jsx'
-import React from 'react'
+import loadable from 'loadable-components'
 
 // const loader = () => <Loader loaderClass="central-loader"></Loader>
 export const HomeContent = loadable(() => import('./components/HomeContent/HomeContent.jsx'))

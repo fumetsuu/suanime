@@ -1,21 +1,21 @@
 export const scoresData = [
-    { value: 0, label: '-' },
-    { value: 1, label: '1' },
-    { value: 2, label: '2' },
-    { value: 3, label: '3' },
-    { value: 4, label: '4' },
-    { value: 5, label: '5' },
-    { value: 6, label: '6' },
-    { value: 7, label: '7' },
-    { value: 8, label: '8' },
-    { value: 9, label: '9' },
-    { value: 10, label: '10' },
+	{ value: 0, label: '-' },
+	{ value: 1, label: '1' },
+	{ value: 2, label: '2' },
+	{ value: 3, label: '3' },
+	{ value: 4, label: '4' },
+	{ value: 5, label: '5' },
+	{ value: 6, label: '6' },
+	{ value: 7, label: '7' },
+	{ value: 8, label: '8' },
+	{ value: 9, label: '9' },
+	{ value: 10, label: '10' },
 ]
 
 export const statusData = [
-    { value: 1, label: 'Currently Watching' },
-    { value: 2, label: 'Completed' },
-    { value: 3, label: 'On Hold' },
-    { value: 4, label: 'Dropped' },
-    { value: 6, label: 'Plan to watch' }
+	{ value: 1, label: 'Currently Watching' },
+	{ value: 2, label: 'Completed' },
+	{ value: 3, label: 'On Hold' },
+	{ value: 4, label: 'Dropped' },
+	{ value: 6, label: 'Plan to watch' }
 ]

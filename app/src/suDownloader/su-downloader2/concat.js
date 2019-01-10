@@ -1,5 +1,5 @@
-const fs = require('fs')
-const PQueue = require('p-queue')
+import fs from 'fs'
+import PQueue from 'p-queue'
 const pqueue = new PQueue({ concurrency: 1 })
 
 module.exports = function concat(files, outputFile, removeFiles, removeOutputFileIfExists) {

@@ -1,13 +1,12 @@
-const path = require('path')
-const fs = require('fs')
-const bytes = require('bytes')
-import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec } from '../util/util.js'
-import { getDownloadLink } from '../util/getDownloadLink.js'
-import store from '../store.js';
-const pqueueAll = require('../util/pqueueAll')
+import path from 'path'
+import fs from 'fs'
+import bytes from 'bytes'
 
-const suDownloader = require('../suDownloader/suDownloader')
-console.log(suDownloader)
+import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec, pqueueAll } from '../util/util'
+import { getDownloadLink } from '../util/getDownloadLink'
+import store from '../store'
+
+import suDownloader from '../suDownloader/suDownloader'
 
 export function clearDL(animeFilename) {
 	return {
@@ -32,45 +31,31 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	var vidPath = genVideoPath(animeName, animeFilename)
 	//check if file already exists
 	if(fs.existsSync(vidPath)) {
-			store.dispatch({
-				type: 'QUEUE_DOWNLOAD',
-				payload: {
-					epLink,
-					animeFilename,
-					posterImg,
-					animeName,
-					epTitle
-				}
-			})
-			return completeDL(animeFilename, {
-				status: 'COMPLETED',
-				speed: '',
-				progressSize: bytes(fs.statSync(vidPath).size),
-				percentage: '100',
-				remaining: '0',
-				elapsed: convertSec(0),
-				completeDate: Date.now()
-			})
+		store.dispatch({
+			type: 'QUEUE_DOWNLOAD',
+			payload: {
+				epLink,
+				animeFilename,
+				posterImg,
+				animeName,
+				epTitle
+			}
+		})
+		return completeDL(animeFilename, {
+			status: 'COMPLETED',
+			speed: '',
+			progressSize: bytes(fs.statSync(vidPath).size),
+			percentage: '100',
+			remaining: '0',
+			elapsed: convertSec(0),
+			completeDate: Date.now()
+		})
 	}
-	if(!fs.existsSync(genFolderPath(animeName))) {
-		fs.mkdirSync(genFolderPath(animeName))
-	}
-	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
-		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
-		const dlOptions = {
-			key: animeFilename,
-			path: vidPath,
-			url: downloadURL,
-			concurrent
-		}
-		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
-		console.log(suDownloader)
-		suDownloader.QueueDownload(dlOptions)
-	}).catch(err => {
-		if(err) {
-			suDownloader.emit('error', { key: animeFilename, err })
-		}
-	})
+
+	if(!fs.existsSync(genFolderPath(animeName))) fs.mkdirSync(genFolderPath(animeName))
+
+	startDownload(epLink, animeFilename, animeName)
+
 	return {
 		type: 'QUEUE_DOWNLOAD',
 		payload: {
@@ -83,23 +68,43 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 	}
 }
 
+export function startDownload(epLink, animeFilename, animeName) {
+	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
+		var vidPath = genVideoPath(animeName, animeFilename)
+		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
+		const dlOptions = {
+			key: animeFilename,
+			path: vidPath,
+			url: downloadURL,
+			concurrent
+		}
+
+		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
+		console.log(suDownloader)
+
+		suDownloader.QueueDownload(dlOptions)
+	}).catch(err => {
+		if(err) suDownloader.emit('error', { key: animeFilename, err })
+	})
+}
+
 export function queueDLAll(paramsArray, animeName) {
-	if(!fs.existsSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))) {
-		fs.mkdirSync(path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`))
-	}
+	var animeFolderPath = path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`)
+	if(!fs.existsSync(animeFolderPath)) fs.mkdirSync(animeFolderPath)
+
 	var linkPromises = paramsArray.map(el => () => getDownloadLink(el.epLink))
+
 	pqueueAll(linkPromises).then(downloadURLs => {
-		console.log(downloadURLs)
 		downloadURLs.forEach((res, i) => {
 			if(res.status == 'rejected') {
 				suDownloader.emit('error', { key: paramsArray[i].animeFilename, err: res.error })
-				return false
+				return
 			}
 			var downloadURL = res.value
 			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 			const dlOptions = {
 				key: paramsArray[i].animeFilename,
-				path: path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}/${fixFilename(paramsArray[i].animeFilename)}`),
+				path: path.join(animeFolderPath, fixFilename(paramsArray[i].animeFilename)),
 				url: downloadURL,
 				concurrent
 			}
@@ -108,6 +113,7 @@ export function queueDLAll(paramsArray, animeName) {
 			suDownloader.QueueDownload(dlOptions)
 		})
 	})
+
 	return {
 		type: 'QUEUE_ALL',
 		payload: paramsArray
@@ -144,7 +150,7 @@ export function persistDL(animeFilename, persistedState) {
 
 export function search(searchValue, searchSort, searchType, searchStatus, searchGenre) {
 	return {
-		type: "SEARCH",
+		type: 'SEARCH',
 		payload: {
 			searchValue,
 			searchSort,
@@ -169,7 +175,7 @@ export function updateAnime(malID, updatedObj) {
 	}
 
 	return {
-		type: "UPDATE_ANIME",
+		type: 'UPDATE_ANIME',
 		payload: {
 			malID,
 			updatedObj: updatedObjWithTime || updatedObj,
@@ -180,7 +186,7 @@ export function updateAnime(malID, updatedObj) {
 
 export function addAnime(malID, animeObj) {
 	return {
-		type: "ADD_ANIME",
+		type: 'ADD_ANIME',
 		payload: {
 			malID,
 			animeObj
@@ -190,7 +196,7 @@ export function addAnime(malID, animeObj) {
 
 export function deleteHistoryCard(malID, episode, timeUpdated) {
 	return {
-		type: "DELETE_HISTORY_CARD",
+		type: 'DELETE_HISTORY_CARD',
 		payload: {
 			malID,
 			episode,
@@ -201,7 +207,7 @@ export function deleteHistoryCard(malID, episode, timeUpdated) {
 
 export function persistMAL(listStatus, listSort, listView) {
 	return {
-		type: "PERSIST_MAL",
+		type: 'PERSIST_MAL',
 		payload: {
 			listStatus,
 			listSort,
@@ -212,7 +218,7 @@ export function persistMAL(listStatus, listSort, listView) {
 
 export function persistDLState(listView, listSort) {
 	return {
-		type: "PERSIST_DL_STATE",
+		type: 'PERSIST_DL_STATE',
 		payload: {
 			listView,
 			listSort
@@ -222,7 +228,7 @@ export function persistDLState(listView, listSort) {
 
 export function savelist(listdata, listinfo) {
 	return {
-		type: "SAVE_LIST",
+		type: 'SAVE_LIST',
 		payload: {
 			listdata,
 			listinfo

@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import InfoEpisodeCard from './InfoEpisodeCard.jsx'
-// const rp = require('request-promise')
-const cloudscraper = require('cloudscraper')
+import cloudscraper from 'cloudscraper'
 import Loader from '../Loader/Loader.jsx'
-import { fixURLMA, fixURL, genFilename } from '../../util/util.js'
+import { fixURLMA, genFilename } from '../../util/util.js'
 import { connect } from 'react-redux'
-import { queueDLAll } from '../../actions/actions';
-import { processExceptions } from './processExceptions';
+import { queueDLAll } from '../../actions/actions'
+import { processExceptions } from './processExceptions'
 
 class InfoEpisodes extends Component {
 	constructor(props) {
@@ -25,7 +24,7 @@ class InfoEpisodes extends Component {
 	
 	
 	componentWillMount() {
-		if(this.props.animeID == "null") {
+		if(this.props.animeID == 'null') {
 			this.stateFromName(this.props.animeName)
 		} else {
 			this.stateFromID(this.props.animeID)
@@ -121,9 +120,10 @@ class InfoEpisodes extends Component {
 }
 
 const mapStateToProps = state => {
+	var { downloading, completed } = state.downloadsReducer
 	return {
-		downloading: state.downloadsReducer.downloading,
-		completed: state.downloadsReducer.completed
+		downloading,
+		completed
 	}
 }
 
