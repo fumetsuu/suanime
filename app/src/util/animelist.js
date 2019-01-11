@@ -1,4 +1,4 @@
-import { convertMS } from './util.js'
+import { convertMS, fixYear } from './util.js'
 
 export function statusToCode(airingString) {
 	switch(airingString) {
@@ -118,6 +118,34 @@ export function dateToSeason(date) {
 	if(seasonMonth > 9 && seasonMonth <= 12) {
 		return `Fall ${year}`
 	}
+}
+
+export function dateMDYToYMD(date) {
+	if(!date || !date.includes('-')) return null
+	var year = parseInt(date.split('-')[2]),
+		month = parseInt(date.split('-')[0]),
+		day = parseInt(date.split('-')[1])
+	var newYear = fixYear(year)
+	return `${newYear}-${month}-${day}`
+}
+
+export function getDateInts(date) {
+	if(!date || !date.includes('-')) return null
+	var year = parseInt(date.split('-')[2]),
+		month = parseInt(date.split('-')[0]),
+		day = parseInt(date.split('-')[1])
+	return { year, month, day }
+}
+
+//return result of d1 > d2
+export function cmpDateInts(d1, d2) {
+	if(!d1 || !d2) return false
+	if(fixYear(d1.year) > fixYear(d2.year)) return true
+	if(fixYear(d1.year) < fixYear(d2.year)) return false
+	if(d1.month > d2.month) return true
+	if(d1.month < d2.month) return false
+	if(d1.day > d2.day) return true
+	return false
 }
 
 export function myStatusToColour(myStatus) {

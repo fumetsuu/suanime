@@ -198,7 +198,7 @@
                     background-color: $grey
                     transition: 0.3s
                     display: grid
-                    grid-template-columns: 90px 1fr 2fr
+                    grid-template-columns: 90px 2fr 3fr
                     //animation: fadeIn 0.5s
                     .bg-img
                         width: 75px
@@ -224,7 +224,7 @@
                             font-family: 'Source Sans Pro'
                             font-weight: 900
                             letter-spacing: 1px
-                            margin-top: 5px
+                            margin-top: 8px
                             margin-right: 10px
                             color: white
                             font-size: 13px
@@ -235,6 +235,7 @@
                             font-family: 'Lato'
                             font-size: 12px
                             font-weight: 400
+                            margin-bottom: 12px
                     .my-info
                         position: relative
                         width: 100%
@@ -266,7 +267,7 @@
                             width: unquote("calc(100% - 40px)")
                             height: 100%
                             display: grid
-                            grid-template-columns: 85% 20px 20px 10%
+                            grid-template-columns: 90% 10%
                             .progress-bar-container
                                 width: 100%
                                 height: 10px
@@ -291,14 +292,14 @@
                             .progress-text
                                 font-size: 12px
                                 line-height: 33px
-                                justify-self: end
+                                justify-self: center
                 .list-card-container-compact    
                     width: 100%
                     height: 30px
                     background-color: $grey
                     transition: 0.3s
                     display: grid
-                    grid-template-columns: 30px 35% 25% 5% 12% 4% 8% 8%
+                    grid-template-columns: 30px 45% 25% 5% 5% 10% 6%
                     grid-template-rows: 100%
                     transition: 0.3s
                     .status-button
@@ -307,46 +308,46 @@
                         border-radius: 50%
                         justify-self: center
                         margin-top: 10px
-                    .scores-dropdown, .status-dropdown
-                        justify-self: center
-                        border-right: 1px solid #4c4c4c
-                        width: 99%
-                        .Dropdown-control
-                            margin-top: 3.5px !important
-                            margin-right: 0 !important
-                            background-color: $black
-                            height: 13px
-                            line-height: 13px
-                            font-size: 12px
-                            background-color: transparent
-                            font-family: 'Lato'
-                            font-weight: 400
-                            justify-self: center
-                            padding: 5px 0
-                            .Dropdown-placeholder
-                                text-align: center
-                        .Dropdown-menu
-                            background-color: $dark-grey
-                            position: relative
-                            .Dropdown-option
-                                border-bottom: 1px solid $grey
-                                background-color: $black
-                                font-family: 'Lato'
-                                font-weight: 400
-                                font-size: 12px
-                                text-align: center
-                                padding: 5px 0
-                                &:hover
-                                    cursor: pointer
-                                    background-color: lighten($dark-grey, 5%)
-                            .is-selected
-                                background-color: $light-blue
-                                pointer-events: none
-                        &:hover
-                            cursor: pointer
-                            background-color: $black
-                    .scores-dropdown
-                        width: 95%
+                    // .scores-dropdown, .status-dropdown
+                    //     justify-self: center
+                    //     border-right: 1px solid #4c4c4c
+                    //     width: 99%
+                    //     .Dropdown-control
+                    //         margin-top: 3.5px !important
+                    //         margin-right: 0 !important
+                    //         background-color: $black
+                    //         height: 13px
+                    //         line-height: 13px
+                    //         font-size: 12px
+                    //         background-color: transparent
+                    //         font-family: 'Lato'
+                    //         font-weight: 400
+                    //         justify-self: center
+                    //         padding: 5px 0
+                    //         .Dropdown-placeholder
+                    //             text-align: center
+                    //     .Dropdown-menu
+                    //         background-color: $dark-grey
+                    //         position: relative
+                    //         .Dropdown-option
+                    //             border-bottom: 1px solid $grey
+                    //             background-color: $black
+                    //             font-family: 'Lato'
+                    //             font-weight: 400
+                    //             font-size: 12px
+                    //             text-align: center
+                    //             padding: 5px 0
+                    //             &:hover
+                    //                 cursor: pointer
+                    //                 background-color: lighten($dark-grey, 5%)
+                    //         .is-selected
+                    //             background-color: $light-blue
+                    //             pointer-events: none
+                    //     &:hover
+                    //         cursor: pointer
+                    //         background-color: $black
+                    // .scores-dropdown
+                    //     width: 95%
                     .series-title
                         grid-column: 2
                         font-family: 'Lato'
@@ -517,22 +518,23 @@
                             .scores-dropdown 
                                 margin: 5px 8px 5px 4px
                                 background-color: transparentize($black, 0.2)
-                                .Dropdown-control
-                                    line-height: 20px
-                                    &:hover
-                                        background-color: $light-blue
-                                        cursor: pointer
-                                .Dropdown-menu
-                                    position: relative
-                                    z-index: 100
-                                    .Dropdown-option
-                                        padding: 5px 0
-                                        &:hover
-                                            cursor: pointer
-                                            background-color: $black
-                                    .is-selected
-                                        background-color: $light-blue
-                                        pointer-events: none
+                                line-height: 20px
+                                // .Dropdown-control
+                                //     line-height: 20px
+                                //     &:hover
+                                //         background-color: $light-blue
+                                //         cursor: pointer
+                                // .Dropdown-menu
+                                //     position: relative
+                                //     z-index: 100
+                                //     .Dropdown-option
+                                //         padding: 5px 0
+                                //         &:hover
+                                //             cursor: pointer
+                                //             background-color: $black
+                                //     .is-selected
+                                //         background-color: $light-blue
+                                //         pointer-events: none
                     .series-title
                         background-color: transparentize($black, 0.2)
                         font-family: 'Lato'

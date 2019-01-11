@@ -35,6 +35,26 @@ export function convertMS(ms) {
 	return 'Moments Ago'
 }
 
+export function MDYToTimeAgo(date) {
+	if(!date || !date.includes('-')) return null
+	var year = parseInt(date.split('-')[2]),
+		month = parseInt(date.split('-')[0]),
+		day = parseInt(date.split('-')[1])
+	var newYear = fixYear(year)
+	var d = new Date(newYear, month - 1, day)
+	var delta = Date.now() - d.getTime()
+	return convertMS(delta)
+}
+
+
+export function fixYear(year) {
+	var newYear
+	if(year < 30) newYear = 2000 + year
+	if(year >= 30) newYear = 1900 + year
+	return newYear
+}
+
+
 export function convertSec(sec) {
 	var d, h, m, s
 	m = Math.floor(Math.round(sec) / 60)

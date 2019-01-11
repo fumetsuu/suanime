@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 import store from '../store.js'
-import popura from 'popura'
+// import popura from 'popura'
 // const pclient = popura()
 const tempcwd = require('electron').remote.app.getPath('userData')
 global.tempDLPath = path.join(tempcwd, '/downloads/')
@@ -48,11 +48,10 @@ export function initialiseDB() {
 	})
 	if(global.estore.get('listdata') && global.estore.get('listinfo')) {
 		store.dispatch({
-			type: 'HYDRATE_LIST',
+			type: 'HYDRATE_LIST_MALReadonly',
 			payload: {
 				listdata: global.estore.get('listdata'),
-				listinfo: global.estore.get('listinfo'),
-				malhistory: global.estore.get('malhistory')
+				listinfo: global.estore.get('listinfo')
 			}
 		})
 	}

@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux'
 
-import downloadsReducer from './downloadsReducer.js'
-import animeVideoReducer from './animeVideoReducer.js'
-import searchReducer from './searchReducer.js'
-import animelistReducer from './animelistReducer.js'
+import downloadsReducer from './downloadsReducer'
+import animeVideoReducer from './animeVideoReducer'
+import searchReducer from './searchReducer'
+import animelistReducer from './animelistReducer'
+import MALReadonlyReducer from './MALReadonlyReducer'
 
 export default combineReducers({
 	downloadsReducer,
 	animeVideoReducer,
 	searchReducer,
-	animelistReducer
+	animelistReducer,
+	MALReadonlyReducer
 })

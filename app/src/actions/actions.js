@@ -235,3 +235,30 @@ export function savelist(listdata, listinfo) {
 		}
 	}
 }
+
+export function savelistMALReadonly(listdata, listinfo) {
+	return {
+		type: 'SAVE_LIST_MALReadonly',
+		payload: {
+			listdata,
+			listinfo
+		}
+	}
+}
+
+export function persistMALReadonly(listStatus, listSort, listView) {
+	return {
+		type: 'PERSIST_MALReadonly',
+		payload: {
+			listStatus,
+			listSort,
+			listView
+		}
+	}
+}
+
+export function killMALReadonly() {
+	return {
+		type: 'KILL_MALReadonly'
+	}
+}

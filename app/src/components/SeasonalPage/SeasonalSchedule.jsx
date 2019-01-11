@@ -73,13 +73,16 @@ class SeasonalSchedule extends Component {
 	filterWatching(cat) {
 		let { listdata } = this.props
 		if(!listdata) return cat
-		return cat.filter(el => listdata.find(listel => listel.series_title == el.props.cardData.anime.title) && listdata.find(listel => listel.series_title == el.props.cardData.anime.title).my_status == 1)
+		return cat.filter(el => {
+			var listItem = listdata.find(listel => listel.anime_title == el.props.cardData.anime.title)
+			return listItem && listItem.status == 1
+		})
 	}
 }
 
 const mapStateToProps = state => {
 	return {
-		listdata: state.animelistReducer.listdata
+		listdata: state.MALReadonlyReducer.listdata
 	}
 }
 
