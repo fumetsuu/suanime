@@ -3,6 +3,8 @@ import screenfull from 'screenfull'
 import ReactPlayer from 'react-player'
 import { momentDuration } from '../../util/util'
 
+const FRAMERATE = 24
+
 let playbackRate = 1
 let volume = 1
 let resumeFrom = false
@@ -119,6 +121,10 @@ class AnimeVideo extends Component {
 		this.setState({ playing: !this.state.playing })
 	}
 
+	pause() {
+		this.setState({ playing: false })
+	}
+
 	toggleMuted() {
 		this.setState({ muted: !this.state.muted })
 	}
@@ -156,6 +162,17 @@ class AnimeVideo extends Component {
 		playedSeconds = this.player.getCurrentTime()+seconds		
 		this.player.seekTo(this.player.getCurrentTime()+seconds)
 		resumeFrom = true
+	}
+
+	prevFrame() {
+		console.log('hi')
+		this.seekAmount(- 1 / FRAMERATE)
+		this.pause()
+	}
+
+	nextFrame() {
+		this.seekAmount(1 / FRAMERATE)
+		this.pause()
 	}
 
 	incPlaybackRate() {
@@ -220,6 +237,8 @@ class AnimeVideo extends Component {
 			case 81: this.seekAmount(-60); break
 			case 101: this.seekAmount(10); break
 			case 69: this.seekAmount(60); break
+			case 44: this.prevFrame(); break
+			case 46: this.nextFrame(); break
 		}
 	}
 
