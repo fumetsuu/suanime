@@ -5,7 +5,6 @@ import DownloadsFolder from './DownloadsFolder.jsx'
 import DownloadLabels from './DownloadLabels.jsx'
 import { clearAllDownloads, persistDLState } from '../../actions/actions'
 
-import suDownloader from '../../suDownloader/suDownloader'
 
 class DownloadsHolder extends Component {
 	constructor(props) {
@@ -39,7 +38,7 @@ class DownloadsHolder extends Component {
 				<div className="sort-area"> 
 					<div className="sort-by" onClick={this.startQueue}>Start Queue</div>
 					<div className="sort-by" onClick={this.stopQueue}>Stop Queue</div>
-					<div className="sort-by" onClick={this.clearAll.bind(this)}>Clear All</div>
+					<div className="sort-by" disabled={true}>Clear All</div>
 					<div className="spacer-horizontal"/>
 					<div sortvalue="TITLE" onClick={this.setListSort} className={`sort-by${/TITLE/.test(listSort)?' sort-by-active':''}`}>Title</div>
 					<div sortvalue="ADDED" onClick={this.setListSort} className={`sort-by${/ADDED/.test(listSort)?' sort-by-active':''}`}>Date Added</div> 
@@ -184,18 +183,19 @@ class DownloadsHolder extends Component {
 	}
 
 	startQueue() {
-		suDownloader.startQueue()
+		global.suDScheduler.startQueue()
 	}
 
 	stopQueue() {
-		suDownloader.stopQueue()
+		global.suDScheduler.pauseAll()
 	}
 
 	clearAll() {
-		if(confirm('Delete all downloads from suanime? (This will not delete the actual video files in your library)')) {
-			suDownloader.clearAll()
-			this.props.clearAllDownloads()
-		}
+		console.log('not working atm')
+		// if(confirm('Delete all downloads from suanime? (This will not delete the actual video files in your library)')) {
+		// 	suDownloader.clearAll()
+		// 	this.props.clearAllDownloads()
+		// }
 	}
 }
 

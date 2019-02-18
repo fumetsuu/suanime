@@ -73,6 +73,8 @@ export function getDownloadLink(epLink, getHD) {
 				} else {
 					return reject('ERR 404 MP4UPLOAD')
 				}
+			}).catch(e => {
+				return reject('ERR 404 MP4UPLOAD')
 			})
 		})
 	}

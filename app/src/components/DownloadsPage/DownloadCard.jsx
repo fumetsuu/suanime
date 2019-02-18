@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import fs from 'fs'
 import bytes from 'bytes'
 
-import { clearDL, playAnime, persistDL, startDownload } from '../../actions/actions'
+import { clearDL, playAnime, persistDL, startDownload, completeDL } from '../../actions/actions'
 import { toWordDate, convertSec, genVideoPath } from '../../util/util'
 
-import suDownloader from '../../suDownloader/suDownloader'
-//status can be 'QUEUED', 'QUEUED_R', 'PAUSED', 'STARTING', 'DOWNLOADING', 'COMPLETED', 'FETCHING_URL'
+import { downloadEmitter } from '../../util/downloadEmitter'
+
 class DownloadCard extends Component {
 	constructor(props) {
 		super(props)
@@ -16,10 +15,11 @@ class DownloadCard extends Component {
 		this.clearDownload = this.clearDownload.bind(this)
 		this.pauseDownload = this.pauseDownload.bind(this)
 		this.playDownload = this.playDownload.bind(this)
+
 		this.configureDownloadItem = this.configureDownloadItem.bind(this)
-		this.addStatusListeners = this.addStatusListeners.bind(this)
-		this.removeStatusListeners = this.removeStatusListeners.bind(this)
-		this.handlesuDError = this.handlesuDError.bind(this)
+		this.handleData = this.handleData.bind(this)
+		this.handleError = this.handleError.bind(this)
+		this.handleComplete = this.handleComplete.bind(this)
 
 		if(this.props.completed) {
 			let { progressSize, elapsed, completeDate, totalSize } = this.props.persistedState
@@ -47,14 +47,11 @@ class DownloadCard extends Component {
 
 	componentDidMount() {
 		if(!this.props.completed) {
-			this.configureDownloadItem(this.props.animeFilename)
-			this.addsuDListeners()
+			this.configureDownloadItem()
 		}
 	}
 
 	componentWillUnmount() {
-		this.removeStatusListeners()
-		this.removesuDListeners()
 		if(this.downloadItem && this.state.status != 'FETCHING_URL') {
 			this.props.persistDL(this.props.animeFilename, this.state)
 		}
@@ -198,18 +195,18 @@ class DownloadCard extends Component {
 			let { animeFilename, animeName, epLink } = this.props
 			startDownload(epLink, animeFilename, animeName)
 		} else {
-			suDownloader.startDownload(this.props.animeFilename)
+			global.suDScheduler.startDownload(this.props.animeFilename)
 			this.setState({ status: 'STARTING'})
 		}
 	}
 
 	pauseDownload() {
-		suDownloader.pauseDownload(this.props.animeFilename)
+		global.suDScheduler.pauseDownload(this.props.animeFilename)
 		this.setState({ status: 'PAUSED' })
 	}
 
 	continueDownload() {
-		suDownloader.resumeDownload(this.props.animeFilename)
+		global.suDScheduler.startDownload(this.props.animeFilename)
 		this.setState({ status: 'STARTING'})
 	}
 
@@ -222,109 +219,58 @@ class DownloadCard extends Component {
 	}
 
 	clearDownload() {
-		suDownloader.clearDownload(this.props.animeFilename, true)
-		this.removeStatusListeners()
+		global.suDScheduler.killDownload(this.props.animeFilename)
 		this.props.clearDL(this.props.animeFilename)
 	}
 
-	configureDownloadItem(key) {
-		if(key == this.props.animeFilename) {
-			let downloadItem = suDownloader.getActiveDownload(key)
-			if(downloadItem) {
-				// this.clearFetchUrlErrorTimeout()
-				var sudPath =  `${genVideoPath(this.props.animeName, this.props.animeFilename)}.sud`
-				if(fs.existsSync(sudPath)) this.setState({ status: 'QUEUED_R' })
-				if(downloadItem.status == 'DOWNLOADING') this.setState({ status: 'DOWNLOADING' })
-				if(downloadItem.status == 'STARTING') this.setState({ status: 'STARTING' })
-				this.downloadItem = downloadItem
-				this.addStatusListeners()
-				return true
-			} else {
-				let downloadOptions = suDownloader.getQueuedDownload(key)
-				if(downloadOptions) {
-					// this.clearFetchUrlErrorTimeout()
-					this.setState({ status: 'QUEUED' })
-					return true
-				}
-				//the download is neither downloading, starting, or waiting in queue. it is therefore fetching the url or has encountered an error
-				//wait 10 seconds before deciding an error has occured
-				//the conditional checks to make sure that we aren't just waiting for the promises to resolve (this timeout is really only necessary for when suanime is trying to start a download
-				//after being reopened and the download link wasn't found before suanime was closed)
-				//this.fetchurlerrortimeout = setTimeout(() => this.setState({ status: 'ERROR' }), 10000) waiting isn't necessary?
-				if(!this.props.gettingLinks.includes(key)) this.setState({ status: 'ERROR' })
-				//the only event that is able to stop this timeout from starting is the one emitted by suDownloader: new_download_queued
-				//this event will call configureDownloadItem and will set the status to something else, and also clear the timeout
-				return false
-			}
+	configureDownloadItem() {
+		var key = this.props.animeFilename
+		downloadEmitter.on(key, payload => {
+			var { type } = payload
+			if(type == 'data') this.handleData(payload.data)
+			if(type == 'error') this.handleError(payload.error)
+			if(type == 'complete') this.handleComplete()
+		})
+	}
+
+	handleData(x) {
+		var status = 'DOWNLOADING'
+		var speed = bytes(x.speed) + '/s'
+		var progressSize = bytes(x.total.downloaded)
+		var totalSize = bytes(x.total.filesize)
+		var percentage = x.total.percentage.toFixed(2)
+		var elapsed = convertSec(Math.round(x.time.elapsed / 1000))
+		var remaining = convertSec(Math.round(x.time.eta))
+		this.setState({
+			status,
+			speed,
+			progressSize,
+			totalSize,
+			percentage,
+			elapsed,
+			remaining
+		})
+	}
+
+	handleError(error) {
+		this.setState({
+			status: 'ERROR'
+		})
+		console.log('ERROR FOR DOWNLOAD ', this.props.animeFilename, error)
+	}
+
+	handleComplete() {
+		const completedObj = {
+			status: 'COMPLETED',
+			speed: '',
+			progressSize: this.state.totalSize,
+			percentage: '100',
+			remaining: '0',
+			elapsed: '',
+			completeDate: Date.now()
 		}
-	}
-	
-	clearFetchUrlErrorTimeout() {
-		if(this.fetchurlerrortimeout) clearTimeout(this.fetchurlerrortimeout)
-	}
-
-	handlesuDError(x) {
-		if(x.key == this.props.animeFilename) {
-			console.log(x.err)
-			this.setState({ status: 'ERROR' })
-		}
-	}
-
-	removesuDListeners() {
-		suDownloader.removeListener('new_download_started', this.configureDownloadItem)
-		suDownloader.removeListener('new_download_queued', this.configureDownloadItem)
-		suDownloader.removeListener('error', this.handlesuDError)
-	}
-
-	addsuDListeners() {
-		suDownloader.on('new_download_started', this.configureDownloadItem)
-		suDownloader.on('new_download_queued', this.configureDownloadItem)
-		suDownloader.on('error', this.handlesuDError)
-	}
-
-	removeStatusListeners() {
-		if(!this.downloadItem) return false
-		this.downloadItem.removeAllListeners('progress')
-		this.downloadItem.removeAllListeners('error')
-		this.downloadItem.removeAllListeners('pause')
-	}
-
-	addStatusListeners() {
-		if(!this.downloadItem) return false
-		this.removeStatusListeners()
-		this.downloadItem
-			.on('progress', x => {
-				var status = 'DOWNLOADING'
-				var speed = bytes(x.present.speed) + '/s'
-				var progressSize = bytes(x.total.downloaded)
-				var totalSize = bytes(x.total.size)
-				var percentage = (x.total.completed).toFixed(2)
-				var elapsed = convertSec(Math.round(x.present.time))
-				var remaining = convertSec(Math.round(x.future.eta))
-				this.setState({
-					status,
-					speed,
-					progressSize,
-					totalSize,
-					percentage,
-					elapsed,
-					remaining
-				})
-			})
-			.on('error', err => console.log('err: ', err))
-			.on('pause', () => this.setState({ status: 'PAUSED' }))
-			.on('finish', x => { 
-				this.setState({
-					status: 'COMPLETED',
-					speed: '',
-					progressSize: bytes(x.total.size),
-					percentage: '100',
-					remaining: '0',
-					elapsed: convertSec(Math.round(x.present.time)),
-					completeDate: Date.now()
-				})
-				this.removeStatusListeners()
-			})
+		this.setState(completedObj)
+		this.props.completeDL(this.props.animeFilename, completedObj)
 	}
 }
 
@@ -337,7 +283,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 	return {
 		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
-		persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
+		persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState)),
+		completeDL: (animeFilename, persistedState) => dispatch(completeDL(animeFilename, persistedState))
 	}
 }
 

@@ -6,17 +6,21 @@ import store from '../store.js'
 // const pclient = popura()
 const tempcwd = require('electron').remote.app.getPath('userData')
 global.tempDLPath = path.join(tempcwd, '/downloads/')
-const suDownloader = require('../suDownloader/suDownloader')
+
+import { downloadObserver } from '../util/downloadEmitter'
+import { sudPath } from 'su-downloader3'
 
 export function initialiseDB() {
 	if(!global.estore.get('sudownloaderSettings')) {
 		global.estore.set('sudownloaderSettings', {})
 	} //legacy support
 
-	let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get('sudownloaderSettings')
+	let { maxConcurrentDownloads, autoStart } = global.estore.get('sudownloaderSettings')
 
-	suDownloader.setSettings({ maxConcurrentDownloads, autoQueue, autoStart })
-	suDownloader.populateState()
+	global.suDScheduler.options.maxConcurrentDownloads = maxConcurrentDownloads
+	global.suDScheduler.options.autoQueue = autoStart
+
+	// suDownloader.populateState()
 
 	if(!isInitialised()) {
 		global.estore.set('initialised', 'true')
@@ -34,7 +38,6 @@ export function initialiseDB() {
 		})
 		global.estore.set('usepagination', false)
 		global.estore.set('downloadsPath', path.join(tempcwd, '/downloads/'))
-		suDownloader.clearAll()
 	} 
 	store.dispatch({
 		type: 'HYDRATE_DOWNLOADS',
@@ -82,6 +85,20 @@ export function initialiseDB() {
 	if(!fs.existsSync(path.join(tempcwd, '/mal-cache/'))) {
 		fs.mkdirSync(path.join(tempcwd, '/mal-cache/'))
 	}
+
+	//populate suDScheduler
+	var taskQueue = global.estore.get('suDSchedulerTasks')
+	if(taskQueue) {
+		taskQueue.forEach(taskQueueItem => {
+			var { key, status, params: { locations, options } } = taskQueueItem
+			//the download hadn't been started yet
+			if(status == 'queued') {
+				global.suDScheduler.queueDownload(key, locations, options, downloadObserver(key))
+			} else { //resume from .sud path
+				global.suDScheduler.queueDownload(key, sudPath(locations.savePath), options, downloadObserver(key))
+			}
+		})
+	}
 }
 
 function isInitialised() {
@@ -91,9 +108,17 @@ function isInitialised() {
 export function setDownloaderSettings() {
 	let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get('sudownloaderSettings')
 
-	suDownloader.setSettings({ maxConcurrentDownloads, autoQueue, autoStart })
+	global.suDScheduler.options.maxConcurrentDownloads = maxConcurrentDownloads
+	global.suDScheduler.options.autoStart = autoQueue
 }
 
-
-
+export function persistSuD3State() {
+	var { taskQueue } = global.suDScheduler
+	var updatedTaskQueue = taskQueue.map(taskQueueItem => {
+		var { key, status, params } = taskQueueItem
+		//we don't want the observer as it will not be useful
+		return { key, status, params }
+	})
+	global.estore.set('suDSchedulerTasks', updatedTaskQueue)
+}
 

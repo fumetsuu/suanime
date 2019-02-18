@@ -6,7 +6,8 @@ import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec, pqueueAll
 import { getDownloadLink } from '../util/getDownloadLink'
 import store from '../store'
 
-import suDownloader from '../suDownloader/suDownloader'
+import { downloadObserver, downloadEmitter } from '../util/downloadEmitter'
+import { persistSuD3State } from '../util/estoreUtil'
 
 export function clearDL(animeFilename) {
 	return {
@@ -72,52 +73,54 @@ export function startDownload(epLink, animeFilename, animeName) {
 	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
 		var vidPath = genVideoPath(animeName, animeFilename)
 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
-		const dlOptions = {
-			key: animeFilename,
-			path: vidPath,
+		var key = animeFilename
+		var locations = {
 			url: downloadURL,
-			concurrent
+			savePath: vidPath
 		}
+		const dlOptions = { threads: concurrent }
 
 		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
-		console.log(suDownloader)
 
-		suDownloader.QueueDownload(dlOptions)
-	}).catch(err => {
-		if(err) suDownloader.emit('error', { key: animeFilename, err })
+		global.suDScheduler.queueDownload(key, locations, dlOptions, downloadObserver(key))
+		persistSuD3State()
+		console.log(global.suDScheduler.taskQueue)
+	}).catch(error => {
+		if(error) downloadEmitter.emit(animeFilename, { type: 'error', error })
 	})
 }
 
 export function queueDLAll(paramsArray, animeName) {
-	var animeFolderPath = path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`)
-	if(!fs.existsSync(animeFolderPath)) fs.mkdirSync(animeFolderPath)
+	console.log('not working atm')
+	// var animeFolderPath = path.join(global.estore.get('downloadsPath'), `${fixFilename(animeName)}`)
+	// if(!fs.existsSync(animeFolderPath)) fs.mkdirSync(animeFolderPath)
 
-	var linkPromises = paramsArray.map(el => () => getDownloadLink(el.epLink))
+	// var linkPromises = paramsArray.map(el => () => getDownloadLink(el.epLink))
 
-	pqueueAll(linkPromises).then(downloadURLs => {
-		downloadURLs.forEach((res, i) => {
-			if(res.status == 'rejected') {
-				suDownloader.emit('error', { key: paramsArray[i].animeFilename, err: res.error })
-				return
-			}
-			var downloadURL = res.value
-			var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
-			const dlOptions = {
-				key: paramsArray[i].animeFilename,
-				path: path.join(animeFolderPath, fixFilename(paramsArray[i].animeFilename)),
-				url: downloadURL,
-				concurrent
-			}
-			if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')
-			console.log(suDownloader)
-			suDownloader.QueueDownload(dlOptions)
-		})
-	})
+	// pqueueAll(linkPromises).then(downloadURLs => {
+	// 	downloadURLs.forEach((res, i) => {
+	// 		if(res.status == 'rejected') {
+	// 			suDownloader.emit('error', { key: paramsArray[i].animeFilename, err: res.error })
+	// 			return
+	// 		}
+	// 		var downloadURL = res.value
+	// 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
+	// 		const dlOptions = {
+	// 			key: paramsArray[i].animeFilename,
+	// 			path: path.join(animeFolderPath, fixFilename(paramsArray[i].animeFilename)),
+	// 			url: downloadURL,
+	// 			concurrent
+	// 		}
+	// 		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')
+	// 		console.log(suDownloader)
+	// 		suDownloader.QueueDownload(dlOptions)
+	// 	})
+	// })
 
-	return {
-		type: 'QUEUE_ALL',
-		payload: paramsArray
-	}
+	// return {
+	// 	type: 'QUEUE_ALL',
+	// 	payload: paramsArray
+	// }
 }
 
 export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
@@ -129,6 +132,7 @@ export function launchInfo(animeName, slug, animeID, malID) { //animeID is maste
 }
 
 export function completeDL(animeFilename, persistedState) {
+	persistSuD3State()
 	return {
 		type: 'COMPLETED_DOWNLOAD',
 		payload: {
