@@ -13,14 +13,13 @@ export default class SettingsContainer extends React.Component {
 			downloadsPath: global.estore.get('downloadsPath'),
 			maxConcurrentDownloads: global.estore.get('sudownloaderSettings').maxConcurrentDownloads || 4,
 			usepagination: global.estore.get('usepagination'),
-			autoQueue: global.estore.get('sudownloaderSettings').autoQueue,
 			autoStart: global.estore.get('sudownloaderSettings').autoStart,
 			downloadHD: global.estore.get('downloadHD')
 		}
 	}
 	
 	render() {
-		let { downloadsPath, maxConcurrentDownloads, usepagination, autoQueue, autoStart, downloadHD } = this.state
+		let { downloadsPath, maxConcurrentDownloads, usepagination, autoStart, downloadHD } = this.state
 		return(
 			<div className="settings-wrapper">
 				<div className="settings-container">
@@ -50,10 +49,7 @@ export default class SettingsContainer extends React.Component {
 								<span className="label-text">Max concurrent downloads:</span> <Dropdown className="dropdown-options" options={maxDownloads()} onChange={this.changeMCD.bind(this)} value={maxDownloads().find(el => el.value == maxConcurrentDownloads)} placeholder="max concurrent downloads"/>
 							</div>
 							<div className="settings-item-content">
-								<span className="label-text">Automatically start queueing:</span> <Toggle onToggle={this.changeAutoQueue.bind(this)} className="toggle-margin" toggleOn={autoQueue}/>
-							</div>
-							<div className="settings-item-content">
-								<span className="label-text">Automatically start downloading on startup:</span> <Toggle onToggle={this.changeAutoStart.bind(this)} className="toggle-margin" toggleOn={autoStart}/>
+								<span className="label-text">Automatically start donwloads after queueing:</span> <Toggle onToggle={this.changeAutoStart.bind(this)} className="toggle-margin" toggleOn={autoStart}/>
 							</div>
 							<div className="settings-item-content">
 								<span className="label-text">Download in highest quality:</span> <Toggle onToggle={this.changeDownloadHD.bind(this)} className="toggle-margin" toggleOn={downloadHD}/>
@@ -97,11 +93,6 @@ export default class SettingsContainer extends React.Component {
 		setDownloaderSettings()
 	}
 
-	changeAutoQueue() {
-		global.estore.set('sudownloaderSettings', Object.assign({}, global.estore.get('sudownloaderSettings'), { autoQueue: !global.estore.get('sudownloaderSettings').autoQueue }))
-		setDownloaderSettings()
-	}
-
 	changeAutoStart() {
 		global.estore.set('sudownloaderSettings', Object.assign({}, global.estore.get('sudownloaderSettings'), { autoStart: !global.estore.get('sudownloaderSettings').autoStart }))
 		setDownloaderSettings()
@@ -119,7 +110,6 @@ export default class SettingsContainer extends React.Component {
 				downloadsPath: global.estore.get('downloadsPath'),
 				maxConcurrentDownloads: 4,
 				usepagination: false,
-				autoQueue: true,
 				autoStart: true,
 				downloadHD: true
 			})

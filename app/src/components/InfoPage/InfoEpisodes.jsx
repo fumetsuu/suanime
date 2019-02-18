@@ -77,7 +77,7 @@ class InfoEpisodes extends Component {
 			<div className="info-episodes-wrapper">
 				<div className="info-episodes-container">
 					{epCards ?
-						<div className={downloadAllClass} onClick={this.downloadAll.bind(this)}>Download All Episodes</div>
+						<div className="download-all disabled" onClick={this.downloadAll.bind(this)}>Download All Episodes</div>
 						:null}
 					{epCards?epCards:<div className="noeps">{this.state.error}</div>}
 				</div>

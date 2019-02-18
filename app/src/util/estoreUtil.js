@@ -18,7 +18,7 @@ export function initialiseDB() {
 	let { maxConcurrentDownloads, autoStart } = global.estore.get('sudownloaderSettings')
 
 	global.suDScheduler.options.maxConcurrentDownloads = maxConcurrentDownloads
-	global.suDScheduler.options.autoQueue = autoStart
+	global.suDScheduler.options.autoStart = autoStart
 
 	// suDownloader.populateState()
 
@@ -33,7 +33,6 @@ export function initialiseDB() {
 		global.estore.set('downloadHD', true)
 		global.estore.set('sudownloaderSettings', {
 			maxConcurrentDownloads: 4,
-			autoQueue: true,
 			autoStart: true
 		})
 		global.estore.set('usepagination', false)
@@ -107,10 +106,10 @@ function isInitialised() {
 }
 
 export function setDownloaderSettings() {
-	let { maxConcurrentDownloads, autoQueue, autoStart } = global.estore.get('sudownloaderSettings')
+	let { maxConcurrentDownloads, autoStart } = global.estore.get('sudownloaderSettings')
 
 	global.suDScheduler.options.maxConcurrentDownloads = maxConcurrentDownloads
-	global.suDScheduler.options.autoStart = autoQueue
+	global.suDScheduler.options.autoStart = autoStart
 }
 
 export function persistSuD3State() {
