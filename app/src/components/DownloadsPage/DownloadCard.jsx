@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import bytes from 'bytes'
 
 import { clearDL, playAnime, persistDL, startDownload, completeDL } from '../../actions/actions'
-import { toWordDate, convertSec, genVideoPath } from '../../util/util'
+import { toWordDate, convertSec } from '../../util/util'
 
 import { downloadEmitter } from '../../util/downloadEmitter'
+import { persistSuD3State } from '../../util/estoreUtil'
 
 class DownloadCard extends Component {
 	constructor(props) {
@@ -70,21 +71,15 @@ class DownloadCard extends Component {
 				controlAction = this.startDownload
 				break
 			}
-			case 'QUEUED_R': {
-				controlIcon = 'play_arrow'
-				statusText = 'Queued (Resumable)'
-				controlAction = this.startDownload
-				break
-			}
 			case 'DOWNLOADING': {
 				controlIcon = 'pause'
 				statusText = 'Downloading'
 				controlAction = this.pauseDownload
 				break
 			}
-			case 'STARTING': {
+			case 'ACTIVE': {
 				controlIcon = 'pause'
-				statusText = 'Starting'
+				statusText = 'Active'
 				controlAction = this.pauseDownload
 				break
 			}
@@ -118,7 +113,7 @@ class DownloadCard extends Component {
 		let { viewType, animeName, epTitle } = this.props
 		let isCompleted = this.state.status == 'COMPLETED'
 		let isHide = ['COMPLETED', 'FETCHING_URL', 'ERROR'].includes(this.state.status)
-		let isPaused = ['PAUSED', 'QUEUED', 'QUEUED_R', 'STARTING'].includes(this.state.status)
+		let isPaused = ['PAUSED', 'QUEUED', 'ACTIVE'].includes(this.state.status)
 		let downloadSize = isCompleted ? this.state.progressSize : (this.state.progressSize == 0 ? '' : this.state.progressSize + '/' + this.state.totalSize)
 		let percentage = (isHide || this.state.percentage == 0) ? '' : `${this.state.percentage}%`
 		let remaining = (isHide || isPaused) ? '' : this.state.remaining
@@ -128,9 +123,9 @@ class DownloadCard extends Component {
 			case 'COMPLETED': statusColour = '#51e373'; break
 			case 'DOWNLOADING': statusColour = '#7cebff'; break
 			case 'FETCHING_URL': statusColour = '#dadada'; break
-			case 'QUEUED': case 'QUEUED_R': statusColour = '#fec42f'; break
 			case 'PAUSED': statusColour = '#fec42f'; break
-			case 'STARTING': statusColour = '#2e55a1'; break
+			case 'ACTIVE': statusColour = '#2e55a1'; break
+			case 'QUEUED': statusColour = '#fec42f'; break
 			default: statusColour = '#f55353'
 		}
 		let titleclick = isCompleted ? this.playDownload : () => {}		
@@ -190,14 +185,8 @@ class DownloadCard extends Component {
 	}
 
 	startDownload() {
-		if(this.state.status == 'ERROR') {
-			this.setState({ status: 'FETCHING_URL' })
-			let { animeFilename, animeName, epLink } = this.props
-			startDownload(epLink, animeFilename, animeName)
-		} else {
-			global.suDScheduler.startDownload(this.props.animeFilename)
-			this.setState({ status: 'STARTING'})
-		}
+		global.suDScheduler.startDownload(this.props.animeFilename)
+		this.setState({ status: 'ACTIVE'})
 	}
 
 	pauseDownload() {
@@ -207,7 +196,7 @@ class DownloadCard extends Component {
 
 	continueDownload() {
 		global.suDScheduler.startDownload(this.props.animeFilename)
-		this.setState({ status: 'STARTING'})
+		this.setState({ status: 'ACTIVE'})
 	}
 
 	playDownload() {
@@ -220,6 +209,7 @@ class DownloadCard extends Component {
 
 	clearDownload() {
 		global.suDScheduler.killDownload(this.props.animeFilename)
+		persistSuD3State()
 		this.props.clearDL(this.props.animeFilename)
 	}
 
@@ -227,6 +217,7 @@ class DownloadCard extends Component {
 		var key = this.props.animeFilename
 		downloadEmitter.on(key, payload => {
 			var { type } = payload
+			if(type == 'queued') this.setState({ status: 'QUEUED' })
 			if(type == 'data') this.handleData(payload.data)
 			if(type == 'error') this.handleError(payload.error)
 			if(type == 'complete') this.handleComplete()
@@ -235,7 +226,7 @@ class DownloadCard extends Component {
 
 	handleData(x) {
 		var status = 'DOWNLOADING'
-		var speed = bytes(x.speed) + '/s'
+		var speed = bytes(x.avgSpeed) + '/s'
 		var progressSize = bytes(x.total.downloaded)
 		var totalSize = bytes(x.total.filesize)
 		var percentage = x.total.percentage.toFixed(2)

@@ -90,6 +90,7 @@ export function initialiseDB() {
 	var taskQueue = global.estore.get('suDSchedulerTasks')
 	if(taskQueue) {
 		taskQueue.forEach(taskQueueItem => {
+			console.log(taskQueueItem)
 			var { key, status, params: { locations, options } } = taskQueueItem
 			//the download hadn't been started yet
 			if(status == 'queued') {
@@ -119,6 +120,7 @@ export function persistSuD3State() {
 		//we don't want the observer as it will not be useful
 		return { key, status, params }
 	})
+	console.log('persistint sud3 state', updatedTaskQueue)
 	global.estore.set('suDSchedulerTasks', updatedTaskQueue)
 }
 

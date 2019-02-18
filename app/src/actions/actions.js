@@ -83,6 +83,7 @@ export function startDownload(epLink, animeFilename, animeName) {
 		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
 
 		global.suDScheduler.queueDownload(key, locations, dlOptions, downloadObserver(key))
+		downloadEmitter.emit(animeFilename, { type: 'queued' })
 		persistSuD3State()
 		console.log(global.suDScheduler.taskQueue)
 	}).catch(error => {

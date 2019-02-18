@@ -9,7 +9,7 @@ import eStore from 'electron-store'
 global.estore = new eStore()
 
 import { SuDScheduler } from 'su-downloader3'
-global.suDScheduler = new SuDScheduler({ downloadOptions: { throttleRate: 100 } })
+global.suDScheduler = new SuDScheduler({ downloadOptions: { throttleRate: 50 } })
 
 initialiseDB()
 

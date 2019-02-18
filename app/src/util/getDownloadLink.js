@@ -29,14 +29,22 @@ export function getDownloadLink(epLink, getHD) {
 			}).catch(err => reject(err))
 		})
 	})
+
+	function getMirror(streamdata, hostid) {
+		var hostMirrors = streamdata.mirrors.filter(mirror => mirror.host.id == hostid)
+		var workingMirror
+		if(getHD) {
+			workingMirror = hostMirrors.find(mirror => mirror.quality == 1080) || hostMirrors.find(mirror => mirror.quality == 720)
+		} else {
+			workingMirror = hostMirrors.find(mirror => mirror.quality == 360) || hostMirrors.find(mirror => mirror.quality == 480)
+		}
+		if(!workingMirror) workingMirror = hostMirrors[0]
+		return workingMirror
+	}
 	
 	function getStreamMoeURL(streamdata) {
 		return new Promise((resolve, reject) => {
-			if(getHD) {
-				var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 19)   
-			} else {
-				var workingMirror = streamdata.mirrors.reverse().find(mirror => mirror.host.id == 19)
-			}
+			var workingMirror = getMirror(streamdata, 19)
 			if(!workingMirror) return reject('ERR 404 StreamMoe')
 			var embedURL = 'https://stream.moe/' + workingMirror.embed_id
 			rp(embedURL).then(body => {
@@ -49,11 +57,7 @@ export function getDownloadLink(epLink, getHD) {
 
 	function getmp4UploadURL(streamdata) {
 		return new Promise((resolve, reject) => {
-			if(getHD) {
-				var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 1)
-			} else {
-				var workingMirror = streamdata.mirrors.reverse().find(mirror => mirror.host.id == 1)
-			}
+			var workingMirror = getMirror(streamdata, 1)
 			if(!workingMirror) return reject('ERR 404 MP4UPLOAD')
 			var embedURL = 'https://mp4upload.com/embed-' + workingMirror.embed_id + '.html'
 			rp(embedURL).then(body => {
@@ -108,7 +112,7 @@ export function getDownloadLink(epLink, getHD) {
 
 	function getRapidvideoURL(streamdata) {
 		return new Promise((resolve, reject) => {
-			var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 21)
+			var workingMirror = getMirror(streamdata, 21)
 			if(!workingMirror) return reject('ERR 404 RapidVideo')
 			var embedURL = 'https://www.rapidvideo.com/?v=' + workingMirror.embed_id
 			rp(embedURL).then(body => {
@@ -136,11 +140,7 @@ export function getDownloadLink(epLink, getHD) {
 
 	function getStreamangoURL(streamdata) {
 		return new Promise((resolve, reject) => {
-			if(getHD) {
-				var workingMirror = streamdata.mirrors.find(mirror => mirror.host.id == 18)   
-			} else {
-				var workingMirror = streamdata.mirrors.reverse().find(mirror => mirror.host.id == 18)
-			}
+			var workingMirror = getMirror(streamdata, 18)
 			if(!workingMirror) return reject('ERR 404 Streammango')
 			var embedURL = 'https://streamango.com/embed/' + workingMirror.embed_id
 			rp(embedURL).then(body => {
