@@ -38,7 +38,7 @@ export function getDownloadLink(epLink, getHD) {
 		} else {
 			workingMirror = hostMirrors.find(mirror => mirror.quality == 360) || hostMirrors.find(mirror => mirror.quality == 480)
 		}
-		if(!workingMirror) workingMirror = hostMirrors[0]
+		if(!workingMirror) workingMirror = hostMirrors[hostMirrors.length - 1]
 		return workingMirror
 	}
 	
