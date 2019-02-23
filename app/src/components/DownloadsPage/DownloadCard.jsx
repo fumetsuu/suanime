@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import bytes from 'bytes'
 
-import { clearDL, playAnime, persistDL, startDownload, completeDL } from '../../actions/actions'
+import { clearDL, playAnime, persistDL } from '../../actions/actions'
 import { toWordDate, convertSec } from '../../util/util'
 
-import { downloadEmitter } from '../../util/downloadEmitter'
+import { downloadEmitter, genCompletedProps } from '../../util/downloadUtil'
 import { persistSuD3State } from '../../util/estoreUtil'
 
 class DownloadCard extends Component {
@@ -56,6 +56,7 @@ class DownloadCard extends Component {
 		if(this.downloadItem && this.state.status != 'FETCHING_URL') {
 			this.props.persistDL(this.props.animeFilename, this.state)
 		}
+		downloadEmitter.removeAllListeners(this.props.animeFilename)
   	}
 
 	render() {
@@ -251,17 +252,9 @@ class DownloadCard extends Component {
 	}
 
 	handleComplete() {
-		const completedObj = {
-			status: 'COMPLETED',
-			speed: '',
-			progressSize: this.state.totalSize,
-			percentage: '100',
-			remaining: '0',
-			elapsed: '',
-			completeDate: Date.now()
-		}
+		genCompletedProps(this.state.totalSize)
 		this.setState(completedObj)
-		this.props.completeDL(this.props.animeFilename, completedObj)
+		console.log(this.props.animeFilename, 'download finished')
 	}
 }
 
@@ -274,8 +267,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 	return {
 		clearDL: animeFilename => dispatch(clearDL(animeFilename)),
-		persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState)),
-		completeDL: (animeFilename, persistedState) => dispatch(completeDL(animeFilename, persistedState))
+		persistDL: (animeFilename, persistedState) => dispatch(persistDL(animeFilename, persistedState))
 	}
 }
 

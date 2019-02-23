@@ -7,7 +7,7 @@ import store from '../store.js'
 const tempcwd = require('electron').remote.app.getPath('userData')
 global.tempDLPath = path.join(tempcwd, '/downloads/')
 
-import { downloadObserver } from '../util/downloadEmitter'
+import { downloadObserver } from './downloadUtil'
 import { sudPath } from 'su-downloader3'
 
 export function initialiseDB() {

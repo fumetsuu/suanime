@@ -1,4 +1,5 @@
 import React from 'react'
+import { persistSuD3State } from '../util/estoreUtil'
 
 export default function reducer(state={
 	downloadsArray: [],
@@ -83,6 +84,9 @@ export default function reducer(state={
 			global.estore.set('storedDownloadsArray', newDownloadsArray)
 			var newCompletedArray = [newCompletedProps, ...global.estore.get('storedCompletedArray')]
 			global.estore.set('storedCompletedArray', newCompletedArray)
+
+			persistSuD3State()
+
 			return Object.assign({}, state, {
 				downloading: newDownloading,
 				completed: [newCompleted, ...state.completed],

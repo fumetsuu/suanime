@@ -1,12 +1,11 @@
-import path from 'path'
 import fs from 'fs'
 import bytes from 'bytes'
 
-import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec, pqueueAll } from '../util/util'
+import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec } from '../util/util'
 import { getDownloadLink } from '../util/getDownloadLink'
 import store from '../store'
 
-import { downloadObserver, downloadEmitter } from '../util/downloadEmitter'
+import { downloadObserver, downloadEmitter } from '../util/downloadUtil'
 import { persistSuD3State } from '../util/estoreUtil'
 
 export function clearDL(animeFilename) {
@@ -70,6 +69,7 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 }
 
 export function startDownload(epLink, animeFilename, animeName) {
+	console.log(downloadEmitter)
 	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
 		var vidPath = genVideoPath(animeName, animeFilename)
 		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
@@ -133,7 +133,6 @@ export function launchInfo(animeName, slug, animeID, malID) { //animeID is maste
 }
 
 export function completeDL(animeFilename, persistedState) {
-	persistSuD3State()
 	return {
 		type: 'COMPLETED_DOWNLOAD',
 		payload: {
