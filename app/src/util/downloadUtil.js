@@ -22,10 +22,14 @@ function downloadObserver(key) {
 		},
 		error: error => downloadEmitter.emit(key, { type: 'error', error}),
 		complete: () => {
-			var completedProps = genCompletedProps(filesize)
-			var { completeDL } = require('../actions/actions')
-			store.dispatch(completeDL(key, completedProps))
-			downloadEmitter.emit(key, { type: 'complete' })
+			//run on next tick AFTER su-downloader3 finishes updating its internal state
+			//since su-downloader3's downloader observable emits completion before state is updated...
+			setTimeout(() => {
+				var completedProps = genCompletedProps(filesize)
+				var { completeDL } = require('../actions/actions')
+				store.dispatch(completeDL(key, completedProps))
+				downloadEmitter.emit(key, { type: 'complete' })
+			}, 1)
 		}
 	}
 }

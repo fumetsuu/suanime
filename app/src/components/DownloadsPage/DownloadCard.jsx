@@ -252,7 +252,7 @@ class DownloadCard extends Component {
 	}
 
 	handleComplete() {
-		genCompletedProps(this.state.totalSize)
+		var completedObj = genCompletedProps(this.state.totalSize)
 		this.setState(completedObj)
 		console.log(this.props.animeFilename, 'download finished')
 	}
