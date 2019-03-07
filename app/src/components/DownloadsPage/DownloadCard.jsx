@@ -201,11 +201,9 @@ class DownloadCard extends Component {
 	}
 
 	playDownload() {
-		let { animeName } = this.props
+		let { animeName, poster} = this.props
 		var epNumber = this.props.epTitle
-		var posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
-		var slug = this.props.epLink.split('watch/')[1].split('/')[0]
-		playAnime(animeName, epNumber, posterImg, slug)
+		playAnime(animeName, epNumber, poster)
 	}
 
 	clearDownload() {

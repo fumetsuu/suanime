@@ -100,6 +100,7 @@
   },
   "dependencies": {
     "aggregate-error": "^1.0.0",
+    "cheerio": "^1.0.0-rc.2",
     "cloudscraper": "^1.5.1",
     "electron-cookies": "github:heap/electron-cookies",
     "electron-debug": "^1.5.0",

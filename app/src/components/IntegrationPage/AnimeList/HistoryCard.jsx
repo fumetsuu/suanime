@@ -20,7 +20,7 @@ class HistoryCard extends Component {
 
 	launchInfoPage() {
 		let { series_title, series_animedb_id } = this.props.data
-		launchInfo(series_title, null, null, series_animedb_id)
+		launchInfo(series_title, series_animedb_id)
 	}
 
 	deleteHistory() {

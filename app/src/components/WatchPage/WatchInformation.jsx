@@ -22,8 +22,7 @@ class WatchInformation extends Component {
 			animeListObject: null,
 			hasPrevEp: false,
 			hasNextEp: false,
-			loadingALO: true,
-			cposter: ''
+			loadingALO: true
 		}
 		this.updateScore = this.updateScore.bind(this)
 		this.updateStatus = this.updateStatus.bind(this)
@@ -52,12 +51,6 @@ class WatchInformation extends Component {
 	componentWillReceiveProps(nextProps) {
 		this.checkEps(nextProps)
 	}
-	
-	componentWillMount() {
-		loadMAImage(this.props.posterImg).then(imgData => {
-			this.setState({ cposter: imgData })
-		}).catch(console.log)
-	}
 
 	componentWillUnmount() {
 		window.removeEventListener('resize', this.fixWidths)
@@ -82,7 +75,7 @@ class WatchInformation extends Component {
 		}
 		return (
 			<div className="watch-information" style={{width: this.state.reqWidth}}>
-				<div className="watch-image" style={{backgroundImage: `url('data:image/jpeg;base64,${this.state.cposter}')`}} onClick={this.launchInfoPage}/>
+				<div className="watch-image" style={{backgroundImage: `url('${decodeURIComponent(this.props.posterImg)}')`}} onClick={this.launchInfoPage}/>
 				<div className="watch-title-container">
 					<div className="watch-title" onClick={this.launchInfoPage}>
 						{this.props.animeName}
@@ -100,7 +93,6 @@ class WatchInformation extends Component {
 						<div className="progress-text">{my_watched_episodes}/{series_episodes==0?'?':series_episodes}</div>
 					</div>
 				)):<div className="empty"/>}    
-				<div className="anime-out-link masterani-circle" onClick={() => browserLink(`https://www.masterani.me/anime/info/${this.props.slug}`)}></div>
 				<div className={malstyle} onClick={() => browserLink(this.state.MALlink)}></div>
 				{this.state.animeInfo}
 			</div>
@@ -210,9 +202,8 @@ class WatchInformation extends Component {
 	}
 
 	launchInfoPage() {
-		let { animeName, slug } = this.props
-		var animeID = slug.split('-')[0]
-		launchInfo(animeName, slug, animeID)
+		let { animeName } = this.props
+		launchInfo(animeName)
 	}
 
 	checkEps(nextProps) {
@@ -237,17 +228,15 @@ class WatchInformation extends Component {
 	}
 
 	goPrevEp() {
-		let { animeName, slug } = this.props
+		let { animeName, posterImg } = this.props
 		let epNumber = 'Episode ' + (parseInt(this.props.epNumber.split('Episode ')[1]) - 1)
-		let posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
-		playAnime(animeName, epNumber, posterImg, slug)
+		playAnime(animeName, epNumber, posterImg)
 	}
 
 	goNextEp() {
-		let { animeName, slug } = this.props
+		let { animeName, posterImg } = this.props
 		let epNumber = 'Episode ' + (parseInt(this.props.epNumber.split('Episode ')[1]) + 1)
-		let posterImg = this.props.posterImg.split('https://cdn.masterani.me/poster/')[1]
-		playAnime(animeName, epNumber, posterImg, slug)
+		playAnime(animeName, epNumber, posterImg)
 	}
 
 	getMALInfo() {

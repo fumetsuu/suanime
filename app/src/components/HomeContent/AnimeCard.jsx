@@ -1,30 +1,20 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { convertMS, genFilename } from '../../util/util.js'
+import { genFilename } from '../../util/util.js'
 import { queueDL, playAnime, launchInfo } from '../../actions/actions.js'
-import { loadMAImage } from '../../util/maImageLoader'
 
 class AnimeCard extends Component {
 	constructor(props) {
 		super(props)
-		let { title, slug, poster } = this.props.animeDataRecent.anime
-		let { episode, created_at } = this.props.animeDataRecent
+		let { title, poster } = this.props.animeDataRecent.anime
+		let { episode, epLink, timeSince } = this.props.animeDataRecent
 		this.title = title
-		this.link = `https://www.masterani.me/anime/info/${slug}`
-		this.poster = `https://cdn.masterani.me/poster/${poster}`
-		this.epLink = `https://www.masterani.me/anime/watch/${slug}/${episode}`
 		this.lastEp = episode
-		var tzOffset = Math.abs(new Date().getTimezoneOffset())*60*1000
-		this.timeago = convertMS(Date.now()-Date.parse(created_at)-tzOffset)
+		this.poster = poster
+		this.epLink = epLink
+		this.timeago = timeSince
 		this.animeFilename = genFilename(title, episode)    
 		this.epTitle = 'Episode '+episode
-		this.state = { cposter: '' }
-	}
-
-	componentWillMount() {
-		loadMAImage(this.poster).then(imgData => {
-			this.setState({ cposter: imgData })
-		}).catch(console.log)
 	}
 
 	render() {
@@ -44,7 +34,7 @@ class AnimeCard extends Component {
 		}
 		this.content = 
 			<div className="card-container" onClick={this.launchInfoPage.bind(this)}>
-				<div className="card-bg" style={{ backgroundImage: `url('data:image/jpeg;base64,${this.state.cposter}')`}}></div>
+				<div className="card-bg" style={{ backgroundImage: `url('${this.poster}')`}}></div>
 				<div className={downloadClass} onClick={this.queueDLComp.bind(this)}><i className="material-icons">file_download</i></div>
 				<div className={playClass} onClick={this.playEpComp.bind(this)}><i className="material-icons">play_arrow</i></div>
 				<div className="card-header">
@@ -65,14 +55,13 @@ class AnimeCard extends Component {
 
 	playEpComp(e) {
 		e.stopPropagation()
-		let { slug, title, poster } = this.props.animeDataRecent.anime
-		let { epTitle } = this
-		playAnime(title, epTitle, poster, slug)
+		let { epTitle, title, poster } = this
+		playAnime(title, epTitle, poster)
 	}
 
 	launchInfoPage() {
-		let { title, slug, id } = this.props.animeDataRecent.anime
-		launchInfo(title, slug, id, null)
+		let { title } = this.props.animeDataRecent.anime
+		launchInfo(title)
 	}
 }
 

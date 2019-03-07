@@ -96,7 +96,7 @@ class ListCard extends Component {
 
 	launchInfoPage() {
 		let { anime_title, anime_id } = this.props.animeData
-		launchInfo(anime_title, null, null, anime_id)
+		launchInfo(anime_title, anime_id)
 	  }
 
 }

@@ -2,7 +2,8 @@ import fs from 'fs'
 import bytes from 'bytes'
 
 import { fixFilename, fixURL, genFolderPath, genVideoPath, convertSec } from '../util/util'
-import { getDownloadLink } from '../util/getDownloadLink'
+// import { getDownloadLink } from '../util/getDownloadLink'
+import { downloadLink } from '../util/animefreak'
 import store from '../store'
 
 import { downloadObserver, downloadEmitter } from '../util/downloadUtil'
@@ -23,8 +24,8 @@ export function clearAllDownloads() {
 	}
 }
 
-export function playAnime(animeName, epNumber, posterImg, slug) {
-	window.location.hash = `#/watch/${fixFilename(animeName)}/${epNumber}/${posterImg}/${slug}`
+export function playAnime(animeName, epNumber, posterImg) {
+	window.location.hash = `#/watch/${fixFilename(animeName)}/${epNumber}/${encodeURIComponent(posterImg)}`
 }
 
 export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
@@ -70,17 +71,14 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 
 export function startDownload(epLink, animeFilename, animeName) {
 	console.log(downloadEmitter)
-	getDownloadLink(epLink, global.estore.get('downloadHD')).then(downloadURL => {
+	downloadLink(epLink).then(downloadURL => {
 		var vidPath = genVideoPath(animeName, animeFilename)
-		var concurrent = /mp4upload/.test(downloadURL) ? 1 : 18
 		var key = animeFilename
 		var locations = {
 			url: downloadURL,
 			savePath: vidPath
 		}
-		const dlOptions = { threads: concurrent }
-
-		if(concurrent == 1) console.log('WARNING: USING MP4UPLOAD FOR', dlOptions.key, ' EXPECT SLOW SPEEDS AND ERRORS')		
+		const dlOptions = { threads: 18 }
 
 		global.suDScheduler.queueDownload(key, locations, dlOptions, downloadObserver(key))
 		downloadEmitter.emit(animeFilename, { type: 'queued' })
@@ -124,12 +122,8 @@ export function queueDLAll(paramsArray, animeName) {
 	// }
 }
 
-export function launchInfo(animeName, slug, animeID, malID) { //animeID is masterani ID
-	if(animeID) {
-		window.location.hash = `#/info/${fixURL(animeName)}/${slug}/${animeID}`
-	} else if(malID) {
-		window.location.hash = `#/info/${fixURL(animeName)}/null/null/${malID}`
-	}
+export function launchInfo(animeName, malID='null') {
+	window.location.hash = `#/info/${fixURL(animeName)}/${malID}`
 }
 
 export function completeDL(animeFilename, persistedState) {

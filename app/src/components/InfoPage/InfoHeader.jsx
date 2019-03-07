@@ -20,7 +20,7 @@ class InfoHeader extends React.Component {
 	}
 
 	render() {
-		let { title, title_japanese, link, masteraniLink } = this.props
+		let { title, title_japanese, link } = this.props
 		if(this.state.animeListObject) {
 			var { my_watched_episodes, series_episodes, my_score, my_status } = this.state.animeListObject
 		}
@@ -40,7 +40,6 @@ class InfoHeader extends React.Component {
 						<div className="progress-text">{my_watched_episodes}/{series_episodes==0?'?':series_episodes}</div>
 					</div>
 				)) : <div className="empty"/>}    
-				<div className="anime-out-link masterani-circle" onClick={() => browserLink(masteraniLink)}/>
 				<div className="anime-out-link mal-circle" onClick={() => browserLink(link)}/>
 			</div>
 		)

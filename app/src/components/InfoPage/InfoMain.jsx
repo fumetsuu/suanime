@@ -78,7 +78,7 @@ export default class InfoMain extends Component {
 			tablerows.push(
 				<tr key={relation}>
 					<td className="data-label">{relation}</td>
-					<td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?'related-link disabled':'related-link'} onClick={() => {launchInfo(decodeHTML(el.title), null, null, el.mal_id)}}>{decodeHTML(el.title)}</span></span>)}</td>
+					<td>{data[relation].map((el, i) => <span key={el.mal_id}>{i?', ':''}<span className={el.type=='manga'?'related-link disabled':'related-link'} onClick={() => {launchInfo(decodeHTML(el.title), el.mal_id)}}>{decodeHTML(el.title)}</span></span>)}</td>
 				</tr>
 			)
 		})

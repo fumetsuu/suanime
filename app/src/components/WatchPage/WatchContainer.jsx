@@ -7,19 +7,18 @@ import { playAnime } from '../../actions/actions'
 
 const WatchContainer = (props) => {
 	if(!props.match.params.animeName) {
-		var { animeName, epNumber, posterImg, slug } = store.getState().animeVideoReducer.videoParams
-		playAnime(animeName, epNumber, posterImg, slug)
+		var { animeName, epNumber, posterImg } = store.getState().animeVideoReducer.videoParams
+		playAnime(animeName, epNumber, posterImg)
 	} else {
-		var { animeName, epNumber, posterImg, slug } = props.match.params
+		var { animeName, epNumber, posterImg } = props.match.params
 		store.dispatch({ type: 'PLAY_ANIME', payload: props.match.params })
 	}
 	var videoFile = genVideoPath(animeName, genFilename(animeName, epNumber.split('Episode ')[1]))
-	var posterLink = `https://cdn.masterani.me/poster/${posterImg}`
 	return (
 		<div className="watch-wrapper">
 			<div className="watch-container">
 				<AnimeVideo videoSrc={videoFile}/>
-				<WatchInformation animeName={animeName} epNumber={epNumber} posterImg={posterLink} slug={slug}/>
+				<WatchInformation animeName={animeName} epNumber={epNumber} posterImg={posterImg}/>
 			</div>
 		</div>
 	)
