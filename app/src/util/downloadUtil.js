@@ -29,7 +29,7 @@ function downloadObserver(key) {
 				var { completeDL } = require('../actions/actions')
 				store.dispatch(completeDL(key, completedProps))
 				downloadEmitter.emit(key, { type: 'complete' })
-			}, 1)
+			}, 2000)
 		}
 	}
 }
