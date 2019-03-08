@@ -33,7 +33,7 @@ export default class ResultCard extends Component {
 		var animeName = title
 		var animeID = id
 		console.log(title)
-		launchInfo(animeName, slug, animeID, null)
+		launchInfo(animeName, 'null', slug, animeID)
 	  }
 	  
 }

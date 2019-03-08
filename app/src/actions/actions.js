@@ -53,6 +53,8 @@ export function queueDL(epLink, animeFilename, posterImg, animeName, epTitle) {
 		})
 	}
 
+	if(/masterani/.test(epLink)) return
+
 	if(!fs.existsSync(genFolderPath(animeName))) fs.mkdirSync(genFolderPath(animeName))
 
 	startDownload(epLink, animeFilename, animeName)
@@ -122,7 +124,10 @@ export function queueDLAll(paramsArray, animeName) {
 	// }
 }
 
-export function launchInfo(animeName, malID='null') {
+export function launchInfo(animeName, malID='null', slug, masteraniID) {
+	if(slug && masteraniID) {
+		window.location.hash = `#/info/${fixURL(animeName)}/${malID}/${slug}/${masteraniID}`
+	}
 	window.location.hash = `#/info/${fixURL(animeName)}/${malID}`
 }
 

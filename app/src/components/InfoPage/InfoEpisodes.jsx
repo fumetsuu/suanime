@@ -24,10 +24,11 @@ class InfoEpisodes extends Component {
 	
 	
 	componentWillMount() {
-		if(this.props.animeID == 'null') {
-			this.stateFromName(this.props.animeName)
+		let { animeID, animeName } = this.props
+		if(!animeID || animeID == 'null') {
+			this.stateFromName(animeName)
 		} else {
-			this.stateFromID(this.props.animeID)
+			this.stateFromID(animeID)
 		}
 	}
 	

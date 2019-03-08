@@ -51,9 +51,9 @@ class InfoEpisodeCard extends Component {
 		var animeFilename = genFilename(animeName, episode)
 		var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`
 		this.props.queueDL(epLink, animeFilename, posterImg, animeName, epTitle)
-	  }
+	}
 	
-	  playEpComp(e) {
+	playEpComp(e) {
 		e.stopPropagation()
 		let { slug, title } = this.props.broadData 
 		let { episode } = this.props.epData
@@ -61,7 +61,7 @@ class InfoEpisodeCard extends Component {
 		var epNumber = 'Episode '+episode
 		var posterImg = this.props.poster
 		playAnime(animeName, epNumber, posterImg, slug)
-	  }
+	}
 }
 
 const mapStateToProps = state => {

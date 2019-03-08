@@ -3,7 +3,7 @@ import rp from 'request-promise'
 import Loader from '../Loader/Loader.jsx'
 import InfoHeader from './InfoHeader.jsx'
 import InfoMain from './InfoMain.jsx'
-// import InfoEpisodes from './InfoEpisodes.jsx'
+import InfoEpisodes from './InfoEpisodes.jsx'
 import { fixURL } from '../../util/util.js'
 import { processExceptions } from './processExceptions'
 
@@ -49,14 +49,15 @@ export default class InfoContainer extends Component {
 	
 	render() {
 		if(this.state.isLoading) return <Loader loaderClass="central-loader"/>
-		let { animeName } = this.props.match.params
+		let { animeName, slug, masteraniID } = this.props.match.params
 		let { MALData } = this.state
 		let { title, title_english, title_japanese, link_canonical, mal_id, status, aired, image_url, episodes, type } = MALData || this.notFoundMALData
 		return (
 			<div className="info-wrapper">
 				<div className="info-container">
 					<InfoHeader title={title} title_english={title_english} title_japanese={title_japanese} link={link_canonical} malID={mal_id} aired={aired} image_url={image_url} episodes={episodes} type={type} status={status} history={this.props.history}/>
-					<InfoMain MALData={MALData}/> 
+					<InfoMain MALData={MALData}/>
+					<InfoEpisodes animeName={animeName} slug={slug} animeID={masteraniID}/>
 				</div>
 			</div>
 		)
