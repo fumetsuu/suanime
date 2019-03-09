@@ -55,12 +55,11 @@ class InfoEpisodeCard extends Component {
 	
 	playEpComp(e) {
 		e.stopPropagation()
-		let { slug, title } = this.props.broadData 
+		let { title } = this.props.broadData 
 		let { episode } = this.props.epData
-		var animeName = title
 		var epNumber = 'Episode '+episode
-		var posterImg = this.props.poster
-		playAnime(animeName, epNumber, posterImg, slug)
+		var posterImg = `https://cdn.masterani.me/poster/${this.props.poster}`		
+		playAnime(title, epNumber, posterImg)
 	}
 }
 
