@@ -7,7 +7,7 @@ require('./styles/main.sass')
 
 //components imports
 import SideNav from './components/SideNav/SideNav.jsx'
-import { HomeContent, DownloadsPage, WatchPage, SearchPage, InfoPage, IntegrationPage, SettingsPage, AboutPage, SeasonalPage } from './routes.js'
+import { HomeContent, DownloadsPage, WatchPage, SearchPage, InfoPage, IntegrationPage, SettingsPage, AboutPage, SeasonalPage, VideoPlayer } from './routes.js'
 
 export default class App extends Component {
 	render() {
@@ -26,6 +26,7 @@ export default class App extends Component {
 							<Route path="/info/:animeName?/:malID?/:slug?/:masteraniID?" component={InfoPage}/>
 							<Route path="/integration" component={IntegrationPage}/>
 							<Route path="/watch/:animeName?/:epNumber?/:posterImg?/:slug?" component={WatchPage}/>
+							<Route path="/vidplayer" component={VideoPlayer}/>
 							<Route path="/settings" component={SettingsPage}/>
 							<Route path="/about" component={AboutPage}/>
 						</Switch>

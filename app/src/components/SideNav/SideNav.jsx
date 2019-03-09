@@ -4,7 +4,7 @@ import { withRouter, NavLink } from 'react-router-dom'
 import SideNavLink from './SideNavLink.jsx'
 import SideNavToggle from './SideNavToggle.jsx'
 import { sidenavhide, sidenavshow } from '../../util/sidenavtoggle.js'
-const toggableHashes = ['#/watch', '#/info']
+const toggableHashes = ['#/watch', '#/info', '#/vidplayer']
 
 class SideNav extends Component {
 	constructor(props) {
@@ -37,6 +37,7 @@ class SideNav extends Component {
 				<SideNavLink icon="file_download" label="Downloads" linkTarget="/downloads"/>
 				<SideNavLink icon="merge_type" label="Integration" linkTarget="/integration"/>
 				<SideNavLink icon="live_tv" label="Watch" linkTarget="/watch" disabled={watchDisabled}/>
+				<SideNavLink icon="live_tv" label="Video Player" linkTarget="/vidplayer"/>
 				<div className="spacer-vertical"/>
 				{this.state.showToggle ? <SideNavToggle toggleLeft={toggleLeft} toggleIcon={toggleIcon}/> : ''}
 				<div className="settings-about">

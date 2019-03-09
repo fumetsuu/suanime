@@ -10,3 +10,4 @@ export const IntegrationPage = loadable(() => import('./components/IntegrationPa
 export const SettingsPage = loadable(() => import('./components/SettingsPage/SettingsContainer.jsx'))
 export const AboutPage = loadable(() => import('./components/AboutPage/AboutContainer.jsx'))
 export const SeasonalPage = loadable(() => import('./components/SeasonalPage/SeasonalContainer.jsx'))
+export const VideoPlayer = loadable(() => import('./components/VideoPlayer/VideoContainer.jsx'))
