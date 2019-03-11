@@ -1,7 +1,7 @@
 {
   "name": "suanime",
   "productName": "suanime",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "suanime",
   "main": "index.js",
   "scripts": {
