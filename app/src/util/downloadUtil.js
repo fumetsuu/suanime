@@ -13,11 +13,17 @@ const downloadEmitter = new DownloadEmitter()
 
 function downloadObserver(key) {
 	var filesize
+	var first = true
 	return {
 		next: data => {
 			if(data.time) {
 				filesize = bytes(data.total.filesize)
 				downloadEmitter.emit(key, { type: 'data', data })
+				if(data.total.percentage > 95 && first) {
+					first = false
+					global.suDScheduler.pauseDownload(key)
+					global.suDScheduler.startDownload(key)
+				}
 			}
 		},
 		error: error => downloadEmitter.emit(key, { type: 'error', error}),
@@ -29,7 +35,7 @@ function downloadObserver(key) {
 				var { completeDL } = require('../actions/actions')
 				store.dispatch(completeDL(key, completedProps))
 				downloadEmitter.emit(key, { type: 'complete' })
-			}, 2000)
+			}, 1000)
 		}
 	}
 }
