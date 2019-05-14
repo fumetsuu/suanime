@@ -35,7 +35,7 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "fumetsuu",
+        "owner": "josephsurin",
         "repo": "suanime"
       }
     ]

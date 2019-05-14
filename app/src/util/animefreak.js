@@ -2,7 +2,7 @@ const rp = require('request-promise')
 const cheerio = require('cheerio')
 
 const HOME_URL = 'https://www.animefreak.tv/'
-const dlRegex = /file:"(.*)",\s+/
+const dlRegex = /var file = "(.*)";\s+/
 
 /*
 	returns an array of objects:
